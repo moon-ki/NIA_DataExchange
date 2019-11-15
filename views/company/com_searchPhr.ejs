@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>데이터 거래소 시스템</title>
+    <link href='http://fonts.googleapis.com/css?family=Margarine' rel='stylesheet' type='text/css'>
+    <!-- CSS -->
+    <link rel="stylesheet" href="/styles/bootstrap.css">
+    <link rel="stylesheet" href="/styles/sm.css">
+    <link rel="stylesheet" href="/styles/lg.css" media="screen and (min-width: 768px)">
+    <link rel="stylesheet" href="/styles/main.css">
+        <!-- 달력 -->
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/redmond/jquery-ui.min.css" />
+    <!-- JS -->
+    <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="/public/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/public/script.js"></script>
+        <!-- 달력 -->
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/i18n/jquery-ui-i18n.min.js"></script>
+</head>
+
+<body>
+    <header id="main_header">
+            <hgroup id="title">
+                <h1>데이터 거래소 시스템</h1>
+                <h2>PHR 정보 조회</h2>
+            </hgroup>
+            <nav id="main_lnb">
+                <ul>
+                    <li><a href="/user/logout">로그아웃</a></li>
+                    <li><a href="/company/searchPhr">PHR 신청</a></li>
+                    <li><a href="/company/requestData">PHR 신청현황</a></li>
+                </ul>
+            </nav>
+    </header>
+    <form action="/company/searchPhr" method="POST" id="searchPhr">
+        <div id="content">            
+            성별<br>
+            <input type="radio" name="sex" value="1"> 남자
+            <input type="radio" name="sex" value="2"> 여자
+            <br><br>
+            나이<br>
+            <input type="text" name='ageFrom'> ~ <input type="text" name='ageTo'>
+            <br><br>
+            <!-- 흡연여부<br>
+            <input type="radio" name='smokingYn' value='1'> 피우지 않는다.<br>
+            <input type="radio" name='smokingYn' value='2'> 과거에 피웠으나 지금은 끊었다.<br>
+            <input type="radio" name='smokingYn' value='3'> 현재도 피운다.<br>
+            <br>
+            음주여부<br>
+            <input type="radio" name='drinkingYn' value='0'> 하지 않는다.<br>
+            <input type="radio" name='drinkingYn' value='1'> 한다.<br>
+            <br><br> -->
+            BMI<br>
+            <input type="text" name='bmiFrom'> ~ <input type="text" name='bmiTo'>
+            <br><br>
+            수축기 혈압<br>
+            <input type="text" name='systoleFrom'> ~ <input type="text" name='systoleTo'>
+            <br><br>
+            이완기 혈압<br>
+            <input type="text" name='relaxFrom'> ~ <input type="text" name='relaxTo'>
+            <br><br>
+            AST<br>
+            <input type="text" name='astFrom'> ~ <input type="text" name='astTo'>
+            <br><br>
+            ALT<br>
+            <input type="text" name='altFrom'> ~ <input type="text" name='altTo'>
+            <br><br>
+            <select name="requestPurpose">
+                <option value="">활용 목적</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Sales">Sales</option>
+                <option value="ETC">ETC</option>
+            </select> &nbsp;
+            <input type="text" id="deadLine" name="deadLine" size="20" placeholder="마감일자를 선택하세요"/>
+            <input type="text" id="requireCnt" name="requireCnt" size="30" placeholder="필요한 PHR 정보를 100건 단위로 입력"/>
+            <br><br>
+            <textarea id="rewardDesc" name="rewardDesc" cols="40" rows="5" autofocus placeholder="정보제공에 따른 보상 방법을 입력하세요"></textarea>
+
+            <br><br>
+            <input type="submit" value="신청" class="submit">
+        </div>
+    </form>
+
+</body>
+</html>
+
+<script type="text/javascript">
+    $(function(){
+        $.datepicker.setDefaults($.datepicker.regional['ko']);
+        $("#deadLine").datepicker();
+    });
+
+    (function(){
+        $(document).ready(function() {
+            $('#searchPhr').submit(function(){
+            var $requestPurpose = $('#searchPhr select[name=requestPurpose]');
+            var $deadLine = $('#searchPhr input[name=deadLine]');
+            var $requireCnt = $('#searchPhr input[name=requireCnt]');
+            
+            if(!$requestPurpose.val()){
+                alert("활용목적을 선택하세요.");
+                $requestPurpose.focus();
+                return false;
+            }
+            if(!$deadLine.val()){
+                alert("마감일자를 선택하세요.");
+                $deadLine.focus();
+                return false;
+            }
+            if(!$requireCnt.val()){
+                alert("필요한 PHR 건수를 입력하세요.");
+                $requireCnt.focus();
+                return false;
+            }else{
+                if(Number($requireCnt.val())%100!=0){
+                    alert("요청 PHR 건수를 100단위로 입력하세요.");
+                    $requireCnt.focus();
+                    return false;
+                }
+            }
+
+            if(confirm('해당 조건으로 데이터를 신청합니까?'))
+                return true;
+            else return false;
+
+            });
+        });
+    })();
+</script>
+    

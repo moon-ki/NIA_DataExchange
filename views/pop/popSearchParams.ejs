@@ -1,0 +1,76 @@
+<style>
+table.type09 {
+    border-collapse: collapse;
+    text-align: left;
+    line-height: 1.5;
+
+}
+table.type09 thead th {
+    padding: 10px;
+    font-weight: bold;
+    vertical-align: top;
+    color: #369;
+    border-bottom: 3px solid #036;
+}
+table.type09 tbody th {
+    width: 150px;
+    padding: 10px;
+    font-weight: bold;
+    vertical-align: top;
+    border-bottom: 1px solid #ccc;
+    background: #f3f6f7;
+}
+table.type09 td {
+    width: 350px;
+    padding: 10px;
+    vertical-align: top;
+    border-bottom: 1px solid #ccc;
+}
+</style>
+
+<table class="type09">
+    <thead>
+    <tr>
+        <th scope="cols">항목</th>
+        <th scope="cols">조건</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th scope="row">번호</th>
+        <td><%=searchParams.num %></td>
+    </tr>        
+    <tr>
+        <th scope="row">성별</th>
+        <td><%=searchParams.sex %></td>
+    </tr>
+    <tr>
+        <th scope="row">나이</th>
+        <td><%=searchParams.ageFrom %> 세 이상</td>
+    </tr>
+    <tr>
+        <th scope="row">BMI</th>
+        <td><%=searchParams.bmiFrom %> 이상</td>
+    </tr>
+    <tr>
+        <th scope="row">수축기 혈압</th>
+        <td><%=searchParams.systoleFrom %> 이상</td>
+    </tr>
+    <tr>
+        <th scope="row">이완기 혈압</th>
+        <td><%=searchParams.relaxFrom %> 이상</td>
+    </tr>
+    <tr>
+        <th scope="row">AST</th>
+        <td><%=searchParams.astFrom %> 이상</td>
+    </tr>
+    <tr>
+        <th scope="row">ALT</th>
+        <td><%=searchParams.altFrom %> 이상</td>
+    </tr>
+    <tr>
+        <th scope="row">보상규정</th>
+        <td><textarea cols="30" rows="5">  <%=searchParams.rewardDesc %> </textarea></td>
+    </tr>
+    </tbody>
+</table>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>데이터 거래소</title>
+
+<!-- CSS -->
+<link rel="stylesheet" href="/styles/bootstrap.css">
+<link rel="stylesheet" href="/styles/sm.css">
+<link rel="stylesheet" href="/styles/lg.css" media="screen and (min-width: 768px)">
+<link rel="stylesheet" href="/styles/style.css">
+
+<!-- JS -->
+<script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/public/bootstrap.min.js"></script>
+<script type="text/javascript" src="/public/script.js"></script>
+
+
+</head>
+
+<body>
+<div id="wrap">
+	<!-- S: Header -->
+	<header id="header">
+		<div class="container">
+			<!-- 오른쪽 메뉴바 -->
+			<button type="button" class="btn menu-btn"></button>
+			<h1 class=""> 
+				<!-- logo: logo-lg.png -->
+				<a href="/home"><span class="sr-only">데이터 거래소</span></a>
+			</h1>
+			<div class="gnb">
+
+				<ul>
+						<li class="gnb-logout">
+							<a href="/accounts/logout" onclick="return confirm('로그아웃 하시겠습니까?')">
+							<i class="icon icon-login"></i>LOGOUT</a>
+						</li>
+						<li>
+							<a href="/accounts/myinfo">
+							<i class="icon icon-person"></i>내 정보</a>
+						</li>
+						<li>
+							<a href="/accounts/acceptList">
+							<i class="icon icon-view"></i>승인내역</a>
+						</li>
+						<li class="gnb-wallet">
+							<a style="cursor: pointer" onclick="window.open('/accounts/wallet','팝업창', 'height=680, width=500; return false;')">
+							<i class="icon icon-wallet"></i>Wallet</a>
+						</li>
+						<li><a href="/accounts/transactionList/">내역조회</a></li>
+				</ul>
+
+			</div>
+		</div>
+	</header>
+	<!-- E: Header -->
+	<!-- S: Container -->
+	<div id="container">
+		<div class="container">
+			<div id="content">

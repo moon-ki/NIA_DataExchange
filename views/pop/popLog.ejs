@@ -1,0 +1,50 @@
+<style>
+	table.type09 {
+		border-collapse: collapse;
+		text-align: left;
+		line-height: 1.0;
+
+	}
+	table.type09 thead th {
+		padding: 10px;
+		font-weight: bold;
+		vertical-align: top;
+		color: #369;
+		border-bottom: 3px solid #036;
+	}
+	table.type09 tbody th {
+		width: 50px;
+		padding: 10px;
+		font-weight: bold;
+		vertical-align: top;
+		border-bottom: 1px solid #ccc;
+		background: #f3f6f7;
+	}
+	table.type09 td {
+		width: 500px;
+		padding: 10px;
+		vertical-align: top;
+		border-bottom: 1px solid #ccc;
+	}
+</style>
+
+<table class="type09">
+		<thead>
+		<tr>
+			<th  width="7%" scope="cols">번호</th>
+			<th  width="10%" scope="cols">병원</th>
+			<th  width="66%" scope="cols">로그</th>
+			<th  width="17%" scope="cols">생성시간</th>
+		</tr>
+		</thead>
+		<tbody>
+		<% logDetail.forEach(function(log) { %>
+			<tr>
+				<td><%= log.num %></td>
+				<td><%= log.from %></td>
+				<td><%= log.messageDetail %></td>
+				<td><%= log.create_dt %></td>
+			</tr>
+		<% }) %>
+		</tbody>
+	</table>

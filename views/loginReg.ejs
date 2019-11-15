@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="kr">
+	<head>
+    <link rel="stylesheet" href="/styles/loginReg.css">
+	<meta charset="UTF-8">
+	<title>데이터 거래소</title>
+</head>
+<body>
+
+<section class="container">
+    <article class="half">
+            <h1>의료 데이터 거래소</h1>
+            <div class="tabs">
+                    <span class="tab signin active"><a href="#signin">Sign in</a></span>
+                    <span class="tab signup"><a href="#signup">Sign up</a></span>
+            </div>
+            <div class="content">
+                <div class="signin-cont cont">
+                    <form action="/user/loginReg" method="post"id="login_form" >
+                            <input type="text" name="uid"  class="inpt" placeholder="ID">
+                            <input type="password" name="upw" class="inpt" placeholder="Password">
+                            <input type="checkbox" id="remember" class="checkbox" checked>
+                            <!-- <label for="remember">Remember me</label> -->
+                            <input type="radio" class="radio" name="selectwho" value="company"> 기업
+                            <input type="radio" class="radio" name="selectwho" value="person"> 개인
+                            <div class="submit-wrap">
+                                <input type="submit" value="Sign in" class="submit">
+                                <!-- <a href="#" class="more">Forgot your password?</a> -->
+                            </div>
+                    </form>
+                </div>
+                <div class="signup-cont cont">
+                    <form action="/company/register" method="post" id='register_form'>
+                        <input type="email" name="email" class="inpt"  placeholder="Email">
+                        <input type="text" name="comName"  class="inpt"  placeholder="Company Name">
+                        <input type="text" name="comNumber"  class="inpt"  placeholder="Company Number">
+                        <input type="password" name="cpw" class="inpt"  placeholder="Password">
+                        <input type="password" name="comfirmCpw" class="inpt" placeholder="Comfirm Password">
+
+                        <div class="submit-wrap">
+                            <input type="submit" value="Sign up" class="submit">
+                            <a href="#" class="more">Terms and conditions</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+    </article>
+	</section>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> 
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    (function(){
+        $(document).ready(function() {
+            
+            $('#login_form').submit(function(){
+                var $usernameInput = $('#login_form input[name=uid]');
+                var $passwordInput = $('#login_form input[name=upw]');
+                var $radioInput = $('#login_form input[name=selectwho]:checked');
+
+                if(!$usernameInput.val()){
+                    alert("아이디를 입력해주세요.");
+                    $usernameInput.focus();
+                    return false;
+                }
+                if(!$passwordInput.val()){
+                    alert("패스워드를 입력해주세요.");
+                    $passwordInput.focus();
+                    return false;
+                }
+                if(!$radioInput.val()){
+                    alert("개인이나 기업을 선택해주세요.");
+                    $radioInput.focus();
+                    return false;
+                }
+
+                return true;
+            });
+
+            $('#register_form').submit(function(){
+                var $comEmail = $('#register_form input[name=email]');
+                var $comName = $('#register_form input[name=comName]');
+                var $comNumber = $('#register_form input[name=comNumber]');
+                var $cpw = $('#register_form input[name=cpw]');
+                var $comfirmCpw = $('#register_form input[name=comfirmCpw]');
+
+                if(!$comEmail.val()){
+                    alert("이메일을 입력하세요");
+                    $comEmail.focus();
+                    return false;
+                }
+                if(!$comName.val()){
+                    alert("기업명을 입력하세요.");
+                    $comName.focus();
+                    return false;
+                }
+                if(!$comNumber.val()){
+                    alert("사업자 번호를 입력하세요.");
+                    $comNumber.focus();
+                    return false;
+                }
+                if(!$cpw.val()){
+                    alert("비밀번호를 입력하세요.");
+                    $cpw.focus();
+                    return false;
+                }
+                if(!$comfirmCpw.val()){
+                    alert("비밀번호를 한번더 입력해야합니다.");
+                    $comfirmCpw.focus();
+                    return false;
+                }
+                if($cpw.val()!=comfirmCpw.val()){
+                    alert('비밀번호가 일치하지 않습니다. 다시 입력해주세요.');
+                    $cpw.val('');
+                    $comfirmCpw.val('');
+                    $cpw.focus();
+                    return false;
+                }
+                return true;
+            });
+
+
+        });
+    })();
+</script>
+<script type="text/javascript">
+    $('.tabs .tab').click(function(){
+        if ($(this).hasClass('signin')) {
+            $('.tabs .tab').removeClass('active');
+            $(this).addClass('active');
+            $('.cont').hide();
+            $('.signin-cont').show();
+        } 
+        if ($(this).hasClass('signup')) {
+            $('.tabs .tab').removeClass('active');
+            $(this).addClass('active');
+            $('.cont').hide();
+            $('.signup-cont').show();
+        }
+    });
+    </script>
+</script>
+</body>
+</html>
