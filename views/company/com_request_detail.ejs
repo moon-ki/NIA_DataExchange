@@ -93,10 +93,12 @@
                                     )" />  
                                 </td>
                             
-                            <%}else if(requestdetail.done_yn=='YYY'){%>
+                            <%}else if(requestdetail.request_yn=='Y'){%>
                                 <td>완료</td>
                             <%}else if(requestdetail.request_yn=='P'){%>
-                                <td>수신중</td>    
+                                <td>수신중</td>
+                            <%}else if(requestdetail.request_yn=='F'){%>
+                                <td>미완료</td>    
                             <%}else{%>
                                 <td>ffff</td>
                             <%}%>

@@ -168,7 +168,6 @@ router.get('/requestData', paginate.middleware(10, 100), function(req,res){
                 if(req.param_altTo="altTo","-",req.param_altTo) as param_altTo, \
                 req.param_altTo as altTo,\
                 \
-                req.request_yn, \
                 case when date_format(req.request_dt,"%y%m%d")=date_format(now(),"%y%m%d") then date_format(req.request_dt, "%H:%i") \
                         else date_format(req.request_dt,"%y.%m.%d") end as create_time,\
                 req.dynamic_sql,\
@@ -176,7 +175,11 @@ router.get('/requestData', paginate.middleware(10, 100), function(req,res){
                 req.deadline, \
                 case when trim(req.reward_desc) is null or trim(req.reward_desc) ="" then "-" \
                      else req.reward_desc end as reward_desc,\
-                concat(CHUNG_yn, SEOUL_yn, CHAR_yn) as done_yn\
+                concat(CHUNG_yn, SEOUL_yn, CHAR_yn) as done_yn,\
+                case when req.request_yn = "N" then "N"\
+                     when req.request_yn = "P" and date_format(req.deadline,"%y%m%d") > date_format(now(),"%y%m%d")  and concat(CHUNG_yn, SEOUL_yn, CHAR_yn) != "YYY" then "P"\
+                     when req.request_yn = "P" and date_format(req.deadline,"%y%m%d") < date_format(now(),"%y%m%d") and concat(CHUNG_yn, SEOUL_yn, CHAR_yn) != "YYY" then "F"\
+                     when concat(CHUNG_yn, SEOUL_yn, CHAR_yn) = "YYY" then "Y" end request_yn\
                 \
         from    com_requests req, \
                 com_info b, (select @rownum:=0) tmp\
