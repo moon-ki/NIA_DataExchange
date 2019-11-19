@@ -76,19 +76,19 @@ router.post('/searchPhr', function(req,res){
     // 보상 상세데이터의 개행문자를 <br>로 변환: 개행문자가 있으면 팝업을 호출하는 스크립트에서 syntax 오류를 일으킴
     sqlAndParams[1].push(requestPurpose, deadLine, rewardDesc.replace(/(?:\r\n|\r|\n)/g, '<br>'), requireCnt);
 
-    var cntSQL = conn.query('select count(*) as cnt \
+    var cntSQL = conn.query('select p_code \
                                from user_phr_sample \
                               where 1=1 and join_yn = "Y" and alert_yn = "Y"'+sqlAndParams[0], sqlAndParams[1], 
-        function(err,result){
+        function(err, pCodes){
 
             if(err) console.error(err);
             else{
                 // 조회 데이터가 없을 경우
-                if(!result[0].cnt) {
+                if(pCodes==""||pCodes.length==0) {
                     res.send('<script>alert("결과가 존재하지 않습니다. 다시 검색하세요."); \
                                 location.href="/company/searchPhr"; </script>');
                 // 목표 건수보다, 조회 건수가 적을 경우
-                }else if( result[0].cnt < requireCnt ){
+                }else if( pCodes.length < requireCnt ){
                     res.send('<script>alert("목표 PHR건수 보다 조회된 레코드가 적습니다."); \
                                 location.href="/company/searchPhr"; </script>');
                 }else{
@@ -97,20 +97,45 @@ router.post('/searchPhr', function(req,res){
                                     com_email,request_cnt,dynamic_sql,\
                                     param_sex, param_ageFrom, param_ageTo, param_bmiFrom, param_bmiTo,\
                                     param_systoleFrom, param_systoleTo, param_relaxFrom, param_relaxTo, param_astFrom,\
-                                    param_astTo, param_altFrom, param_altTo, request_purpose, deadline, reward_desc, require_cnt) \
+                                    param_astTo, param_altFrom, param_altTo, request_purpose, deadline, \
+                                    reward_desc, require_cnt) \
                                values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)' ;
                     
                     // com_requests 인서트 파라미터 셋팅
-                    var insertParams = [req.session.comEmail, result[0].cnt, sqlAndParams[0]];
+                    var insertParams = [req.session.comEmail, pCodes.length, sqlAndParams[0]];
                     for(var i=0;i<sqlAndParams[1].length;i++){
                         insertParams.push(sqlAndParams[1][i]);
                     }
                     // com_requests 인서트 실행
                     var insertSQL = conn.query(sql, insertParams,function(err,insertResult){
                         if(!err){
-                            conn.query('select seq from com_requests order by seq desc limit 1',[],function(err, ress){
-                                logger.info(ress[0].seq, {messageDetail:'[SEARCH] PHR 조회 및 내역 저장 완료 (전체 조회건수: '+result[0].cnt+', 목표건수: '+requireCnt+')'});
-                                res.redirect('/company/requestData');
+                            conn.query('select seq from com_requests order by seq desc limit 1',[],function(err, comSeq){
+                                async.waterfall([
+                                    function(callback){
+                                        // 로그 기록
+                                        logger.info(comSeq[0].seq, {messageDetail:'[SEARCH] PHR 조회 및 내역 저장 완료 (전체 조회건수: '+pCodes.length+', 목표건수: '+requireCnt+')'});
+                                        callback(null, comSeq[0].seq, pCodes);
+                                    },
+                                    // user_requests 인서트 파라미터 셋팅
+                                    function(com_seq, pCodes,callback){
+                                        var userRequestInsertParam=[]
+                                        async.each(pCodes, function(pCode){
+                                            userRequestInsertParam.push([com_seq, req.session.comEmail, requestPurpose, pCode.p_code])
+                                        });
+                                        callback(null, userRequestInsertParam);
+                                        
+                                    },
+                                    // user_requests 인서트
+                                    function(userRequestInsertParam, callback){
+                                        conn.query('insert into user_requests (com_seq, com_email, request_purpose, p_code) values ? ', [userRequestInsertParam], function(err,Re){
+                                            if(err) console.error(err);
+                                            else callback(null)
+                                        });
+                                    },
+                                    function(){
+                                        res.redirect('/company/requestData');
+                                    }
+                                ]);
                             });
                         }else console.error(err);
                     });
@@ -184,9 +209,9 @@ router.get('/requestData', paginate.middleware(10, 100), function(req,res){
         from    com_requests req, \
                 com_info b, (select @rownum:=0) tmp\
                 \
-        where    1=1\
-            and    req.com_email = b.com_email\
-            and    req.com_email = ?  \
+        where   1=1\
+          and   req.com_email = b.com_email\
+          and   req.com_email = ?\
         order by req.request_dt\
         ) main\
     order by main.request_dt desc\
@@ -231,9 +256,6 @@ router.post('/requestPhr', async(req,res)=>{
                         where 1=1 \
                             and join_yn = "Y" and alert_yn="Y"'+dynamicSql+'and p_hospital=?' ;
 
-    //사용자 신청 로그에 저장할 데이터
-    var sql_INERT_UserLog = 'insert into user_requests (com_seq, com_email, request_purpose, p_code) values ? '
-
     // API에서 받은 데이터 인서트 쿼리
     var sql_INSERT_PHR='insert into phr_record_remote(\
                             p_hospital,p_code,p_sex,p_location,p_phone,p_name,birth_dt,height,weight,waist_cir\
@@ -276,20 +298,8 @@ router.post('/requestPhr', async(req,res)=>{
                                 function(phrArrayTotal, responseCnt, callback){
                                     conn.query(sql_INSERT_PHR,[phrArrayTotal], function(err,result){
                                         if (err) console.log(err);
-                                        else callback(null, phrArrayTotal, responseCnt);
-                                    });
-                                },
-// 3. user_requests 테이블 인서트 *************************************************************************************************
-                                function(phrArrayTotal, responseCnt, callback){
-                                    var phrTmp=[];
-                                    async.each(phrArrayTotal, function(phrArrayOne){
-                                        phrTmp.push([com_seq, req.session.comEmail, req.body.requestPurpose, phrArrayOne[1]]);
-                                    });
-                                    conn.query(sql_INERT_UserLog, [phrTmp], function(err, result){
-                                        if (err) console.log(err);
                                         else callback(null, responseCnt);
                                     });
-                                    
                                 },
 // 4. com_requests.response_cnt 업데이트 *****************************************************************************************
                                 function(responseCnt, callback){
