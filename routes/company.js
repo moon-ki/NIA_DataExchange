@@ -270,69 +270,68 @@ router.post('/requestPhr', async(req,res)=>{
         }),
         
         asyncEachSeries(hospitals, function(hospital, next){
-            // setTimeout(function(){
-                var sql_SELECT_Params = [req.body.sex, req.body.ageFrom, req.body.ageTo, req.body.bmiFrom, req.body.bmiTo, 
-                    req.body.systoleFrom, req.body.systoleTo, req.body.relaxFrom, req.body.relaxTo, req.body.astFrom,
-                    req.body.astTo, req.body.altFrom, req.body.altTo];
+            var sql_SELECT_Params = [req.body.sex, req.body.ageFrom, req.body.ageTo, req.body.bmiFrom, req.body.bmiTo, 
+                req.body.systoleFrom, req.body.systoleTo, req.body.relaxFrom, req.body.relaxTo, req.body.astFrom,
+                req.body.astTo, req.body.altFrom, req.body.altTo];
 
                 // pcodes 조회!
-                selPcodes(sql_SELECT, sql_SELECT_Params, hospital, function(successYn, pCodes){
-                    if(successYn){
+            selPcodes(sql_SELECT, sql_SELECT_Params, hospital, function(successYn, pCodes){
+                if(successYn){
 
-                        // array를 분할
-                        // var seperPcode=[];
-                        // seperPcode = pCodes.division(20);
+                    // array를 분할
+                    // var seperPcode=[];
+                    // seperPcode = pCodes.division(20);
 
-                        //---------------------async.each를 사용하여 callAPI 호출
-                        logger.info(com_seq, {messageDetail: '[API Called] PHR 요청 API Call', from:hospital});
-                        
-                        var currentCnt = 0;
-                        asyncEachSeries(pCodes, function(pCode, next){
-                                setTimeout(function(){
-                                    async.waterfall([
-        // 1. API Call ******************************************************************************************************************
-                                        function(callback){
-                                            callAPI(hospital, pCode, com_seq, function(successYn, phrArrayTotal, responseCnt ){
-                                                if(successYn) callback(null, phrArrayTotal, responseCnt);
-                                                else next(); //데이터가 없는 경우, 다음건 처리 시작
-                                            });
-                                        },
-        // 2. phr_record_remote 테이블 인서트 ********************************************************************************************
-                                        function(phrArrayTotal, responseCnt, callback){
-                                            conn.query(sql_INSERT_PHR, [phrArrayTotal], function(err,result){
-                                                if (err) console.log(err);
-                                                else callback(null, responseCnt);
-                                            });
-                                        },
-        // 3. com_requests.response_cnt 업데이트 *****************************************************************************************
-                                        function(responseCnt, callback){
-                                            conn.query('update com_requests \
-                                                        set response_cnt = response_cnt + cast(? as unsigned)\
-                                                        where seq = ?', [responseCnt, com_seq], function(err, result){
-                                                if(err) console.log(err);
-                                                else callback(null, responseCnt);
-                                            });
-                                        },
-        // 4. 목표수량 체크 **************************************************************************************************************
-                                        function(responseCnt){
-                                            conn.query('select cast(require_cnt as unsigned)  as require_cnt, \
-                                                                cast(response_cnt as unsigned) as response_cnt\
-                                                        from com_requests where seq = ?', com_seq, function(err,result){
-                                                currentCnt+=responseCnt
-                                                if(result[0].require_cnt > result[0].response_cnt+2){
-                                                    next();
-                                                }else{
-                                                    conn.query('update com_requests set '+hospital+'_yn = "Y" where seq = ?',com_seq, function(){
-                                                        logger.info(com_seq, {messageDetail: '[Data Received] '+currentCnt+'건 수신을 완료했습니다.', from:hospital});
-                                                    });
-                                                }
-                                            });}
-        //******************************************************************************************************************************
-                                    ]);}, 5000);
-                        });
-                    }//selPcodes if(successYn){
-                });//selPcodes end
-                next();
+                    //---------------------async.each를 사용하여 callAPI 호출
+                    logger.info(com_seq, {messageDetail: '[API Called] PHR 요청 API Call', from:hospital});
+                    
+                    var currentCnt = 0;
+                    asyncEachSeries(pCodes, function(pCode, next){
+                            setTimeout(function(){
+                                async.waterfall([
+    // 1. API Call ******************************************************************************************************************
+                                    function(callback){
+                                        callAPI(hospital, pCode, com_seq, function(successYn, phrArrayTotal, responseCnt ){
+                                            if(successYn) callback(null, phrArrayTotal, responseCnt);
+                                            else next(); //데이터가 없는 경우, 다음건 처리 시작
+                                        });
+                                    },
+    // 2. phr_record_remote 테이블 인서트 ********************************************************************************************
+                                    function(phrArrayTotal, responseCnt, callback){
+                                        conn.query(sql_INSERT_PHR, [phrArrayTotal], function(err,result){
+                                            if (err) console.log(err);
+                                            else callback(null, responseCnt);
+                                        });
+                                    },
+    // 3. com_requests.response_cnt 업데이트 *****************************************************************************************
+                                    function(responseCnt, callback){
+                                        conn.query('update com_requests \
+                                                    set response_cnt = response_cnt + cast(? as unsigned)\
+                                                    where seq = ?', [responseCnt, com_seq], function(err, result){
+                                            if(err) console.log(err);
+                                            else callback(null, responseCnt);
+                                        });
+                                    },
+    // 4. 목표수량 체크 **************************************************************************************************************
+                                    function(responseCnt){
+                                        conn.query('select cast(require_cnt as unsigned)  as require_cnt, \
+                                                            cast(response_cnt as unsigned) as response_cnt\
+                                                    from com_requests where seq = ?', com_seq, function(err,result){
+                                            currentCnt+=responseCnt
+                                            if(result[0].require_cnt > result[0].response_cnt+2){
+                                                next();
+                                            }else{
+                                                conn.query('update com_requests set '+hospital+'_yn = "Y" where seq = ?',com_seq, function(){
+                                                    logger.info(com_seq, {messageDetail: '[Data Received] '+currentCnt+'건 수신을 완료했습니다.', from:hospital});
+                                                });
+                                            }
+                                        });}
+    //******************************************************************************************************************************
+                                ]);}, 5000);
+                    });
+                }//selPcodes if(successYn){
+            });//selPcodes end
+            next();
             // }, 10000);
         }),// async.each end
 
@@ -414,8 +413,6 @@ function callAPI (hospital, p_codes, com_seq, callback){
         }
     },function(error, response, result){
         if(result.code==0 && (result.result==''||result.result == null)) {
-            console.log('[API null] hospital: %s, p_code: %s, result: %s', hospital, p_codes, result.result);
-
             callback(false,'Nothing',0);
         }else{//---------------------phr 파싱 처리
             var phrArrayTotal = [];
