@@ -46,12 +46,12 @@
                             <!-- <th width="5%">회사명</th> -->
                             <!-- <th width="5%">담당자 Email</th> -->
                             <th width="5%">신청용도</th>
-                            <th width="5%">건수</th>
-                            <th width="5%">요청일자</th>
-                            <th width="5%">마감일자</th>
-                            <th width="5%">조회조건</th>
-                            <th width="5%">로그</th>
-                            <th width="5%">상태</th>
+                            <th width="12%">건수</th>
+                            <th width="4%">요청일자</th>
+                            <th width="4%">마감일자</th>
+                            <th width="3%">조회조건</th>
+                            <th width="3%">로그</th>
+                            <th width="4%">상태</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -72,25 +72,25 @@
                             <% if (requestdetail.request_yn=='N'){ %>
                                 <td>
                                     <input class="btn btn-sm btn-border btn-sky" type="button" value="요청"
-                                    onclick="requestPhr(
-                                        '<%=requestdetail.dynamic_sql%>'
-                                        ,'<%=requestdetail.sex%>'
-                                        ,'<%=requestdetail.ageFrom%>'
-                                        ,'<%=requestdetail.ageTo%>'
-                                        ,'<%=requestdetail.bmiFrom%>'
-                                        ,'<%=requestdetail.bmiTo%>'
-                                        ,'<%=requestdetail.systoleFrom%>'
-                                        ,'<%=requestdetail.systoleTo%>'
-                                        ,'<%=requestdetail.relaxFrom%>'
-                                        ,'<%=requestdetail.relaxTo%>'
-                                        ,'<%=requestdetail.astFrom%>'
-                                        ,'<%=requestdetail.astTo%>'
-                                        ,'<%=requestdetail.altFrom%>'
-                                        ,'<%=requestdetail.altTo%>'
-                                        ,'<%=requestdetail.require_cnt%>'
-                                        ,'<%=requestdetail.request_purpose%>'
-                                        ,'<%=requestdetail.seq%>'
-                                    )" />  
+                                        onclick="requestPhr(
+                                            '<%=requestdetail.dynamic_sql%>'
+                                            ,'<%=requestdetail.sex%>'
+                                            ,'<%=requestdetail.ageFrom%>'
+                                            ,'<%=requestdetail.ageTo%>'
+                                            ,'<%=requestdetail.bmiFrom%>'
+                                            ,'<%=requestdetail.bmiTo%>'
+                                            ,'<%=requestdetail.systoleFrom%>'
+                                            ,'<%=requestdetail.systoleTo%>'
+                                            ,'<%=requestdetail.relaxFrom%>'
+                                            ,'<%=requestdetail.relaxTo%>'
+                                            ,'<%=requestdetail.astFrom%>'
+                                            ,'<%=requestdetail.astTo%>'
+                                            ,'<%=requestdetail.altFrom%>'
+                                            ,'<%=requestdetail.altTo%>'
+                                            ,'<%=requestdetail.require_cnt%>'
+                                            ,'<%=requestdetail.request_purpose%>'
+                                            ,'<%=requestdetail.seq%>'
+                                        )" />  
                                 </td>
                             
                             <%}else if(requestdetail.request_yn=='Y'){%>
@@ -131,47 +131,49 @@
 
 <script type="text/javascript">
     function requestPhr(dynamicSql,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,seq){
-        var client = new XMLHttpRequest();
-        // var $comEmail = $('#register_form input[name=email]');
-        var params = 'dynamicSql='+dynamicSql+
-                     '&sex='+p1+
-                     '&ageFrom='+p2+
-                     '&ageTo='+p3+
-                     '&bmiFrom='+p4+
-                     '&bmiTo='+p5+
-                     '&systoleFrom='+p6+
-                     '&systoleTo='+p7+
-                     '&relaxFrom='+p8+
-                     '&relaxTo='+p9+
-                     '&astFrom='+p10+
-                     '&astTo='+p11+
-                     '&altFrom='+p12+
-                     '&altTo='+p13+
-                     '&requireCnt='+p14+
-                     '&requestPurpose='+p15+
-                     '&seq='+seq ;
-        
-        // https://www.zerocho.com/category/HTML&DOM/post/594bc4e9991b0e0018fff5ed 참고
-        // https://www.w3schools.com/xml/ajax_xmlhttprequest_response.asp 참고
-        
-        client.onreadystatechange = function(){
-            if(client.readyState===client.DONE){
-                if(this.status===200 || this.status==201){
-                    // https://codeday.me/ko/qa/20190310/40850.html 참고
+            if(confirm('해당 조건으로 PHR 신청을 진행하겠습니까?')){
+            var client = new XMLHttpRequest();
+            // var $comEmail = $('#register_form input[name=email]');
+            var params = 'dynamicSql='+dynamicSql+
+                        '&sex='+p1+
+                        '&ageFrom='+p2+
+                        '&ageTo='+p3+
+                        '&bmiFrom='+p4+
+                        '&bmiTo='+p5+
+                        '&systoleFrom='+p6+
+                        '&systoleTo='+p7+
+                        '&relaxFrom='+p8+
+                        '&relaxTo='+p9+
+                        '&astFrom='+p10+
+                        '&astTo='+p11+
+                        '&altFrom='+p12+
+                        '&altTo='+p13+
+                        '&requireCnt='+p14+
+                        '&requestPurpose='+p15+
+                        '&seq='+seq ;
+            
+            // https://www.zerocho.com/category/HTML&DOM/post/594bc4e9991b0e0018fff5ed 참고
+            // https://www.w3schools.com/xml/ajax_xmlhttprequest_response.asp 참고
+            
+            client.onreadystatechange = function(){
+                if(client.readyState===client.DONE){
+                    if(this.status===200 || this.status==201){
+                        // https://codeday.me/ko/qa/20190310/40850.html 참고
 
-                    //응답한 javascript 태그 삽입
-                    document.getElementById("javaexe").innerHTML = this.responseText;
-                    //실행
-                    eval(document.getElementById('sc1').innerHTML);
-                }else{
-                    alert(client.responseText);
+                        //응답한 javascript 태그 삽입
+                        document.getElementById("javaexe").innerHTML = this.responseText;
+                        //실행
+                        eval(document.getElementById('sc1').innerHTML);
+                    }else{
+                        alert(client.responseText);
+                    }
                 }
-            }
-        };
-        
+            };
+            
 
-        client.open('POST', '/company/requestPhr',true);
-        client.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        client.send(params);
+            client.open('POST', '/company/requestPhr',true);
+            client.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            client.send(params);
+        }
     }
 </script>

@@ -8,7 +8,7 @@ var conn = server.conn;
 var asyncEachSeries = require('async-each-series');
 var logger = server.logger;
 
-// Array를 분할하기 위해 사용
+// Array를 분할
 Array.prototype.division = function (n) {
     var arr = this;
     var len = arr.length;
@@ -155,7 +155,7 @@ router.get('/requestData', paginate.middleware(10, 100), function(req,res){
                 req.com_email,\
                 req.request_purpose,\
                 req.require_cnt,\
-                concat(format(req.request_cnt,0)," / ",format(req.require_cnt,0)," / ", ifnull(format(req.response_cnt,0),0) ) as r_cnt, \
+                concat("조회 건: ",format(req.request_cnt,0)," || ","요청 건: ",format(req.require_cnt,0)," || ", "수신 건: ",ifnull(format(req.response_cnt,0),0) ) as r_cnt, \
                 req.request_dt,\
                 \
                 case when req.param_sex = "1" then "남자" \
@@ -293,7 +293,7 @@ router.post('/requestPhr', async(req,res)=>{
                                     function(callback){
                                         callAPI(hospital, pCode, com_seq, function(successYn, phrArrayTotal, responseCnt ){
                                             if(successYn) callback(null, phrArrayTotal, responseCnt);
-                                            else next(); //데이터가 없는 경우, 다음건 처리 시작
+                                            else next(); //데이터가 없는 경우, 다음건 처리
                                         });
                                     },
     // 2. phr_record_remote 테이블 인서트 ********************************************************************************************
@@ -332,12 +332,12 @@ router.post('/requestPhr', async(req,res)=>{
                 }//selPcodes if(successYn){
             });//selPcodes end
             next();
-            // }, 10000);
         }),// async.each end
 
         // Response
-        res.send('<script id="sc1" type="text/javascript"> alert("PHR을 신청했습니다."); \
-                          location.href="/company/requestData";\
+        res.send('<script id="sc1" type="text/javascript"> \
+                    alert("PHR을 신청했습니다."); \
+                    location.href="/company/requestData";\
                   </script>')
     ]);
 }); // router.post('/requestPhr' END
@@ -451,7 +451,7 @@ function genDynamicQuery(params_of_filter){
         sex, ageFrom, ageTo, 
         requestPurpose, deadline, rewardDesc, requireCnt;
 
-    // //기업의 phr 조회 시, 필터링 여부에 관계없도록 다이나믹 쿼리 구현
+    // //기업의 phr 조회 시, 필터링 여부에 관계없도록 조회하도록 다이나믹 쿼리 구현
     var dynamicSql='';
     var queryParams = [];
 //////////////////////////////////////////////////////////////////////////////////////////
