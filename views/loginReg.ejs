@@ -1,13 +1,68 @@
 <!doctype html>
-<html lang="kr">
+<html lang="ko">
 	<head>
-    <link rel="stylesheet" href="/styles/loginReg.css">
-	<meta charset="UTF-8">
-	<title>데이터 거래소</title>
-</head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+		<!-- favicon -->
+		<link rel="shortcut icon" href="/images/favicon/favicon.ico">
+		<link rel="apple-touch-icon" sizes="144x144" href="/images/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/images/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/images/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/images/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" href="/images/favicon/apple-icon-57x57.png">
+		
+		<title>데이터 거래소</title>
+		<!-- <link href="/lib/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet">
+		<link href="/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet"> -->
+		<link href="/styles/loginReg.css" rel="stylesheet">
+	</head>
 <body>
-
-<section class="container">
+	<div class="img_area">
+		<div class="img_inner">
+			<h1><img class="logo_white" src="/images/login/login_logo.png" alt="DrugAlls 로고" /></h1>
+			<h2>Korea Datamarket<br />&amp; Analytics</h2>
+			<p>메디칼 데이터 거래소 및 분석 시스템</p>
+		</div>
+	</div>
+	<div class="login_area">
+		<div class="login_inner">
+			<form action="/user/loginReg" method="post" id="login_form" >
+				<div class="login_radio">
+					<input type="radio" name="selectwho" id="company" class="radio" value="company" checked><label for="company">기업고객</label>
+					<input type="radio" name="selectwho" id="person" class="radio" value="person"><label for="person">개인고객</label>
+				</div>
+				<ul>
+					<li>
+						<h4>ID</h4>
+						<input id="inp_loginId" name="uid" type="text" size="20" placeholder="ID" />
+					</li>
+					<li>
+						<h4>PASSWORD</h4>
+						<input id="inp_loginPwd" name="upw" type="password" size="20" placeholder="Password" autocomplete="off" />
+					</li>
+				</ul>	
+				<div class="login_util">
+					<div class="remember_area">
+						<div class="border-checkbox-section">
+					        <div class="border-checkbox-group border-checkbox-group-default">
+					            <input class="border-checkbox" type="checkbox" id="remember">
+					            <label class="border-checkbox-label" for="remember">아이디 기억</label>
+					        </div>
+				        </div>
+					</div>
+					<button id="div_memberJoin">Join us</button>
+				</div>
+				<a href="#signin" id="btn_login" class="login_btn" onclick="login()">LOGIN</a>
+			</form>
+		</div>
+    </div>
+    <div id="javaexe"></div>
+		
+		
+<!-- <section class="container">
     <article class="half">
             <h1>의료 데이터 거래소</h1>
             <div class="tabs">
@@ -20,12 +75,12 @@
                             <input type="text" name="uid"  class="inpt" placeholder="ID">
                             <input type="password" name="upw" class="inpt" placeholder="Password">
                             <input type="checkbox" id="remember" class="checkbox" checked>
-                            <!-- <label for="remember">Remember me</label> -->
+                            <label for="remember">Remember me</label>
                             <input type="radio" class="radio" name="selectwho" value="company"> 기업
                             <input type="radio" class="radio" name="selectwho" value="person"> 개인
                             <div class="submit-wrap">
                                 <input type="submit" value="Sign in" class="submit">
-                                <!-- <a href="#" class="more">Forgot your password?</a> -->
+                                <a href="#" class="more">Forgot your password?</a>
                             </div>
                     </form>
                 </div>
@@ -45,13 +100,51 @@
                 </div>
             </div>
     </article>
-	</section>
+	</section> -->
+
+<!-- jQuery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<!-- jQuery UI Interactions -->
+<script src="/lib/jquery.ui/interactions/jquery-ui.min.js"></script>
+<!-- jQuery Form -->
+<script src="/lib/jquery.form/jquery.form.min.js"></script>
+<!-- Bootstrap -->
+<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
 
 
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> 
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> 
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script> -->
 <script type="text/javascript">
+    function login(){
+        var pw = $('#login_form input[id=inp_loginPwd]');
+        var id = $('#login_form input[id=inp_loginId]');
+        var selectwho = $('#login_form input[name=selectwho]');
+        
+        var client = new XMLHttpRequest();
+        var params = 'uid='+id.val()+'&upw='+pw.val()+'&selectwho='+selectwho.val();
+
+        client.onreadystatechange = function(){
+            if(client.readyState===client.DONE){
+                if(this.status===200 || this.status==201){
+                    // https://codeday.me/ko/qa/20190310/40850.html 참고
+
+                    //응답한 javascript 태그 삽입
+                    document.getElementById("javaexe").innerHTML = this.responseText;
+                    //실행
+                    eval(document.getElementById('sc1').innerHTML);
+                }else{
+                    alert(client.responseText);
+                }
+            }
+        };
+
+        client.open('POST', '/user/loginReg',true);
+        client.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        client.send(params);
+
+    }
+
+
     (function(){
         $(document).ready(function() {
             

@@ -1,179 +1,223 @@
-
-<!DOCTYPE html>
-
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <meta charset="utf-8" />
-    <title>데이터 거래소 시스템</title>
-    <link href='http://fonts.googleapis.com/css?family=Margarine' rel='stylesheet' type='text/css'>
-        <!-- CSS -->
-    <link rel="stylesheet" href="/styles/bootstrap.css">
-    <link rel="stylesheet" href="/styles/sm.css">
-    <link rel="stylesheet" href="/styles/lg.css" media="screen and (min-width: 768px)">
-    <link rel="stylesheet" href="/styles/main.css">
-
-    <!-- JS -->
-    <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="/public/bootstrap.min.js"></script>
-    <script type="text/javascript" src="/public/script.js"></script>
-
-</head>
-<body>
-    <header id="main_header">
-        <hgroup id="title">
-            <h1>데이터 거래소 시스템</h1>
-            <h2>기업 PHR 신청 현황</h2>
-        </hgroup>
-        <nav id="main_lnb">
-            <nav id="main_lnb">
-                    <ul>
-                        <li><a href="/user/logout">로그아웃</a></li>
-                        <li><a href="/company/searchPhr">PHR 신청</a></li>
-                        <li><a href="/company/requestData">PHR 신청현황</a></li>
-                    </ul>
-            </nav>
-        </nav>
-    </header>
-
-    <div id="content">
-            <br>
-        <section id="main_section">
-
-            <table class="table-style" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr align="center">
-                            <th width="2%" >번호</th>
-                            <!-- <th width="5%">회사명</th> -->
-                            <!-- <th width="5%">담당자 Email</th> -->
-                            <th width="5%">신청용도</th>
-                            <th width="12%">건수</th>
-                            <th width="4%">요청일자</th>
-                            <th width="4%">마감일자</th>
-                            <th width="3%">조회조건</th>
-                            <th width="3%">로그</th>
-                            <th width="4%">상태</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% requestdetail.forEach(function(requestdetail){ %>
-                        <tr>
-                            <td><%=requestdetail.num %></td>
-                            <td><%=requestdetail.request_purpose%></td>
-                            <td><%=requestdetail.r_cnt%></td>
-                            <td><%=requestdetail.create_time%></td>
-                            <td><%=requestdetail.deadline%></td>
+<!doctype html>
+<html lang="ko">
+	<head>
+	    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+		<!-- favicon -->
+		<link rel="shortcut icon" href="/images/favicon/favicon.ico">
+		<link rel="apple-touch-icon" sizes="144x144" href="/images/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/images/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/images/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/images/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" href="/images/favicon/apple-icon-57x57.png">
+	
+	    <title>데이터 거래소 시스템</title>
+	    <link href='http://fonts.googleapis.com/css?family=Margarine' rel='stylesheet' type='text/css'>
+	    
+	    <!-- CSS -->
+	    <link href="/lib/font-awesome/css/all.css" rel="stylesheet">
+	    <link href="/lib/bootstrap/css/bootstrap.css" rel="stylesheet">
+		<link href="/styles/style.css" rel="stylesheet">
+	</head>
+	<body>
+	    <header>
+	        <div class="user-area">
+	        	<div class="container">
+	        		<h3 class="user-info"><i class="fa fa-user-circle"></i><span id="userNm">홍길동</span>님 반갑습니다</h3>
+	        		<a class="btn btn-white outline btn-25" href="/user/logout">로그아웃</a>
+	        	</div>
+	        	
+	        </div>
+	        <div class="nav-area">
+	        	<div class="container">
+	        		<h1><img src="/images/common/logo.png" alt="KODA 메디칼 데이터 거래소 및 분석 시스템"></h1>
+	        		<nav id="mainGnb">
+	        			<ul>
+	                        <li><a href="/company/searchPhr"><i class="fab fa-wpforms"></i>연구 신청</a></li>
+	                        <li class="active"><a href="/company/requestData"><i class="fab fa-stack-overflow"></i>연구 신청현황</a></li>
+	                    </ul>
+	        		</nav>
+        		</div>
+        	</div>
+	    </header>
+	
+	    <div class="container">
+	    	<h2 class="sub-title">
+				<span>기업 연구 신청 현황</span>
+			</h2>
+            <table class="list-table" id="dataTable">
+				<thead>
+				    <tr>
+				        <th width="6%" >번호</th>
+				        <!-- <th width="5%">회사명</th> -->
+				        <!-- <th width="5%">담당자 Email</th> -->
+				        <th width="8%">신청용도</th>
+				        <th width="8%">대상</th>
+				        <th width="auto">신청건수</th>
+				        <th width="10%">요청일자</th>
+				        <th width="10%">마감일자</th>
+				        <!-- <th width="8%">조회조건</th> -->
+				        <!-- <th width="8%">로그</th> -->
+				        <th width="10%">상태</th>
+				        <th width="10%">상세</th>
+				    </tr>
+				</thead>
+                <tbody>
+                    <% requestdetail.forEach(function(requestdetail){ %>
+                    <tr>
+                        <td><%=requestdetail.num %></td>
+                        <td><%=requestdetail.request_purpose%></td>
+                        <td><%=requestdetail.request_cnt%></td>
+                        <!-- <td><%=requestdetail.r_cnt%></td> -->
+                        <td>
+                        	<!-- 
+								수신중 :  	progress-bar-info
+								완료 : 		progress-bar-success
+								미완료 : 	progress-bar-danger
+							 -->
+							
+                        	<div class="progress">
+								<div class="progress-bar <%= requestdetail.request_yn == 'Y' ? 'progress-bar-success' : requestdetail.request_yn == 'P' ? 'progress-bar-info' : requestdetail.request_yn == 'F' ? 'progress-bar-danger' : ''  %> " role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: <%=requestdetail.ratio%>%"><%=requestdetail.response_cnt%></div>
+							</div>
+							<!-- 
+								수신중 :  	color_blue
+								완료 : 		color_dgreen
+								미완료 : 	color_red
+							-->
+							<span class="<%= requestdetail.request_yn == 'Y' ? 'color_dgreen' : requestdetail.request_yn == 'P' ? 'color_blue' : requestdetail.request_yn == 'F' ? 'color_red' : ''  %> "><%=requestdetail.require_cnt%></span>
+							<!-- <span class="color_dgreen">1,000</span> -->
+							<!-- <span class="color_red">1,000</span> -->
+                        </td>
+                        <td><%=requestdetail.create_time%></td>
+                        <td><%=requestdetail.deadline%></td>
+                        <!-- <td>
+                            <a onclick="window.open('popSearchParams/<%=requestdetail.num%>/<%=requestdetail.param_sex%>/<%=requestdetail.param_ageFrom%>/<%=requestdetail.param_bmiFrom%>/<%=requestdetail.param_systoleFrom%>/<%=requestdetail.param_relaxFrom%>/<%=requestdetail.param_astFrom%>/<%=requestdetail.param_altFrom%>/<%=requestdetail.reward_desc %>',
+                                                    '_blank', 'height=550, width=450; return false;')">보기</a>
+                        </td> -->
+                        <!-- <td>
+                            <a onclick="window.open('popLog/<%=requestdetail.seq%>/<%=requestdetail.num%>', '_blank', 'height=250, width=900; return false;')">보기</a>
+                        </td> -->
+                        <% if (requestdetail.request_yn=='N'){ %>
                             <td>
-                                <a onclick="window.open('popSearchParams/<%=requestdetail.num%>/<%=requestdetail.param_sex%>/<%=requestdetail.param_ageFrom%>/<%=requestdetail.param_bmiFrom%>/<%=requestdetail.param_systoleFrom%>/<%=requestdetail.param_relaxFrom%>/<%=requestdetail.param_astFrom%>/<%=requestdetail.param_altFrom%>/<%=requestdetail.reward_desc %>',
-                                                        '_blank', 'height=550, width=450; return false;')">보기</a>
+                                <input class="btn btn-purple btn-25 w60" type="button" value="요청" style="font-weight:normal;"
+                                    onclick="requestPhr(
+                                        '<%=requestdetail.dynamic_sql%>'
+                                        ,'<%=requestdetail.sex%>'
+                                        ,'<%=requestdetail.ageFrom%>'
+                                        ,'<%=requestdetail.ageTo%>'
+                                        ,'<%=requestdetail.bmiFrom%>'
+                                        ,'<%=requestdetail.bmiTo%>'
+                                        ,'<%=requestdetail.systoleFrom%>'
+                                        ,'<%=requestdetail.systoleTo%>'
+                                        ,'<%=requestdetail.relaxFrom%>'
+                                        ,'<%=requestdetail.relaxTo%>'
+                                        ,'<%=requestdetail.astFrom%>'
+                                        ,'<%=requestdetail.astTo%>'
+                                        ,'<%=requestdetail.altFrom%>'
+                                        ,'<%=requestdetail.altTo%>'
+                                        ,'<%=requestdetail.require_cnt%>'
+                                        ,'<%=requestdetail.request_purpose%>'
+                                        ,'<%=requestdetail.seq%>'
+                                    )" />  
                             </td>
-                            <td>
-                                <a onclick="window.open('popLog/<%=requestdetail.seq%>/<%=requestdetail.num%>', '_blank', 'height=250, width=900; return false;')">보기</a>
-                            </td>
-                            <% if (requestdetail.request_yn=='N'){ %>
-                                <td>
-                                    <input class="btn btn-sm btn-border btn-sky" type="button" value="요청"
-                                        onclick="requestPhr(
-                                            '<%=requestdetail.dynamic_sql%>'
-                                            ,'<%=requestdetail.sex%>'
-                                            ,'<%=requestdetail.ageFrom%>'
-                                            ,'<%=requestdetail.ageTo%>'
-                                            ,'<%=requestdetail.bmiFrom%>'
-                                            ,'<%=requestdetail.bmiTo%>'
-                                            ,'<%=requestdetail.systoleFrom%>'
-                                            ,'<%=requestdetail.systoleTo%>'
-                                            ,'<%=requestdetail.relaxFrom%>'
-                                            ,'<%=requestdetail.relaxTo%>'
-                                            ,'<%=requestdetail.astFrom%>'
-                                            ,'<%=requestdetail.astTo%>'
-                                            ,'<%=requestdetail.altFrom%>'
-                                            ,'<%=requestdetail.altTo%>'
-                                            ,'<%=requestdetail.require_cnt%>'
-                                            ,'<%=requestdetail.request_purpose%>'
-                                            ,'<%=requestdetail.seq%>'
-                                        )" />  
-                                </td>
-                            
-                            <%}else if(requestdetail.request_yn=='Y'){%>
-                                <td>완료</td>
-                            <%}else if(requestdetail.request_yn=='P'){%>
-                                <td>수신중</td>
-                            <%}else if(requestdetail.request_yn=='F'){%>
-                                <td>미완료</td>    
-                            <%}else{%>
-                                <td>ffff</td>
-                            <%}%>
-                        </tr>
-                        <%});%>
-                    </tbody>
-                </table>
-        </section>
-    </div>
-    <div class="pagination-wrap">
-            <ul class="pagination">
-                <li class="pagination-prev">
-                    <a href="<%= paginate.href(true) %>" aria-label="Previous"></a>
-                </li>
-                <% pages.forEach(function(page){ %>
-                <li class="<%= paginate.page == page.number ? 'active' : ''%>">
-                    <a href="<%= page.url %>"><%= page.number %></a>
-                </li>
-                <%})%> <%if(paginate.hasNextPages(pageCount)){%>
-                <li class="pagination-next">
-                    <a href="<%= paginate.href() %>"></a>
-                </li>
-                <%}%>
-            </ul>
-    </div>
-    <div id="javaexe"></div>
-    <footer></footer>
-</body>
+                        
+                        <%}else if(requestdetail.request_yn=='Y'){%>
+                            <td class="color_dgreen">완료</td>
+                        <%}else if(requestdetail.request_yn=='P'){%>
+                            <td class="color_lblue">수신중</td>
+                        <%}else if(requestdetail.request_yn=='F'){%>
+                            <td class="color_gray">미완료</td>    
+                        <%}else{%>
+                            <td>-</td>
+                        <%}%>
+                        <td><a href="requestDataDetail/<%=requestdetail.seq%>/<%=requestdetail.num%>/<%=requestdetail.param_sex%>/<%=requestdetail.param_ageFrom%>/<%=requestdetail.param_bmiFrom%>/<%=requestdetail.param_systoleFrom%>/<%=requestdetail.param_relaxFrom%>/<%=requestdetail.param_astFrom%>/<%=requestdetail.param_altFrom%>/<%=requestdetail.reward_desc%>/<%=requestdetail.request_purpose%>/<%=requestdetail.request_yn%>/<%=requestdetail.create_time%>/<%=requestdetail.deadline%>/<%=requestdetail.request_cnt%>/<%=requestdetail.require_cnt%>/<%=requestdetail.response_cnt%>/<%=requestdetail.ratio%>/<%=requestdetail.create_time%>" class="btn btn-purple btn-25">자세히보기</a></td>
+                    </tr>
+                    <%});%>
+                </tbody>
+            </table>
+		   	<div class="pagination-area">
+				<nav aria-label="Page navigation">
+					<ul class="pagination">
+						<li class="disabled">
+						  <a href="<%= paginate.href(true) %>" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+						</li>
+						<% pages.forEach(function(page){ %>
+						<li class="<%= paginate.page == page.number ? 'active' : ''%>">
+							<a href="<%= page.url %>"><%= page.number %></a>
+						</li>
+						<%})%> <%if(paginate.hasNextPages(pageCount)){%>
+						<li>
+							<a href="<%= paginate.href() %> " aria-label="Next">  
+						    <span aria-hidden="true">&raquo;</span>
+						  </a>
+						</li>
+						<%}%>
+					</ul>
+				</nav>
+			</div>
+		</div>
+		
+	    
+	    <!-- jQuery -->
+		<script src="/lib/jquery/jquery.min.js"></script>
+		<!-- jQuery UI Interactions -->
+		<script src="/lib/jquery.ui/interactions/jquery-ui.min.js"></script>
+		<!-- jQuery Form -->
+		<script src="/lib/jquery.form/jquery.form.min.js"></script>
+		<!-- Bootstrap -->
+		<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
+		
+		<script type="text/javascript">
+		    function requestPhr(dynamicSql,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,seq){
+		            if(confirm('해당 조건으로 PHR 신청을 진행하겠습니까?')){
+		            var client = new XMLHttpRequest();
+		            // var $comEmail = $('#register_form input[name=email]');
+		            var params = 'dynamicSql='+dynamicSql+
+		                        '&sex='+p1+
+		                        '&ageFrom='+p2+
+		                        '&ageTo='+p3+
+		                        '&bmiFrom='+p4+
+		                        '&bmiTo='+p5+
+		                        '&systoleFrom='+p6+
+		                        '&systoleTo='+p7+
+		                        '&relaxFrom='+p8+
+		                        '&relaxTo='+p9+
+		                        '&astFrom='+p10+
+		                        '&astTo='+p11+
+		                        '&altFrom='+p12+
+		                        '&altTo='+p13+
+		                        '&requireCnt='+p14+
+		                        '&requestPurpose='+p15+
+		                        '&seq='+seq ;
+		            
+		            // https://www.zerocho.com/category/HTML&DOM/post/594bc4e9991b0e0018fff5ed 참고
+		            // https://www.w3schools.com/xml/ajax_xmlhttprequest_response.asp 참고
+		            
+		            client.onreadystatechange = function(){
+		                if(client.readyState===client.DONE){
+		                    if(this.status===200 || this.status==201){
+		                        // https://codeday.me/ko/qa/20190310/40850.html 참고
+		
+		                        //응답한 javascript 태그 삽입
+		                        document.getElementById("javaexe").innerHTML = this.responseText;
+		                        //실행
+		                        eval(document.getElementById('sc1').innerHTML);
+		                    }else{
+		                        alert(client.responseText);
+		                    }
+		                }
+		            };
+		            
+		
+		            client.open('POST', '/company/requestPhr',true);
+		            client.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		            client.send(params);
+		        }
+		    }
+		</script>
+	</body>
 </html>
 
-<script type="text/javascript">
-    function requestPhr(dynamicSql,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,seq){
-            if(confirm('해당 조건으로 PHR 신청을 진행하겠습니까?')){
-            var client = new XMLHttpRequest();
-            // var $comEmail = $('#register_form input[name=email]');
-            var params = 'dynamicSql='+dynamicSql+
-                        '&sex='+p1+
-                        '&ageFrom='+p2+
-                        '&ageTo='+p3+
-                        '&bmiFrom='+p4+
-                        '&bmiTo='+p5+
-                        '&systoleFrom='+p6+
-                        '&systoleTo='+p7+
-                        '&relaxFrom='+p8+
-                        '&relaxTo='+p9+
-                        '&astFrom='+p10+
-                        '&astTo='+p11+
-                        '&altFrom='+p12+
-                        '&altTo='+p13+
-                        '&requireCnt='+p14+
-                        '&requestPurpose='+p15+
-                        '&seq='+seq ;
-            
-            // https://www.zerocho.com/category/HTML&DOM/post/594bc4e9991b0e0018fff5ed 참고
-            // https://www.w3schools.com/xml/ajax_xmlhttprequest_response.asp 참고
-            
-            client.onreadystatechange = function(){
-                if(client.readyState===client.DONE){
-                    if(this.status===200 || this.status==201){
-                        // https://codeday.me/ko/qa/20190310/40850.html 참고
-
-                        //응답한 javascript 태그 삽입
-                        document.getElementById("javaexe").innerHTML = this.responseText;
-                        //실행
-                        eval(document.getElementById('sc1').innerHTML);
-                    }else{
-                        alert(client.responseText);
-                    }
-                }
-            };
-            
-
-            client.open('POST', '/company/requestPhr',true);
-            client.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-            client.send(params);
-        }
-    }
-</script>

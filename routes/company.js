@@ -78,7 +78,7 @@ router.post('/searchPhr', function(req,res){
 
     var cntSQL = conn.query('select p_code \
                                from user_phr_sample \
-                              where 1=1 and join_yn = "Y" and alert_yn = "Y"'+sqlAndParams[0], sqlAndParams[1], 
+                              where 1=1 and join_yn = "Y" and alert_yn = "Y" and p_bmi>30'+sqlAndParams[0], sqlAndParams[1], 
         function(err, pCodes){
 
             if(err) console.error(err);
@@ -154,8 +154,10 @@ router.get('/requestData', paginate.middleware(10, 100), function(req,res){
                 req.seq,\
                 req.com_email,\
                 req.request_purpose,\
-                req.require_cnt,\
-                concat("조회 건: ",format(req.request_cnt,0)," || ","요청 건: ",format(req.require_cnt,0)," || ", "수신 건: ",ifnull(format(req.response_cnt,0),0) ) as r_cnt, \
+                format(req.request_cnt,0) request_cnt,\
+                format(req.require_cnt,0) require_cnt,\
+                ifnull(format(req.response_cnt,0),0) response_cnt,\
+                truncate( ( ifnull(req.response_cnt,0.00001) / req.require_cnt) * 100, 0 ) ratio,\
                 req.request_dt,\
                 \
                 case when req.param_sex = "1" then "남자" \
@@ -223,6 +225,9 @@ router.get('/requestData', paginate.middleware(10, 100), function(req,res){
         else{
             var pageCount;
             var pages;
+            // console.log('requestdetail[2].require_cnt: '+requestdetail[2].require_cnt);
+            // console.log('requestdetail[2].response_cnt: '+requestdetail[2].response_cnt);
+            // console.log('requestdetail[2].ratio: '+requestdetail[2].ratio);
             async.waterfall([
                 function(callbak){
                     if(requestdetail[0]){
@@ -263,13 +268,7 @@ router.post('/requestPhr', async(req,res)=>{
     var sql_SELECT = 'select a.p_code\
                         from user_phr_sample a \
                         where 1=1 \
-                            and join_yn = "Y" and alert_yn="Y"'+dynamicSql+'and p_hospital=?' ;
-
-    // API에서 받은 데이터 인서트 쿼리
-    var sql_INSERT_PHR='insert into phr_record_remote(\
-                            p_hospital,p_code,p_sex,p_location,p_phone,p_name,birth_dt,height,weight,waist_cir\
-                            ,lefteye,righteye,leftear,rightear,systole_bp,relax_bp,blood_sugar ,cholesterol ,tregleselaid,hdl_col\
-                            ,ldl_col,blood_color ,feeprotain,kreanin,ast,alt,gamatp,smoke_yn,drink_yn,com_seq) values ?';
+                            and join_yn = "Y" and alert_yn="Y"'+dynamicSql+'and p_hospital=? and p_bmi > 30' ;
 
     //병원 별, API Request 실핻
     var hospitals = ['CHUNG','CHAR','SEOUL'];
@@ -283,61 +282,15 @@ router.post('/requestPhr', async(req,res)=>{
                 req.body.systoleFrom, req.body.systoleTo, req.body.relaxFrom, req.body.relaxTo, req.body.astFrom,
                 req.body.astTo, req.body.altFrom, req.body.altTo];
 
-                // pcodes 조회!
+            // pcodes 조회!
             selPcodes(sql_SELECT, sql_SELECT_Params, hospital, function(successYn, pCodes){
                 if(successYn){
-
-                    // array를 분할
                     // var seperPcode=[];
                     // seperPcode = pCodes.division(20);
 
-                    //---------------------async.each를 사용하여 callAPI 호출
-                    logger.info(com_seq, {messageDetail: '[API Called] PHR 요청 API Call', from:hospital});
-                    
-                    var currentCnt = 0;
-                    asyncEachSeries(pCodes, function(pCode, next){
-                            setTimeout(function(){
-                                async.waterfall([
-    // 1. API Call ******************************************************************************************************************
-                                    function(callback){
-                                        callAPI(hospital, pCode, com_seq, function(successYn, phrArrayTotal, responseCnt ){
-                                            if(successYn) callback(null, phrArrayTotal, responseCnt);
-                                            else next(); //데이터가 없는 경우, 다음건 처리
-                                        });
-                                    },
-    // 2. phr_record_remote 테이블 인서트 ********************************************************************************************
-                                    function(phrArrayTotal, responseCnt, callback){
-                                        conn.query(sql_INSERT_PHR, [phrArrayTotal], function(err,result){
-                                            if (err) console.log(err);
-                                            else callback(null, responseCnt);
-                                        });
-                                    },
-    // 3. com_requests.response_cnt 업데이트 *****************************************************************************************
-                                    function(responseCnt, callback){
-                                        conn.query('update com_requests \
-                                                    set response_cnt = response_cnt + cast(? as unsigned)\
-                                                    where seq = ?', [responseCnt, com_seq], function(err, result){
-                                            if(err) console.log(err);
-                                            else callback(null, responseCnt);
-                                        });
-                                    },
-    // 4. 목표수량 체크 **************************************************************************************************************
-                                    function(responseCnt){
-                                        conn.query('select cast(require_cnt as unsigned)  as require_cnt, \
-                                                           cast(response_cnt as unsigned) as response_cnt\
-                                                    from com_requests where seq = ?', com_seq, function(err,result){
-                                            currentCnt+=responseCnt
-                                            if(result[0].require_cnt > result[0].response_cnt+2){
-                                                next();
-                                            }else{
-                                                conn.query('update com_requests set '+hospital+'_yn = "Y" where seq = ?',com_seq, function(){
-                                                    logger.info(com_seq, {messageDetail: '[Data Received] '+currentCnt+'건 수신을 완료했습니다.', from:hospital});
-                                                });
-                                            }
-                                        });}
-    //******************************************************************************************************************************
-                                ]);}, 5000);
-                    });
+                    //**************************************************PHR 처리 전체 프로세스
+                    PhrProcess(pCodes, com_seq, hospital);
+                    //**********************************************************************
                 }//selPcodes if(successYn){
             });//selPcodes end
             next();
@@ -351,18 +304,36 @@ router.post('/requestPhr', async(req,res)=>{
     ]);
 }); // router.post('/requestPhr' END
 
-//phr 조회 파라미터 확인 팝업
-router.get('/popSearchParams/:num/:sex/:ageFrom/:bmiFrom/:systoleFrom/:relaxFrom/:astFrom/:altFrom/:rewardDesc', function(req,res){
-    var searchParams = {num:req.params.num,
-                        sex: req.params.sex, 
-                        ageFrom: req.params.ageFrom, 
-                        bmiFrom: req.params.bmiFrom, 
-                        systoleFrom: req.params.systoleFrom,
-                        relaxFrom: req.params.relaxFrom,
-                        astFrom: req.params.astFrom,
-                        altFrom: req.params.altFrom,
-                        rewardDesc: req.params.rewardDesc.replace(/(<br>|<br\/>|<br \/>)/g, '\r\n')}
-    res.render('./pop/popSearchParams',{searchParams : searchParams});
+//기업 상세 페이지
+router.get('/requestDataDetail/:seq/:num/:sex/:ageFrom/:bmiFrom/:systoleFrom/:relaxFrom/:astFrom/:altFrom/:rewardDesc/:purpose/:requestYn/:requestDt/:deadLine/:requestCnt/:requireCnt/:responseCnt/:ratio/:createTime', function(req,res){
+    var searchParams = {
+        num:req.params.num,
+        sex: req.params.sex, 
+        ageFrom: req.params.ageFrom, 
+        bmiFrom: req.params.bmiFrom, 
+        systoleFrom: req.params.systoleFrom,
+        relaxFrom: req.params.relaxFrom,
+        astFrom: req.params.astFrom,
+        altFrom: req.params.altFrom,
+        rewardDesc: req.params.rewardDesc.replace(/(<br>|<br\/>|<br \/>)/g, '\r\n'),
+        purpose:req.params.purpose,
+        requestYn:req.params.requestYn,
+        requestDt: req.params.requestDt,
+        deadLine:req.params.deadLine,
+        requestCnt:req.params.requestCnt,
+        requireCnt:req.params.requireCnt,
+        responseCnt:req.params.responseCnt,
+        ratio:req.params.ratio,
+        createTime: req.params.createTime
+    };
+    
+    // async.waterfall([
+    //     function(callback){
+
+    //     }
+    // ])
+    
+    res.render('./company/com_request_detail2',{requestdetail:searchParams});
 });
 
 //로그 조회 팝업
@@ -387,8 +358,6 @@ router.get('/popLog/:comSeq/:seq', function(req,res){
         res.render('./pop/popLog',{logDetail : logDetails});
         
     });
-
-    
 });
 
 //API Call에 필요한 p_codes 조회
@@ -453,6 +422,81 @@ function callAPI (hospital, p_codes, com_seq, callback){
         }
     });
 }
+
+function PhrProcess(pCodes, com_seq, hospital){
+
+    // API에서 받은 데이터 인서트 쿼리
+    var sql_INSERT_PHR='insert into phr_record_remote(\
+        p_hospital,p_code,p_sex,p_location,p_phone,p_name,birth_dt,height,weight,waist_cir\
+        ,lefteye,righteye,leftear,rightear,systole_bp,relax_bp,blood_sugar ,cholesterol ,tregleselaid,hdl_col\
+        ,ldl_col,blood_color ,feeprotain,kreanin,ast,alt,gamatp,smoke_yn,drink_yn,com_seq) values ?';
+
+    var currentCnt = 0;
+    logger.info(com_seq, {messageDetail: '[API Called] PHR 요청 API Call', from:hospital});
+    asyncEachSeries(pCodes, function(pCode, next){
+        setTimeout(function(){
+            async.waterfall([
+                // 마감기한이 지난 것들에 대해, 따로 저장 함.
+                function(callback){
+                    conn.query('select case when date_format(now(),"%y%m%d") > date_format(str_to_date(deadline,"%Y-%m-%d"),"%y%m%d" ) then 1\
+                                            else 0 end as yn, \
+                                        request_cnt \
+                                from   com_requests\
+                                where  seq = ?', com_seq, 
+                        function(err,result){
+                            // 마감기한 지남
+                            if(result[0].yn==1){
+                                conn.query('insert into err_comseq_pcode(com_seq, p_code) values (?,?)', [com_seq, pCode], function(err,result){});
+                                next();
+                                
+                            // 수신가능
+                            }else if(result[0].yn==0){
+                                callback(null);    
+                            }
+                    });
+                },
+// 1. API Call ******************************************************************************************************************
+                function(callback){
+                    callAPI(hospital, pCode, com_seq, function(successYn, phrArrayTotal, responseCnt ){
+                        if(successYn) callback(null, phrArrayTotal, responseCnt);
+                        else next(); //데이터가 없는 경우, 다음건 처리
+                    });
+                },
+// 2. phr_record_remote 테이블 인서트 ********************************************************************************************
+                function(phrArrayTotal, responseCnt, callback){
+                    conn.query(sql_INSERT_PHR, [phrArrayTotal], function(err,result){
+                        if (err) console.log(err);
+                        else callback(null, responseCnt);
+                    });
+                },
+// 3. com_requests.response_cnt 업데이트 *****************************************************************************************
+                function(responseCnt, callback){
+                    conn.query('update com_requests \
+                                set response_cnt = response_cnt + cast(? as unsigned)\
+                                where seq = ?', [responseCnt, com_seq], function(err, result){
+                        if(err) console.log(err);
+                        else callback(null, responseCnt);
+                    });
+                },
+// 4. 목표수량 체크 **************************************************************************************************************
+                function(responseCnt){
+                    conn.query('select cast(require_cnt as unsigned)  as require_cnt,\
+                                       cast(response_cnt as unsigned) as response_cnt\
+                                from com_requests where seq = ?', com_seq, function(err,result){
+                        currentCnt+=responseCnt
+                        if(result[0].require_cnt > result[0].response_cnt+2){
+                            next();
+                        }else{
+                            conn.query('update com_requests set '+hospital+'_yn = "Y" where seq = ?',com_seq, function(){
+                                logger.info(com_seq, {messageDetail: '[Data Received] '+currentCnt+'건 수신을 완료했습니다.', from:hospital});
+                            });
+                        }
+                });}
+//******************************************************************************************************************************
+            ]);}, 3000);
+    });
+}
+
 
 function genDynamicQuery(params_of_filter){
     var bmiFrom, bmiTo, systoleFrom, systoleTo, relaxFrom, 

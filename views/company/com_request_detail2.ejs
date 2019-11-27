@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ko">
+	<head>
+	    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+		<!-- favicon -->
+		<link rel="shortcut icon" href="/images/favicon/favicon.ico">
+		<link rel="apple-touch-icon" sizes="144x144" href="/images/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/images/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/images/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/images/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" href="/images/favicon/apple-icon-57x57.png">
+	
+	    <title>데이터 거래소 시스템</title>
+	    <link href='http://fonts.googleapis.com/css?family=Margarine' rel='stylesheet' type='text/css'>
+	    
+	    <!-- CSS -->
+	    <link href="/lib/font-awesome/css/all.css" rel="stylesheet">
+	    <link href="/lib/bootstrap/css/bootstrap.css" rel="stylesheet">
+	    <link href="/lib/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+	    <link href="/lib/jquery.ui/interactions/jquery-ui.css" rel="stylesheet">
+		<link href="/styles/style.css" rel="stylesheet">
+	</head>
+	<body>
+	    <header>
+	        <div class="user-area">
+	        	<div class="container">
+	        		<h3 class="user-info"><i class="fa fa-user-circle"></i><span id="userNm">홍길동</span>님 반갑습니다</h3>
+	        		<a class="btn btn-white outline btn-25" href="/user/logout">로그아웃</a>
+	        	</div>
+	        	
+	        </div>
+	        <div class="nav-area">
+	        	<div class="container">
+	        		<h1><img src="/images/common/logo.png" alt="KODA 메디칼 데이터 거래소 및 분석 시스템"></h1>
+	        		<nav id="mainGnb">
+	        			<ul>
+	                        <li><a href="/company/searchPhr"><i class="fab fa-wpforms"></i>연구 신청</a></li>
+	                        <li class="active"><a href="/company/requestData"><i class="fab fa-stack-overflow"></i>연구 신청현황</a></li>
+	                    </ul>
+	        		</nav>
+        		</div>
+        	</div>
+	    </header>
+	
+	    <div class="container">
+	    	<h2 class="sub-title">
+				<span>기업 연구 신청 현황 상세</span>
+			</h2>
+			
+			<h3 class="small-title">연구 신청 현황</h3>
+			<table class="form-table">
+				<caption>연구 신청 현황</caption>
+				<colgroup>
+					<col style="width:12%;" />
+					<col style="width:38%;" />
+					<col style="width:12%;" />
+					<col style="width:38%;" />
+				</colgroup>
+				<tbody>
+					<tr>
+						<th>신청용도</th>
+						<td><%=requestdetail.purpose%></td>
+						<th>상태</th>
+						<td>
+							<!--
+							<span class="color_blue bold">수신중</span>
+							<span class="color_dgreen bold">완료</span>
+							-->
+						<% if (requestdetail.requestYn=='N'){ %>
+							<span class="color_red bold">요청대기</span>
+						<%}else if(requestdetail.requestYn=='Y'){%>
+							<span class="color_dgreen bold">완료</span>
+						<%}else if(requestdetail.requestYn=='P'){%>	
+							<span class="color_blue bold">수신중</span>
+						<%}else if(requestdetail.requestYn=='F'){%>	
+							<span class="color_red bold">미완료</span>								
+							<button class="btn btn-purple btn-25 lm20 w50">수정</button>
+						<%}%>
+						</td>
+					</tr>
+					<tr>
+						<th>요청일자</th>
+						<td><%=requestdetail.createTime%></td>
+						<th>마감일자</th>
+						<td>
+							<!-- disabled 추가 시 input 효과 사라짐 -->
+							<div class="input-group">
+								<input type="text" id="deadLine" class="form-control" name="deadLine" size="20" placeholder="마감일자를 선택하세요" value="2019-11-30"/>
+								<span class="input-group-addon">
+									<i class="fa fa-calendar bigger-110"></i>
+								</span>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<th>대상</th>
+						<td><%=requestdetail.requestCnt%></td>
+						<th>신청건수</th>
+						<td>
+							<!-- 
+								수신중 :  	progress-bar-info
+								완료 : 		progress-bar-success
+								미완료 : 	progress-bar-danger
+ 							 -->
+							  <div class="progress">
+									<div class="progress-bar <%= requestdetail.requestYn == 'Y' ? 'progress-bar-success' : requestdetail.requestYn == 'P' ? 'progress-bar-info' : requestdetail.requestYn == 'F' ? 'progress-bar-danger' : ''  %> " role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: <%=requestdetail.ratio%>%"><%=requestdetail.responseCnt%></div>
+							</div>
+							<!-- 
+								수신중 :  	color_blue
+								완료 : 		color_dgreen
+								미완료 : 	color_red
+							-->
+							<span class="<%= requestdetail.requestYn == 'Y' ? 'color_dgreen' : requestdetail.requestYn == 'P' ? 'color_blue' : requestdetail.requestYn == 'F' ? 'color_red' : ''  %> "><%=requestdetail.requireCnt%></span>
+							<!-- <span class="color_blue">1,000</span> -->
+							<!-- <span class="color_dgreen">1,000</span> -->
+							<!-- <span class="color_red">1,000</span> -->
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h3 class="small-title tm60">조회 조건</h3>
+			<table class="form-table">
+				<caption>조회 조건</caption>
+				<colgroup>
+					<col style="width:12%;" />
+					<col style="width:38%;" />
+					<col style="width:12%;" />
+					<col style="width:38%;" />
+				</colgroup>
+				<tbody>
+					<tr>
+						<th>번호</th>
+						<td><%= requestdetail.num %></td>
+						<th>성별</th>
+						<td><%= requestdetail.sex %></td>
+					</tr>
+					<tr>
+						<th>나이</th>
+						<td><%= requestdetail.ageFrom %>세 이상</td>
+						<th>BMI</th>
+						<td><%= requestdetail.bmiFrom %> 이상</td>
+					</tr>
+					<tr>
+						<th>수축기 혈압</th>
+						<td><%= requestdetail.systoleFrom %> 이상</td>
+						<th>이완기 혈압</th>
+						<td><%= requestdetail.relaxFrom %> 이상</td>
+					</tr>
+					<tr>
+						<th>AST</th>
+						<td><%= requestdetail.astFrom %> 이상</td>
+						<th>ALT</th>
+						<td><%= requestdetail.altFrom %> 이상</td>
+					</tr>
+					<tr>
+						<th>보상규정</th>
+						<td colspan="3" style="height:80px; vertical-align:top;">	
+							<%= requestdetail.rewardDesc %> 
+						</td>
+					</tr>
+				</tbody>
+			</table>
+							
+			<h3 class="small-title tm60">로그 정보</h3>
+			<table class="list-table" id="dataTable" width="100%" cellspacing="0">
+				<thead>
+				    <tr>
+				        <th width="6%" >번호</th>
+				        <th width="10%">병원</th>
+				        <th width="auto">로그</th>
+				        <th width="13%">생성시간</th>
+				    </tr>
+				</thead>
+                <tbody>
+                	<tr>
+                		<td>10</td>
+                		<td>CHAR</td>
+                		<td class="tal">[Data Received] 42건 수신을 완료했습니다.</td>
+                		<td>2019-11-19 17:33</td>
+                	</tr>
+                	<tr>
+                		<td>9</td>
+                		<td>SEOUL</td>
+                		<td class="tal">[Data Received] 42건 수신을 완료했습니다.</td>
+                		<td>2019-11-19 17:32</td>
+                	</tr>
+                </tbody>
+			</table>
+			
+			<div class="tm60 tac">
+				<a href="/company/requestData" class="btn btn-purple w120">목 록</a>
+			</div>
+		
+		</div>
+
+	    
+	    <!-- jQuery -->
+		<script src="/lib/jquery/jquery.min.js"></script>
+		<!-- jQuery UI Interactions -->
+		<script src="/lib/jquery.ui/interactions/jquery-ui.min.js"></script>
+		<!-- Bootstrap -->
+		<script src="/lib/bootstrap-daterangepicker/daterangepicker.js"></script>
+		<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
+		
+		<script type="text/javascript">
+			$( function() {
+				$( "#deadLine" ).datepicker();
+		 	});
+		</script>
+
+
+	</body>
+</html>
+

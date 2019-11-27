@@ -79,27 +79,36 @@ router.post('/loginReg',function(req,res){
     }else if(radio=="company"){     //기업회원 로그인
         sql = 'select * from com_info where com_email = ?';
     }
-
     conn.query(sql, [id], function(err,result){
         if(err) console.error(err);
         else{   //아이디가 존재하지 않는 경우
-            if(!result[0]) res.send('<script>alert("아이디가 존재하지 않습니다. id를 확인하세요."); location.href="/user/login"; </script>');
+            if(result=='') res.send('<script id="sc1" type="test/javascript">alert("아이디가 존재하지 않습니다. id를 확인하세요."); location.href="/user/login"; </script>');
 
             else if(radio=='person'){   //개인회원의 경우
                 if(pw===result[0].p_phone){
                     req.session.uid = result[0].p_code;
-                    res.send('<script>alert("로그인 성공!"); location.href="/user/acceptRequest"; </script>');
-                }else res.send('<script>alert("아이디와 비밀번호가 일치하지 않습니다."); location.href="/user/login"; </script>');
+                    res.send('<script id="sc1" type="test/javascript">alert("로그인 성공!"); location.href="/user/acceptRequest"; </script>');
+
+                }else res.send('<script id="sc1" type="test/javascript">alert("아이디와 비밀번호가 일치하지 않습니다."); location.href="/user/login"; </script>');
             }else if(radio=='company'){ //기업회원의 경우
                 if(pw===result[0].com_pw){
                     req.session.comEmail = result[0].com_email;
                     app.locals.isLogin = true;
-                    // req.session.comNm = result[0].com_nm;
-                    res.send('<script>alert("로그인 성공!"); location.href="/company/requestData"; </script>');
-                }else res.send('<script>alert("아이디와 비밀번호가 일치하지 않습니다."); location.href="/user/login"; </script>');
+                    // res.send('<script>alert("로그인 성공!"); location.href="/company/requestData"; </script>');
+                    res.send('<script id="sc1" type="text/javascript"> \
+                            alert("로그인 성공!"); \
+                            location.href="/company/requestData";\
+                            </script>')
+                }else res.send('<script id="sc1" type="test/javascript">alert("아이디와 비밀번호가 일치하지 않습니다."); location.href="/user/login"; </script>');
             }
         }
     });
 });
+
+//사용자 상세 페이지
+router.get('/acceptRequestDetail', function(req,res){
+    res.render('./user/acceptRequest_detail',{});
+});
+
 
 module.exports = router;

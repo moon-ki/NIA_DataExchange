@@ -18,6 +18,11 @@ var dbConfig = {
     password: 'althghdansrl',
     port    : 3306,
     database: 'NIA_DataExchanger'
+    // host    : '61.38.125.170',
+    // user    : 'root',
+    // password: '0712',
+    // port    : 3306,
+    // database: 'access_test'
 };
 var connection = mysql.createConnection(dbConfig);
 connection.connect();
@@ -51,6 +56,8 @@ app.use('/styles',express.static('css'));
 app.use('/public',express.static('public'));
 app.use('/images', express.static('images'));
 app.use('/utils', express.static('utils'));
+app.use('/lib', express.static('lib'));
+app.use('/font', express.static('font'));
 
 //  라우팅 처리
 app.use('/user', require('./routes/user')); 

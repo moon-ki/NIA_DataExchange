@@ -7,6 +7,60 @@ var conn = server.conn;
 var asyncEachSeries = require('async-each-series');
 var logger = server.logger;
 
+router.get('/8088', function(req, res){
+    console.log('api call!');
+    var response = request({
+        uri: 'http://116.89.189.32:8088/apiapp/',
+        method:'POST',
+        enctype: 'multipart/form-data',
+        json:{
+                "s_year_of_this_data":'2017',
+                "s_individual_person_number":'390',
+                "s_sex_code":'1',
+                "s_age_code":'8',
+                "s_location_code":'47',
+                "s_height":'165.0',
+                "s_weight":'85.0',
+                "s_waist_circumference":'96.0',
+                "s_vision_left":'1.5',
+                "s_vision_right":'1.5',
+                "s_hearing_left":'1.0',
+                "s_hearing_right":'1.0',
+                "s_systolic_blood_pressure":'140.0',
+                "s_diastolic_blood_pressure":'100.0',
+                "s_fasting_glucose":'114.0',
+                "s_total_cholesterol":'236.0',
+                "s_triglyceride":'125.0',
+                "s_hdl_cholesterol":'51.0',
+                "s_ldl_cholesterol":'160.0',
+                "s_hemoglobin":'16.0',
+                "s_urine_protein":'1.0',
+                "s_creatinine":'1.4',
+                "s_ast":'48.0',
+                "s_alt":'130.0',
+                "s_gamma_gtp":'92.0',
+                "s_smoke_status":'1.0',
+                "s_drinking_status":'1.0',
+                "s_got_oral_examination":'1',
+                "s_has_cavity":'nan',
+                "s_has_lost_tooth":'nan',
+                "s_has_cervical_abrasion":'nan',
+                "s_abnormal_wisdom_tooth":'nan',
+                "s_tartar_status":'1.0',
+                "s_open_date_of_data":'20181126',
+                "s_age":'35',
+                "s_birthday":'1985-05-10',
+                "s_bmi":'31.2',
+                "s_name":'심상주',
+                "s_phone":'010-8631-2610',
+                "s_location_name":'경상북도',
+                "s_data_generation_hospital":'분당서울대병원',
+                "s_registering_to_data_deal_market_site":'가입',
+                "s_agree_to_alarm":'동의'
+        }
+    });
+    console.log(response);
+});
 router.get('/dddd', function(req, res){
     console.log('api call!');
     request({
