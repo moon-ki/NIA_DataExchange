@@ -196,7 +196,6 @@ router.get('/requestData', paginate.middleware(10, 100), function(req,res){
                 case when date_format(req.request_dt,"%y%m%d")=date_format(now(),"%y%m%d") then date_format(req.request_dt, "%H:%i") \
                         else date_format(req.request_dt,"%y.%m.%d") end as create_time,\
                 req.dynamic_sql,\
-                count(*) over() as cnt, \
                 req.deadline, \
                 case when trim(req.reward_desc) is null or trim(req.reward_desc) ="" then "-" \
                      else req.reward_desc end as reward_desc,\
@@ -217,31 +216,41 @@ router.get('/requestData', paginate.middleware(10, 100), function(req,res){
     order by main.request_dt desc\
     limit '+ (req.query.page-1)*req.query.limit+','+req.query.limit ;
 
-    var resultSql = conn.query(sql, req.session.comEmail, function(err,result){
+    var resultSql = conn.query(sql, req.session.comEmail, function(err,requestdetail){
 
         if(err) console.error(err);
                 // totalCnt = 0;
         else{
             var pageCount;
             var pages;
-
-            if(result[0]){
-                pageCount = Math.ceil(result[0].cnt / req.query.limit);
-                pages = paginate.getArrayPages(req)( 4 , pageCount, req.query.page);
-            }else{
-                pageCount=1
-                pages=[{number:1, url:''}]
-            }
-            res.render('./company/com_request_detail',{
-                requestdetail : result,
-                pages : pages,
-                pageCount : pageCount
-            });
+            async.waterfall([
+                function(callbak){
+                    if(requestdetail[0]){
+                            conn.query('select count(*) cnt\
+                                        from com_requests req \
+                                        where req.com_email= ?', req.session.comEmail, function(err,result){
+                                pageCount = Math.ceil(result[0].cnt / req.query.limit);
+                                pages = paginate.getArrayPages(req)( 4 , pageCount, req.query.page);
+                                callbak(null, pageCount, pages);
+                            });
+                    }else{
+                        pageCount=1
+                        pages=[{number:1, url:''}]
+                        callbak(null, pageCount, pages);
+                    }
+                },
+                function(pageCount, pages, callback){
+                    res.render('./company/com_request_detail',{
+                        requestdetail : requestdetail,
+                        pages : pages,
+                        pageCount : pageCount
+                    });
+                }
+            ])
+            
             
         }
     });
-    // console.log('--------------------------기업 PHR 신청 현황 조회 쿼리');
-    // console.log(resultSql.sql);
 });
 
 //phr 사용승인 신청 프로세스
@@ -315,7 +324,7 @@ router.post('/requestPhr', async(req,res)=>{
     // 4. 목표수량 체크 **************************************************************************************************************
                                     function(responseCnt){
                                         conn.query('select cast(require_cnt as unsigned)  as require_cnt, \
-                                                            cast(response_cnt as unsigned) as response_cnt\
+                                                           cast(response_cnt as unsigned) as response_cnt\
                                                     from com_requests where seq = ?', com_seq, function(err,result){
                                             currentCnt+=responseCnt
                                             if(result[0].require_cnt > result[0].response_cnt+2){
