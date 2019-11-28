@@ -70,7 +70,7 @@
 							<span class="color_blue bold">수신중</span>
 							<span class="color_dgreen bold">완료</span>
 							-->
-						<% if (requestdetail.requestYn=='N'){ %>
+						<% if (requestdetail.requestYn=='N' || requestdetail.requestYn=='R' ){ %>
 							<span class="color_red bold">요청대기</span>
 						<%}else if(requestdetail.requestYn=='Y'){%>
 							<span class="color_dgreen bold">완료</span>
@@ -78,7 +78,7 @@
 							<span class="color_blue bold">수신중</span>
 						<%}else if(requestdetail.requestYn=='F'){%>	
 							<span class="color_red bold">미완료</span>								
-							<button class="btn btn-purple btn-25 lm20 w50">수정</button>
+							<button class="btn btn-purple btn-25 lm20 w50" onclick='updateDeadline(<%=requestdetail.seq %>)'>수정</button>
 						<%}%>
 						</td>
 					</tr>
@@ -89,7 +89,7 @@
 						<td>
 							<!-- disabled 추가 시 input 효과 사라짐 -->
 							<div class="input-group">
-								<input type="text" id="deadLine" class="form-control" name="deadLine" size="20" placeholder="마감일자를 선택하세요" value="2019-11-30"/>
+								<input type="text" id="deadLine" class="form-control" name="deadLine" size="20" placeholder="마감일자를 선택하세요" value="<%= requestdetail.deadLine %>" readonly/>
 								<span class="input-group-addon">
 									<i class="fa fa-calendar bigger-110"></i>
 								</span>
@@ -180,7 +180,7 @@
 
 					<% logDetails.forEach(function(log) { %>
 						<tr>
-							<td><%= requestdetail.num %></td>
+							<td><%= requestdetail.seq %></td>
 							<td><%= log.from %></td>
 							<td class="tal"><%= log.messageDetail %></td>
 							<td><%= log.create_dt %></td>
@@ -196,7 +196,8 @@
 		
 		</div>
 
-	    
+		<div id="javaexe"></div>
+		
 	    <!-- jQuery -->
 		<script src="/lib/jquery-3.3.1/jquery-3.3.1.js"></script>
 		<script src="/lib/jquery-migrate/jquery-migrate-3.1.0.min.js"></script>
@@ -206,17 +207,45 @@
 		<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
 		
 		<script type="text/javascript">
+			function updateDeadline(seq){
+				if(confirm('마감일자를 수정하겠습니까?')){
+					
+					var client = new XMLHttpRequest();
+						var params = '&seq='+seq+'&deadLine='+$("#deadLine").val();
+						
+						// https://www.zerocho.com/category/HTML&DOM/post/594bc4e9991b0e0018fff5ed 참고
+						// https://www.w3schools.com/xml/ajax_xmlhttprequest_response.asp 참고
+						client.onreadystatechange = function(){
+							if(client.readyState===client.DONE){
+								if(this.status===200 || this.status==201){
+									// https://codeday.me/ko/qa/20190310/40850.html 참고
+			
+									//응답한 javascript 태그 삽입
+									document.getElementById("javaexe").innerHTML = this.responseText;
+									//실행
+									eval(document.getElementById('sc1').innerHTML);
+								}else{
+									alert(client.responseText);
+								}
+							}
+						};
+			
+						client.open('POST', '/company/updateDeadline',true);
+						client.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+						client.send(params);
+				}
+			}
+
+
 			$( function() {
 				$("#deadLine").datepicker({
-				  dateFormat: "yy-mm-dd", // 텍스트 필드에 입력되는 날짜 형식.
-				  showMonthAfterYear: true , // 월, 년순의 셀렉트 박스를 년,월 순으로 바꿔준다. 
+				  dateFormat: "yy-mm-dd", 		// 텍스트 필드에 입력되는 날짜 형식.
+				  showMonthAfterYear: true , 	// 월, 년순의 셀렉트 박스를 년,월 순으로 바꿔준다. 
 				  dayNamesMin: ['월', '화', '수', '목', '금', '토', '일'], // 요일의 한글 형식.
 				  monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
 				  monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월']
-				 });
+				 }, 'disabled', true) ;
 		 	});
 		</script>
-
-
 	</body>
 </html>

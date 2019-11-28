@@ -138,9 +138,8 @@ router.post('/searchPhr', function(req,res){
                                 ]);
                             });
                         }else console.error(err);
-                    });
-                }
-            }
+                    });}
+        }
     });
 });
 
@@ -203,7 +202,8 @@ router.get('/requestData', paginate.middleware(10, 100), function(req,res){
                      else req.reward_desc end as reward_desc,\
                 concat(CHUNG_yn, SEOUL_yn, CHAR_yn) as done_yn,\
                 case when req.request_yn = "N" then "N"\
-                     when req.request_yn = "P" and date_format(req.deadline,"%y%m%d") > date_format(now(),"%y%m%d")  and concat(CHUNG_yn, SEOUL_yn, CHAR_yn) != "YYY" then "P"\
+                     when req.request_yn = "R" then "R"\
+                     when req.request_yn = "P" and date_format(req.deadline,"%y%m%d") >= date_format(now(),"%y%m%d")  and concat(CHUNG_yn, SEOUL_yn, CHAR_yn) != "YYY" then "P"\
                      when req.request_yn = "P" and date_format(req.deadline,"%y%m%d") < date_format(now(),"%y%m%d") and concat(CHUNG_yn, SEOUL_yn, CHAR_yn) != "YYY" then "F"\
                      when concat(CHUNG_yn, SEOUL_yn, CHAR_yn) = "YYY" then "Y" end request_yn\
                 \
@@ -252,8 +252,6 @@ router.get('/requestData', paginate.middleware(10, 100), function(req,res){
                     });
                 }
             ]);
-            
-            
         }
     });
 });
@@ -263,50 +261,74 @@ router.post('/requestPhr', async(req,res)=>{
     //조회 파라미터 초기화
     var dynamicSql = req.body.dynamicSql;
     var com_seq = req.body.seq;
-
-    // 병원 별, API요청할 사용자 select!
-    var sql_SELECT = 'select a.p_code\
-                        from user_phr_sample a \
-                        where 1=1 \
-                            and join_yn = "Y" and alert_yn="Y"'+dynamicSql+'and p_hospital=? and p_bmi > 30' ;
+    var requestYn = req.body.requestYn;
 
     //병원 별, API Request 실핻
     var hospitals = ['CHUNG','CHAR','SEOUL'];
-    await Promise.all([
-        conn.query('update com_requests set request_yn = "P" where seq = ?', com_seq, function(err, res){
-            if(!err) logger.info(com_seq, {messageDetail: '[START] PHR 요청 시작'});
-        }),
-        
-        asyncEachSeries(hospitals, function(hospital, next){
-            var sql_SELECT_Params = [req.body.sex, req.body.ageFrom, req.body.ageTo, req.body.bmiFrom, req.body.bmiTo, 
-                req.body.systoleFrom, req.body.systoleTo, req.body.relaxFrom, req.body.relaxTo, req.body.astFrom,
-                req.body.astTo, req.body.altFrom, req.body.altTo];
+    async.waterfall([
+        function(callback){
+            conn.query('update com_requests set request_yn = "P" where seq = ?', com_seq, function(err, res){
+                if(!err) callback(null);
+            });
+        },
+        function(callback){
+            // 최초 요청 시
+            if(requestYn=='N'){
+                logger.info(com_seq, {messageDetail: '[START] PHR 요청 시작'});
+                // 병원 별, API요청할 사용자 select!
+                var sql_SELECT = 'select a.p_code\
+                                    from user_phr_sample a \
+                                    where 1=1 \
+                                        and join_yn = "Y" and alert_yn="Y"'+dynamicSql+'and p_hospital=? and p_bmi > 30' ;
 
-            // pcodes 조회!
-            selPcodes(sql_SELECT, sql_SELECT_Params, hospital, function(successYn, pCodes){
-                if(successYn){
-                    // var seperPcode=[];
-                    // seperPcode = pCodes.division(20);
+            // 재 요청 시
+            }else if(requestYn=='R'){
+                logger.info(com_seq, {messageDetail: '[RESTART] PHR 재 요청 시작'});
+                // 병원 별, API요청할 사용자 select!
+                var sql_SELECT = 'select p_code\
+                                    from err_comseq_pcode \
+                                    where com_seq = ? and p_hospital = ?'; 
+            }
 
-                    //**************************************************PHR 처리 전체 프로세스
-                    PhrProcess(pCodes, com_seq, hospital);
-                    //**********************************************************************
-                }//selPcodes if(successYn){
-            });//selPcodes end
-            next();
-        }),// async.each end
+            asyncEachSeries(hospitals, function(hospital, next){
+                var sql_SELECT_Params = [req.body.sex, req.body.ageFrom, req.body.ageTo, req.body.bmiFrom, req.body.bmiTo, 
+                    req.body.systoleFrom, req.body.systoleTo, req.body.relaxFrom, req.body.relaxTo, req.body.astFrom,
+                    req.body.astTo, req.body.altFrom, req.body.altTo];
+    
+                console.log(hospital, com_seq)
+                // pcodes 조회!
+                selPcodes(sql_SELECT, sql_SELECT_Params, hospital, requestYn, com_seq, function(successYn, pCodes){
+                    if(successYn){
+                        // var seperPcode=[];
+                        // seperPcode = pCodes.division(20);
+//**********************************************************************************************************PHR 처리 전체 프로세스
+                        PhrProcess(pCodes, com_seq, hospital);
+//*******************************************************************************************************************************
+                    }//selPcodes if(successYn){
+                });//selPcodes end
+                next();
+            });     
 
-        // Response
-        res.send('<script id="sc1" type="text/javascript"> \
-                    alert("PHR을 신청했습니다."); \
-                    location.href="/company/requestData";\
-                  </script>')
+            callback(null);
+        },// async.each end
+        function(callback){
+            res.send('<script id="sc1" type="text/javascript"> \
+                        alert("PHR을 신청했습니다."); \
+                        location.href="/company/requestData";\
+                    </script>')
+        }
     ]);
+
+    // 재요청 시
+
+
+
 }); // router.post('/requestPhr' END
 
-//기업 상세 페이지
+//기업 상세 페이지 출력
 router.get('/requestDataDetail/:seq/:num/:sex/:ageFrom/:bmiFrom/:systoleFrom/:relaxFrom/:astFrom/:altFrom/:rewardDesc/:purpose/:requestYn/:requestDt/:deadLine/:requestCnt/:requireCnt/:responseCnt/:ratio/:createTime', function(req,res){
     var searchParams = {
+        seq:req.params.seq,
         num:req.params.num,
         sex: req.params.sex, 
         ageFrom: req.params.ageFrom, 
@@ -354,13 +376,36 @@ router.get('/requestDataDetail/:seq/:num/:sex/:ageFrom/:bmiFrom/:systoleFrom/:re
         }
     );
 });
+// 
+router.post('/updateDeadline',function(req,res){
+
+    console.log(req.body.seq);
+    console.log(req.body.deadLine);
+
+    conn.query('update com_requests set request_yn = "R", CHUNG_yn = "N", SEOUL_yn="N", CHAR_yn="N", deadline= ? \
+                where seq = ?', [req.body.deadLine, req.body.seq], function(err, result){});
+
+    res.send('<script id="sc1" type="text/javascript"> \
+                alert("마감일자를 정상적으로 업데이트 하였습니다. 다시 요청해주세요."); \
+                location.href="/company/requestData";\
+              </script>');
+});
 
 //API Call에 필요한 p_codes 조회
-function selPcodes(sql_SELECT, sql_SELECT_Params, hospital, callback){
+function selPcodes(sql_SELECT, sql_SELECT_Params, hospital, requestYn, comSeq, callback){
+    var params=[]
     var p_codes = [];
-    sql_SELECT_Params.push(hospital);
-    var sql = conn.query(sql_SELECT, sql_SELECT_Params, function(err, result){
-        if(err) callback(false, err);
+    
+    if(requestYn=="R"){
+        params.push(comSeq, hospital);
+    }else if (requestYn=="N"){
+        params=sql_SELECT_Params;
+        params.push(hospital);    
+    }
+
+    console.log(sql_SELECT, params);
+    var sql = conn.query(sql_SELECT, params, function(err, result){
+        if(err) {console.log(err);callback(false, err);}
         else {
             for(var i =0; i<result.length; i++){
                 p_codes.push(result[i].p_code);
@@ -441,7 +486,7 @@ function PhrProcess(pCodes, com_seq, hospital){
                         function(err,result){
                             // 마감기한 지남
                             if(result[0].yn==1){
-                                conn.query('insert into err_comseq_pcode(com_seq, p_code) values (?,?)', [com_seq, pCode], function(err,result){});
+                                conn.query('insert into err_comseq_pcode(com_seq, p_code, p_hospital) values (?,?,?)', [com_seq, pCode, hospital], function(err,result){});
                                 next();
                                 
                             // 수신가능
