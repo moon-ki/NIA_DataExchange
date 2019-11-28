@@ -251,7 +251,7 @@ router.get('/requestData', paginate.middleware(10, 100), function(req,res){
                         pageCount : pageCount
                     });
                 }
-            ])
+            ]);
             
             
         }
@@ -326,38 +326,33 @@ router.get('/requestDataDetail/:seq/:num/:sex/:ageFrom/:bmiFrom/:systoleFrom/:re
         ratio:req.params.ratio,
         createTime: req.params.createTime
     };
-    
-    // async.waterfall([
-    //     function(callback){
 
-    //     }
-    // ])
-    
-    res.render('./company/com_request_detail2',{requestdetail:searchParams});
-});
-
-//로그 조회 팝업
-router.get('/popLog/:comSeq/:seq', function(req,res){
-    conn.query('select message, meta, date_format(timestamp, "%y.%m.%d %H:%i") create_dt \
+    conn.query('select message,\
+                       replace(replace(replace(meta,"CHAR", "분당차병원"),"SEOUL", "분당서울대병원"),"CHUNG", "충남대병원")  meta,\
+                       date_format(timestamp, "%y.%m.%d %H:%i") create_dt \
                   from sys_logs_default\
                  where message = ? \
-                 order by timestamp desc', [req.params.comSeq],
-    function(err, logs){
-        if(err) console.log(err);
-        else{
-            var logDetails=[]
-            var logTmp;
-            async.each(logs, function(log){
-                logTmp = JSON.parse(log.meta);
-                logTmp.create_dt = log.create_dt;
-                logTmp.num = req.params.seq;
-                logDetails.push(logTmp);
-            });
+                 order by timestamp desc', [req.params.seq],
+        function(err, logs){
+            if(err) console.log(err);
+            else{
+                var logDetails=[]
+                var logTmp;
+                async.each(logs, function(log){
+                    logTmp = JSON.parse(log.meta);
+                    logTmp.create_dt = log.create_dt;
+                    logTmp.num = req.params.seq;
+                    logDetails.push(logTmp);
+                });
+
+                res.render('./company/com_request_detail2',{
+                    requestdetail:searchParams,
+                    logDetails:logDetails
+                });
+                
+            }
         }
-        
-        res.render('./pop/popLog',{logDetail : logDetails});
-        
-    });
+    );
 });
 
 //API Call에 필요한 p_codes 조회

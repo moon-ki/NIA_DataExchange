@@ -58,29 +58,28 @@
 .medium     {font-weight:500;}
 .bold       {font-weight:700;}
 .bolder     {font-weight:900;}
-/* font-weight:100,300,400,500,700,900 */
-html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, caption, article, aside, canvas, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section, summary, time, mark, audio, video
-{margin:0; padding:0; border:0; font-size:100%; vertical-align:baseline; background:transparent; word-break:keep-all;}
-body {font-family:'Noto Sans KR', "맑은고딕", "Malgun Gothic", 'Apple SD Gothic Neo', "돋움", dotum, Arial, sans-serif; letter-spacing:-0.3px; font-size:14px; color:#555;}
-.en_txt {letter-spacing:0px;}
-article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section
-{display:block;}
-nav ul, nav ul li{list-style:none;}
-a{margin:0; padding:0; font-size:100%; text-decoration:none; vertical-align:baseline; color:#333; background:transparent;}
-img{vertical-align:top; border:none;}
-table{border-collapse:collapse; border-spacing:0;}
-input, textarea, select {margin:0; padding:0; box-sizing:border-box; -moz-box-sizing:border-box; -webkit-box-sizing:border-box;
-						vertical-align:top; border:1px solid #999; color:#333; border-radius:0;  font-family:'Noto Sans KR', "맑은고딕", "Malgun Gothic", 'Apple SD Gothic Neo', "돋움", dotum, Arial, sans-serif;}
-input::-moz-input-placeholder{color:#999;}
-input::-webkit-input-placeholder {color:#999;}
-video {width:100%; height:auto;}
 
-*, :after, :before {
-    -webkit-box-sizing:border-box;
-    -moz-box-sizing:border-box;
-    box-sizing:border-box
-}
+*, *:after, *:before {-webkit-box-sizing:border-box; box-sizing:border-box; -webkit-text-size-adjust:none; text-size-adjust:none; -webkit-tap-highlight-color:rgba(0,0,0,0); -webkit-font-smoothing:antialiased;}
+html {-ms-touch-action:none; font-size:16px;}
+body, p, ul, menu, ol, li, dl, dt, dd, form, table, th, td,
+fieldset, input, textarea, select, button, h1, h2, h3, h4, h5, h6, pre, address, i, svg {margin:0; padding:0;}
+html, body {width:100%; height:100%;}
+body {font-family:'Noto Sans KR', 'Malgun Gothic', '맑은 고딕', Dotum, 'Apple SD Gothic Neo', Sans-serif; font-size:13px; line-height:1.4; letter-spacing:-0.2px; color:#333;}
+header, footer, section, article, aside, nav, hgroup, details, menu, figure, figcaption {display:block; margin:0; padding:0;}
+fieldset, img {border:0;}
+img {vertical-align:middle; -ms-interpolation-mode:bicubic;}
+caption, legend {width:0; height:0; line-height:0; visibility:hidden; overflow:hidden;}
+table {border-spacing:0; border-collapse:collapse;}
+a {color:#333; text-decoration:none; transition:0.2s;}
+a:hover {text-decoration:none; color:#505bb8;}
+address, em, i {font-style:normal;}
+del {text-decoration:none}
+button {overflow:hidden; border:0; background:none; text-align:center; cursor:pointer; outline:0; transition:0.2s;}
+h1, h2, h3, h4, h5 {line-height:1.2;}
+strong, b {font-weight:700;}
+pre {word-break:break-all; white-space:pre-line;}
+:focus {outline:0;}
+
 
 
 .col-md-55, .col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xl-1, .col-xs-2,
@@ -573,7 +572,7 @@ form.contact_form input[type="submit"]:hover {background:#06388f; color:#fff; bo
 
 
 .btn {padding:8px 13px 8px 13px; margin-right:5px; -webkit-transition:all 0.2s linear 0s; -o-transition:all 0.2s linear 0s; transition:all 0.2s linear 0s; border-radius:1px; color:#fff; 
-    font-size:13px; border:1px solid #777; text-decoration:none !important; display:inline-block; font-weight:700; line-height:16px; letter-spacing:-.3px; 
+    font-size:13px; border:1px solid #777; text-decoration:none !important; display:inline-block; font-weight:700; line-height:16px; letter-spacing:-.3px; font-weight:normal; 
     box-sizing:border-box; -moz-box-sizing:border-box; -webkit-box-sizing:border-box;}
 .btn:hover {background:#06388f; color:#fff; border:1px solid #06388f; cursor:pointer;}
 button:last-child, .buttons:last-child, .btn:last-child, .modal-footer .btn+.btn:last-child {margin-right:0;}
@@ -838,7 +837,7 @@ button:last-child, .buttons:last-child, .btn:last-child, .modal-footer .btn+.btn
 				check
 ========================================*/
 
-.border-checkbox-section .border-checkbox-group {display:inline-block}
+.border-checkbox-section .border-checkbox-group {display:inline-block;}
 .border-checkbox-section.block-style .border-checkbox-group {display:block; margin-bottom:12px;}
 .border-checkbox-section.block-style .border-checkbox-group:last-child {margin-bottom:0;}
 .border-checkbox-section .border-checkbox-group .border-checkbox:checked+.border-checkbox-label:after {animation:check linear 0.5s; opacity:1; border-color:#01a9ac}
@@ -846,6 +845,9 @@ button:last-child, .buttons:last-child, .btn:last-child, .modal-footer .btn+.btn
 .border-checkbox-section .border-checkbox-group .border-checkbox-label {position:relative; display:inline-block; cursor:pointer; height:20px; line-height:20px; padding-left:30px; margin-right:15px; margin-bottom:0;}
 .border-checkbox-section .border-checkbox-group .border-checkbox-label:after {content:""; display:block; width:6px; height:12px; opacity:0.9; border-right:2px solid #eee;
     border-top:2px solid #eee; position:absolute; left:4px; top:11px; transform:scaleX(-1) rotate(135deg); transform-origin:left top;}
+
+#searchDialog .border-checkbox-section .border-checkbox-group {margin-bottom:15px;}
+#searchDialog .border-checkbox-section .border-checkbox-group .border-checkbox-label {min-width:128px;}
     
 .border-checkbox-section .border-checkbox-group .border-checkbox-label:before {content:""; display:block; border:2px solid #01a9ac; width:20px; height:20px; position:absolute; left:0; background:#fff;}
 .border-checkbox-section .border-checkbox {display:none}
@@ -879,6 +881,8 @@ button:last-child, .buttons:last-child, .btn:last-child, .modal-footer .btn+.btn
 .border-checkbox-section .border-checkbox-group-inverse .border-checkbox:checked+.border-checkbox-label:after {border-color:#404E67}
 .border-checkbox-section .border-checkbox-group-info .border-checkbox-label:before {border:2px solid #2DCEE3}
 .border-checkbox-section .border-checkbox-group-info .border-checkbox:checked+.border-checkbox-label:after {border-color:#2DCEE3}
+.border-checkbox-section .border-checkbox-group-purple .border-checkbox-label:before {border:2px solid #835bc0}
+.border-checkbox-section .border-checkbox-group-purple .border-checkbox:checked+.border-checkbox-label:after {border-color:#835bc0}
 
 .checkbox-fade, .checkbox-zoom {display:inline-block; margin-right:15px}
 .checkbox-fade label, .checkbox-zoom label {line-height:20px}
@@ -918,6 +922,8 @@ button:last-child, .buttons:last-child, .btn:last-child, .modal-footer .btn+.btn
 .checkbox-fade.fade-in-inverse .cr .cr-icon, .checkbox-fade.zoom-inverse .cr .cr-icon, .checkbox-zoom.fade-in-inverse .cr .cr-icon, .checkbox-zoom.zoom-inverse .cr .cr-icon {color:#404E67}
 .checkbox-fade.fade-in-info .cr, .checkbox-fade.zoom-info .cr, .checkbox-zoom.fade-in-info .cr, .checkbox-zoom.zoom-info .cr {border:2px solid #2DCEE3}
 .checkbox-fade.fade-in-info .cr .cr-icon, .checkbox-fade.zoom-info .cr .cr-icon, .checkbox-zoom.fade-in-info .cr .cr-icon, .checkbox-zoom.zoom-info .cr .cr-icon {color:#2DCEE3}
+.checkbox-fade.fade-in-purple .cr, .checkbox-fade.zoom-purple .cr, .checkbox-zoom.fade-in-purple .cr, .checkbox-zoom.zoom-purple .cr {border:2px solid #553d7a}
+.checkbox-fade.fade-in-purple .cr .cr-icon, .checkbox-fade.zoom-purple .cr .cr-icon, .checkbox-zoom.fade-in-purple .cr .cr-icon, .checkbox-zoom.zoom-purple .cr .cr-icon {color:#553d7a}
 
 .checkbox-color {display:inline-block; margin-right:20px; cursor:pointer}
 .checkbox-color label {display:inline-block; position:relative; padding-left:10px; line-height:20px}
@@ -933,7 +939,7 @@ button:last-child, .buttons:last-child, .btn:last-child, .modal-footer .btn+.btn
 .checkbox-color.checkbox-circle label::before {border-radius:50%}
 .checkbox-color.checkbox-inline {margin-top:0}
 .checkbox-danger input[type="checkbox"]:checked+label::after, .checkbox-info input[type="checkbox"]:checked+label::after, .checkbox-primary input[type="checkbox"]:checked+label::after,
-.checkbox-success input[type="checkbox"]:checked+label::after, .checkbox-warning input[type="checkbox"]:checked+label::after {color:#fff}
+.checkbox-success input[type="checkbox"]:checked+label::after, .checkbox-warning input[type="checkbox"]:checked+label::after, .checkbox-purple input[type="checkbox"]:checked+label::after {color:#fff}
 .checkbox-primary input[type="checkbox"]:checked+label::before {background-color:#2196f3; border-color:#2196f3}
 .checkbox-primary input[type="checkbox"]:checked+label::before {background-color:#01a9ac}
 .checkbox-warning input[type="checkbox"]:checked+label::before {background-color:#fe9365}
@@ -942,6 +948,7 @@ button:last-child, .buttons:last-child, .btn:last-child, .modal-footer .btn+.btn
 .checkbox-success input[type="checkbox"]:checked+label::before {background-color:#0ac282}
 .checkbox-inverse input[type="checkbox"]:checked+label::before {background-color:#404E67}
 .checkbox-info input[type="checkbox"]:checked+label::before {background-color:#2DCEE3}
+.checkbox-purple input[type="checkbox"]:checked+label::before {background-color:#6a4a9b}
 
 
 
@@ -1015,7 +1022,7 @@ header .user-area h3.user-info i {font-size:20px; line-height:40px; margin:0 8px
 header .nav-area {margin:30px 0 60px; position:relative;}
 header .nav-area nav {position:absolute; right:0; top:0;}
 header .nav-area nav ul {padding:0; margin:0;}
-header .nav-area nav ul li {float:left; margin-right:60px;}
+header .nav-area nav ul li {float:left; margin-right:60px; list-style:none;}
 header .nav-area nav ul li:last-child {margin-right:0;}
 header .nav-area nav ul li a {font-size:17px; font-weight:bold; display:block; padding:10px; color:#666; position:relative; transition:0.2s;}
 header .nav-area nav ul li a:hover {color:#553d7a; text-decoration:none;}
@@ -1110,6 +1117,15 @@ h3.small-title {font-size:24px; font-weight:normal; margin:0 0 20px 0;}
 
 
 
+
+
+
+.ui-widget-header {border:1px solid #6a4a9b; background:#553d7a;}
+.ui-widget-header .ui-dialog-titlebar-close {width:20px; height:20px; position:absolute; right:7px; top:13px;}
+.ui-widget-header .ui-dialog-titlebar-close:after {content:"\f00d"; font-family: 'Font Awesome 5 Free'; font-size:18px; color:#fff;}
+
+.ui-dialog .ui-dialog-content {padding:20px 25px;}
+.ui-widget-content {border: 1px solid #9582b2;}
 
 
 

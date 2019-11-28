@@ -20,8 +20,8 @@
 	    <!-- CSS -->
 	    <link href="/lib/font-awesome/css/all.css" rel="stylesheet">
 	    <link href="/lib/bootstrap/css/bootstrap.css" rel="stylesheet">
-	    <link href="/lib/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
-	    <link href="/lib/jquery.ui/interactions/jquery-ui.css" rel="stylesheet">
+	    <link href="/lib/jquery.ui/jquery-ui.css" rel="stylesheet">
+	    <link href="/lib/jquery.ui/jquery-ui.theme.css" rel="stylesheet">
 		<link href="/styles/style.css" rel="stylesheet">
 	</head>
 	<body>
@@ -177,22 +177,20 @@
 				    </tr>
 				</thead>
                 <tbody>
-                	<tr>
-                		<td>10</td>
-                		<td>CHAR</td>
-                		<td class="tal">[Data Received] 42건 수신을 완료했습니다.</td>
-                		<td>2019-11-19 17:33</td>
-                	</tr>
-                	<tr>
-                		<td>9</td>
-                		<td>SEOUL</td>
-                		<td class="tal">[Data Received] 42건 수신을 완료했습니다.</td>
-                		<td>2019-11-19 17:32</td>
-                	</tr>
+
+					<% logDetails.forEach(function(log) { %>
+						<tr>
+							<td><%= requestdetail.num %></td>
+							<td><%= log.from %></td>
+							<td class="tal"><%= log.messageDetail %></td>
+							<td><%= log.create_dt %></td>
+						</tr>
+					<% }) %>
+
                 </tbody>
 			</table>
 			
-			<div class="tm60 tac">
+			<div class="tm60 bm60 tac">
 				<a href="/company/requestData" class="btn btn-purple w120">목 록</a>
 			</div>
 		
@@ -200,20 +198,25 @@
 
 	    
 	    <!-- jQuery -->
-		<script src="/lib/jquery/jquery.min.js"></script>
+		<script src="/lib/jquery-3.3.1/jquery-3.3.1.js"></script>
+		<script src="/lib/jquery-migrate/jquery-migrate-3.1.0.min.js"></script>
 		<!-- jQuery UI Interactions -->
-		<script src="/lib/jquery.ui/interactions/jquery-ui.min.js"></script>
+		<script src="/lib/jquery.ui/jquery-ui.min.js"></script>
 		<!-- Bootstrap -->
-		<script src="/lib/bootstrap-daterangepicker/daterangepicker.js"></script>
 		<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
 		
 		<script type="text/javascript">
 			$( function() {
-				$( "#deadLine" ).datepicker();
+				$("#deadLine").datepicker({
+				  dateFormat: "yy-mm-dd", // 텍스트 필드에 입력되는 날짜 형식.
+				  showMonthAfterYear: true , // 월, 년순의 셀렉트 박스를 년,월 순으로 바꿔준다. 
+				  dayNamesMin: ['월', '화', '수', '목', '금', '토', '일'], // 요일의 한글 형식.
+				  monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+				  monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월']
+				 });
 		 	});
 		</script>
 
 
 	</body>
 </html>
-

@@ -4,6 +4,7 @@ var mysqlConnection = require('../server');
 var conn = mysqlConnection.conn;
 var paginate = require('express-paginate');
 var app = express();
+var async = require('async');
 // router.get('/', function(req, res){
 //     // session을 체크하여 로그인 여부 확인
 //     // req.session.id으로 로그인 여부 확인 불가, 로그인 여부확인하는 로직 개발 필요
@@ -36,16 +37,15 @@ router.get('/acceptRequest', paginate.middleware(10, 100), function(req,res){
                       case when date_format(a.request_dt,"%y%m%d")=date_format(now(),"%y%m%d") then date_format(a.request_dt, "%h:%i") \
                            else date_format(a.request_dt,"%y%m%d") end as request_dt,\
                       a.request_dt as create_dt,\
-                      a.request_purpose,\
-                      count(*) over() cnt \
+                      a.request_purpose\
                  from user_requests a, com_info b,\
                       (select @rownum:=0) tmp\
                 where 1=1\
-                  and a.p_code = ?\
+                  and a.p_code = "100105"\
                   and a.com_email = b.com_email\
                 order by a.request_dt) main\
-                order by create_dt desc\
-                limit '+ (req.query.page-1)*req.query.limit+','+req.query.limit ;
+            order by create_dt desc\
+            limit '+ (req.query.page-1)*req.query.limit+','+req.query.limit ;
     
     conn.query(sql, [req.session.uid],function(err, result){
         if(err) {
@@ -55,13 +55,32 @@ router.get('/acceptRequest', paginate.middleware(10, 100), function(req,res){
             res.send('<script>alert("데이터가 존재하지 않습니다."); location.href="/user/acceptRequest"; </script>');
         }
         else{
-            var pageCount = Math.ceil(result[0].cnt / req.query.limit);
-            var pages = paginate.getArrayPages(req)( 4 , pageCount, req.query.page);
-
-            res.render('user/acceptRequest.ejs', 
-                {   requestdetail : result,
-                    pages : pages,
-                    pageCount : pageCount});
+            var pageCount;
+            var pages;
+            async.waterfall([
+                function(callbak){
+                    if(result[0]){
+                            conn.query('select count(*) cnt\
+                                        from user_requests  \
+                                        where p_code = "100105"', req.session.comEmail, function(err,result){
+                                pageCount = Math.ceil(result[0].cnt / req.query.limit);
+                                pages = paginate.getArrayPages(req)( 4 , pageCount, req.query.page);
+                                callbak(null, pageCount, pages);
+                            });
+                    }else{
+                        pageCount=1
+                        pages=[{number:1, url:''}]
+                        callbak(null, pageCount, pages);
+                    }
+                },
+                function(pageCount, pages, callback){
+                    res.render('user/acceptRequest.ejs',{
+                        requestdetail : result,
+                        pages : pages,
+                        pageCount : pageCount
+                    });
+                }
+            ]);
         }
     });
 });
@@ -74,11 +93,13 @@ router.post('/loginReg',function(req,res){
     var sql = '';
 
     //회원에 따른 sql 분기처리
+    console.log(radio);
     if(radio=="person"){            //개인회원 로그인
         sql = 'select * from user_phr_sample where p_code = ?';
     }else if(radio=="company"){     //기업회원 로그인
         sql = 'select * from com_info where com_email = ?';
     }
+
     conn.query(sql, [id], function(err,result){
         if(err) console.error(err);
         else{   //아이디가 존재하지 않는 경우

@@ -1,10 +1,151 @@
-<!DOCTYPE html>
-<html>
-<body>
+<!doctype html>
+<html lang="ko">
+	<head>
+	    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+		<!-- favicon -->
+		<link rel="shortcut icon" href="/images/favicon/favicon.ico">
+		<link rel="apple-touch-icon" sizes="144x144" href="/images/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/images/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/images/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/images/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" href="/images/favicon/apple-icon-57x57.png">
+	
+	    <title>데이터 거래소 시스템</title>
+	    <link href='http://fonts.googleapis.com/css?family=Margarine' rel='stylesheet' type='text/css'>
+	    
+	    <!-- CSS -->
+	    <link href="/lib/font-awesome/css/all.css" rel="stylesheet">
+	    <link href="/lib/bootstrap/css/bootstrap.css" rel="stylesheet">
+	    <link href="/lib/jquery.ui/jquery-ui.css" rel="stylesheet">
+	    <link href="/lib/jquery.ui/jquery-ui.theme.css" rel="stylesheet">
+		<link href="/styles/style.css" rel="stylesheet">
+	</head>
+	<body>
+	    <header>
+	        <div class="user-area">
+	        	<div class="container">
+	        		<h3 class="user-info"><i class="fa fa-user-circle"></i><span id="userNm">홍길동</span>님 반갑습니다</h3>
+	        		<a class="btn btn-white outline btn-25" href="/user/logout">로그아웃</a>
+	        	</div>
+	        	
+	        </div>
+	        <div class="nav-area">
+	        	<div class="container">
+	        		<h1><img src="/images/common/logo.png" alt="KODA 메디칼 데이터 거래소 및 분석 시스템"></h1>
+	        		<nav id="mainGnb">
+	        			<ul>
+	                        <li class="active"><a href="javascript:void(0)"><i class="fab fa-stack-overflow"></i>참여 현황</a></li>
+	                    </ul>
+	        		</nav>
+        		</div>
+        	</div>
+	    </header>
+	    
+	    <div class="container">
+	    	<h2 class="sub-title">
+				<span>참여 현황 상세</span>
+			</h2>
+			
+			<h3 class="small-title">연구 신청 현황</h3>
+			<table class="form-table">
+				<caption>연구 신청 현황</caption>
+				<colgroup>
+					<col style="width:12%;" />
+					<col style="width:38%;" />
+					<col style="width:12%;" />
+					<col style="width:38%;" />
+				</colgroup>
+				<tbody>
+					<tr>
+						<th>신청용도</th>
+						<td>Sales</td>
+						<th>상태</th>
+						<td class="color_lblue">진행중</td>
+                        <!-- <td class="color_gray">마감</td>
+                        <td class="color_red">미완료</td>  -->   
+					</tr>
+					<tr>
+						<th>요청일자</th>
+						<td>2019-11-17</td>
+						<th>마감일자</th>
+						<td>2019-11-28</td>
+					</tr>
+					<tr>
+						<th>대상</th>
+						<td>7,620</td>
+						<th>신청건수</th>
+						<td>100</td>
+					</tr>
+					<tr>
+						<th>참여여부</th>
+						<td colspan="3"><i class="fa fa-check color_dgreen"></i></td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h3 class="small-title tm60">조회 조건</h3>
+			<table class="form-table">
+				<caption>조회 조건</caption>
+				<colgroup>
+					<col style="width:12%;" />
+					<col style="width:38%;" />
+					<col style="width:12%;" />
+					<col style="width:38%;" />
+				</colgroup>
+				<tbody>
+					<tr>
+						<th>번호</th>
+						<td>35</td>
+						<th>성별</th>
+						<td>남자</td>
+					</tr>
+					<tr>
+						<th>나이</th>
+						<td>40세 이상</td>
+						<th>BMI</th>
+						<td>40 이상</td>
+					</tr>
+					<tr>
+						<th>수축기 혈압</th>
+						<td>- 이상</td>
+						<th>이완기 혈압</th>
+						<td>- 이상</td>
+					</tr>
+					<tr>
+						<th>AST</th>
+						<td>40 이상</td>
+						<th>ALT</th>
+						<td>40 이상</td>
+					</tr>
+					<tr>
+						<th>보상규정</th>
+						<td colspan="3" style="height:80px; vertical-align:top;">	
+							보상규정은 ... 입니다. 
+						</td>
+					</tr>
+				</tbody>
+			</table>
+							
+			<div class="tm60 bm60 tac">
+				<a href="/user/acceptRequest" class="btn btn-purple w120">목 록</a>
+				
+			</div>
+		
+		</div>
 
-<h1>My First Heading</h1>
+	    
+	    <!-- jQuery -->
+		<script src="/lib/jquery-3.3.1/jquery-3.3.1.js"></script>
+		<script src="/lib/jquery-migrate/jquery-migrate-3.1.0.min.js"></script>
+		<!-- jQuery UI Interactions -->
+		<script src="/lib/jquery.ui/jquery-ui.min.js"></script>
+		<!-- Bootstrap -->
+		<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
 
-<p>My first paragraph.</p>
 
-</body>
+	</body>
 </html>

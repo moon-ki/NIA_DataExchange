@@ -20,8 +20,8 @@
 	    <!-- CSS -->
 	    <link href="/lib/font-awesome/css/all.css" rel="stylesheet">
 	    <link href="/lib/bootstrap/css/bootstrap.css" rel="stylesheet">
-	    <link href="/lib/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
-	    <link href="/lib/jquery.ui/interactions/jquery-ui.css" rel="stylesheet">
+	    <link href="/lib/jquery.ui/jquery-ui.css" rel="stylesheet">
+	    <link href="/lib/jquery.ui/jquery-ui.theme.css" rel="stylesheet">
 		<link href="/styles/style.css" rel="stylesheet">
 	</head>
 	<body>
@@ -50,8 +50,47 @@
 	    	<h2 class="sub-title">
 				<span>연구정보 조회 신청</span>
 			</h2>
-			
 			<form action="/company/searchPhr" method="POST" id="searchPhr">
+				
+				<!-- start: jQuery Dialog -->
+				<div id="searchDialog" title="조회 조건 추가" style="display:none;">
+				    <div class="border-checkbox-section">
+				        <div class="border-checkbox-group border-checkbox-group-purple">
+				            <input class="border-checkbox" type="checkbox" id="checkbox0">
+				            <label class="border-checkbox-label" for="checkbox0">나이</label>
+				        </div>
+				        <div class="border-checkbox-group border-checkbox-group-purple">
+				            <input class="border-checkbox" type="checkbox" id="checkbox1">
+				            <label class="border-checkbox-label" for="checkbox1">BMI</label>
+				        </div>
+				        <div class="border-checkbox-group border-checkbox-group-purple">
+				            <input class="border-checkbox" type="checkbox" id="checkbox2">
+				            <label class="border-checkbox-label" for="checkbox2">수축기 혈압</label>
+				        </div>
+				        <div class="border-checkbox-group border-checkbox-group-purple">
+				            <input class="border-checkbox" type="checkbox" id="checkbox3">
+				            <label class="border-checkbox-label" for="checkbox3">이완기 혈압</label>
+				        </div>
+				        <div class="border-checkbox-group border-checkbox-group-purple">
+				            <input class="border-checkbox" type="checkbox" id="checkbox4">
+				            <label class="border-checkbox-label" for="checkbox4">AST</label>
+				        </div>
+				        <div class="border-checkbox-group border-checkbox-group-purple">
+				            <input class="border-checkbox" type="checkbox" id="checkbox5">
+				            <label class="border-checkbox-label" for="checkbox5">ALT</label>
+				        </div>
+					</div>
+				    
+				    <div class="tm10 tac">
+						<button id="addItemBtn" class="btn btn-purple w100">조건 추가</button>
+						<button id="cancelBtn" class="btn btn-white w100">취소</button>
+					</div>
+				</div>
+				<!-- end: jQuery Dialog -->
+				
+				<div class="bm10 tar">
+					<button id="searchDialogBtn" class="btn btn-purple btn-28 w100">조건 추가</button>
+				</div>
 				<table class="form-table">
 					<caption>연구 신청 현황</caption>
 					<colgroup>
@@ -73,12 +112,7 @@
 							</td>
 							<th>마감일자</th>
 							<td>
-								<div class="input-group">
-									<input type="text" id="deadLine" class="form-control" name="deadLine" size="20" placeholder="마감일자를 선택하세요"/>
-									<span class="input-group-addon">
-										<i class="fa fa-calendar bigger-110"></i>
-									</span>
-								</div>
+								<input type="text" id="deadLine" class="form-control" name="deadLine" size="20" placeholder="마감일자를 선택하세요"/>
 							</td>
 						</tr>
 						<tr>
@@ -156,17 +190,22 @@
 		
 		
 		<!-- jQuery -->
-		<script src="/lib/jquery/jquery.min.js"></script>
+		<script src="/lib/jquery-3.3.1/jquery-3.3.1.js"></script>
+		<script src="/lib/jquery-migrate/jquery-migrate-3.1.0.min.js"></script>
 		<!-- jQuery UI Interactions -->
-		<script src="/lib/jquery.ui/interactions/jquery-ui.min.js"></script>
+		<script src="/lib/jquery.ui/jquery-ui.min.js"></script>
 		<!-- Bootstrap -->
-		<script src="/lib/bootstrap-daterangepicker/daterangepicker.js"></script>
 		<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
 		
 		<script type="text/javascript">
 		    $(function(){
-		        $.datepicker.setDefaults($.datepicker.regional['ko']);
-		        $("#deadLine").datepicker();
+		    	$("#deadLine").datepicker({
+				  dateFormat: "yy-mm-dd", // 텍스트 필드에 입력되는 날짜 형식.
+				  showMonthAfterYear: true , // 월, 년순의 셀렉트 박스를 년,월 순으로 바꿔준다. 
+				  dayNamesMin: ['월', '화', '수', '목', '금', '토', '일'], // 요일의 한글 형식.
+				  monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+				  monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월']
+				 });
 		    });
 		
 		    (function(){
@@ -205,6 +244,21 @@
 		            });
 		        });
 		    })();
+		    
+		    
+		    // 조회 조건 추가
+		    $( function() {
+	            $( "#searchDialog" ).dialog({
+	                autoOpen: false,
+	                resizable: false,
+	                height: "auto",
+	                width: 800,
+	                modal: true
+	            });
+		        $( "#searchDialogBtn" ).on( "click", function() {
+		            $( "#searchDialog" ).dialog( "open" );
+		        });
+		    });
 		</script>
 	</body>
 </html>
