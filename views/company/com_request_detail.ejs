@@ -36,8 +36,8 @@
 	        		<h1><img src="/images/common/logo.png" alt="KODA 메디칼 데이터 거래소 및 분석 시스템"></h1>
 	        		<nav id="mainGnb">
 	        			<ul>
-	                        <li><a href="/company/searchPhr"><i class="fab fa-wpforms"></i>연구 신청</a></li>
-	                        <li class="active"><a href="/company/requestData"><i class="fab fa-stack-overflow"></i>연구 신청현황</a></li>
+	                        <li><a href="/company/searchPhr"><i class="fab fa-wpforms"></i>의료 데이터 신청</a></li>
+	                        <li class="active"><a href="/company/requestData"><i class="fab fa-stack-overflow"></i>의료 데이터 신청현황</a></li>
 	                    </ul>
 	        		</nav>
         		</div>
@@ -46,7 +46,7 @@
 	
 	    <div class="container">
 	    	<h2 class="sub-title">
-				<span>기업 연구 신청 현황</span>
+				<span>의료 데이터 신청 현황 (기업)</span>
 			</h2>
             <table class="list-table" id="dataTable">
 				<thead>
@@ -128,7 +128,7 @@
                         <%}else if(requestdetail.request_yn=='Y'){%>
                             <td class="color_dgreen">완료</td>
                         <%}else if(requestdetail.request_yn=='P'){%>
-                            <td class="color_lblue">수신중</td>
+                            <td class="color_lblue">진행중</td>
                         <%}else if(requestdetail.request_yn=='F'){%>
                             <td class="color_red">미완료</td>    
                         <%}else{%>

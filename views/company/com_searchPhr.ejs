@@ -38,8 +38,8 @@
 	        		<h1><img src="/images/common/logo.png" alt="KODA 메디칼 데이터 거래소 및 분석 시스템"></h1>
 	        		<nav id="mainGnb">
 	        			<ul>
-	                        <li class="active"><a href="/company/searchPhr"><i class="fab fa-wpforms"></i>연구 신청</a></li>
-	                        <li><a href="/company/requestData"><i class="fab fa-stack-overflow"></i>연구 신청현황</a></li>
+	                        <li class="active"><a href="/company/searchPhr"><i class="fab fa-wpforms"></i>의료 데이터 신청</a></li>
+	                        <li><a href="/company/requestData"><i class="fab fa-stack-overflow"></i>의료 데이터 신청현황</a></li>
 	                    </ul>
 	        		</nav>
         		</div>
@@ -50,47 +50,31 @@
 	    	<h2 class="sub-title">
 				<span>연구정보 조회 신청</span>
 			</h2>
+			<!-- 다이얼로그 버튼 -->
+			<div class="bm10 tar">
+				<button id="searchDialogBtn" class="btn btn-purple btn-28 w100">조건 추가</button>
+			</div>
+			<!-- 다이얼로그 버튼 -->
 			<form action="/company/searchPhr" method="POST" id="searchPhr">
 				
 				<!-- start: jQuery Dialog -->
 				<div id="searchDialog" title="조회 조건 추가" style="display:none;">
 				    <div class="border-checkbox-section">
+						<% colInfos.forEach(function(colInfo) { %>
 				        <div class="border-checkbox-group border-checkbox-group-purple">
-				            <input class="border-checkbox" type="checkbox" id="checkbox0">
-				            <label class="border-checkbox-label" for="checkbox0">나이</label>
-				        </div>
-				        <div class="border-checkbox-group border-checkbox-group-purple">
-				            <input class="border-checkbox" type="checkbox" id="checkbox1">
-				            <label class="border-checkbox-label" for="checkbox1">BMI</label>
-				        </div>
-				        <div class="border-checkbox-group border-checkbox-group-purple">
-				            <input class="border-checkbox" type="checkbox" id="checkbox2">
-				            <label class="border-checkbox-label" for="checkbox2">수축기 혈압</label>
-				        </div>
-				        <div class="border-checkbox-group border-checkbox-group-purple">
-				            <input class="border-checkbox" type="checkbox" id="checkbox3">
-				            <label class="border-checkbox-label" for="checkbox3">이완기 혈압</label>
-				        </div>
-				        <div class="border-checkbox-group border-checkbox-group-purple">
-				            <input class="border-checkbox" type="checkbox" id="checkbox4">
-				            <label class="border-checkbox-label" for="checkbox4">AST</label>
-				        </div>
-				        <div class="border-checkbox-group border-checkbox-group-purple">
-				            <input class="border-checkbox" type="checkbox" id="checkbox5">
-				            <label class="border-checkbox-label" for="checkbox5">ALT</label>
-				        </div>
+				            <input class="border-checkbox" type="checkbox" id="<%=colInfo.column_name%>" name="searchParams" value="<%=colInfo.column_name%>">
+				            <label class="border-checkbox-label" for="<%=colInfo.column_name%>"><%=colInfo.column_comment%></label>
+						</div>
+						<%})%>
 					</div>
-				    
 				    <div class="tm10 tac">
-						<button id="addItemBtn" class="btn btn-purple w100">조건 추가</button>
+						<button id="addItemBtn" class="btn btn-purple w100" onclick="genSearchData()">조건 추가</button>
 						<button id="cancelBtn" class="btn btn-white w100">취소</button>
 					</div>
 				</div>
 				<!-- end: jQuery Dialog -->
 				
-				<div class="bm10 tar">
-					<button id="searchDialogBtn" class="btn btn-purple btn-28 w100">조건 추가</button>
-				</div>
+				
 				<table class="form-table">
 					<caption>연구 신청 현황</caption>
 					<colgroup>
@@ -107,7 +91,7 @@
 					                <option value="">신청용도 선택</option>
 					                <option value="Marketing">Marketing</option>
 					                <option value="Sales">Sales</option>
-					                <option value="ETC">ETC</option>
+					                <option value="ETC">Etcetera</option>
 					            </select>
 							</td>
 							<th>마감일자</th>
@@ -116,7 +100,7 @@
 							</td>
 						</tr>
 						<tr>
-							<th>수집건수</th>
+							<th>신청건수</th>
 							<td><input type="text" id="requireCnt" class="form-control" name="requireCnt" size="30" placeholder="필요한 PHR 건수를 입력하세요."/></td>
 							<th rowspan="2">정보제공<br />보상방법</th>
 							<td rowspan="2">
@@ -143,51 +127,23 @@
 							</td>
 						</tr>
 						
-						<!-- 추가되는 조건 예시 -->
+						<!-- 추가되는 조건 예시
 						<tr>
 							<th>나이</th>
 							<td><input type="text" name="ageFrom" class="form-control inline-block w100"> 이상</td>
 							<th>대상자</th>
 							<td>300</td>
-						</tr>
+						</tr> -->
+
 					</tbody>
 				</table>
 				
 				<div class="tm60 tac">
-					<input type="submit" value="조회 신청" class="btn btn-purple w120" style="font-weight:normal;">
+					<input type="submit" value="신청" class="btn btn-purple w120" style="font-weight:normal;">
 				</div>
 			</form>
-			
-		       <!--  <div id="content">            
-		           
-		            <br><br>
-		            나이<br>
-		            <input type="text" name='ageFrom'> ~ <input type="text" name='ageTo'>
-		            <br><br>
-		            BMI<br>
-		            <input type="text" name='bmiFrom'> ~ <input type="text" name='bmiTo'>
-		            <br><br>
-		            수축기 혈압<br>
-		            <input type="text" name='systoleFrom'> ~ <input type="text" name='systoleTo'>
-		            <br><br>
-		            이완기 혈압<br>
-		            <input type="text" name='relaxFrom'> ~ <input type="text" name='relaxTo'>
-		            <br><br>
-		            AST<br>
-		            <input type="text" name='astFrom'> ~ <input type="text" name='astTo'>
-		            <br><br>
-		            ALT<br>
-		            <input type="text" name='altFrom'> ~ <input type="text" name='altTo'>
-		            <br><br>
-		             &nbsp;
-		           
-		            
-		        </div> -->
-		    
 		</div>
 	    
-		
-		
 		
 		<!-- jQuery -->
 		<script src="/lib/jquery-3.3.1/jquery-3.3.1.js"></script>
@@ -198,9 +154,50 @@
 		<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
 		
 		<script type="text/javascript">
+
+			// ******************************동적 조회 조건 추가!!
+			function genSearchData(colInfos){
+				var params = document.getElementsByName("searchParams");
+				var htmlText;
+				var names;
+				for(var i=0;params.length;i++){
+					if(params[i].checked){
+						if(params[i].value=='p_age') names='나이'
+						else if(params[i].value=='p_bmi') names = 'BMI'
+						else if(params[i].value=='systole_bp') names = '수축기 혈압'
+						else if(params[i].value=='relax_bp') names = '이완기 혈압'
+						else if(params[i].value=='ast') names = 'AST'
+						else if(params[i].value=='alt') names = 'ALT'
+						
+
+						htmlText ='	<tr>\
+										<th>'+names+'</th>\
+										<td> <select >\
+												<option value="">선택</option>\
+												<option value=">"> > </option>\
+												<option value="<"> < </option>\
+												<option value="="> = </option>\
+												<option value="<="> <= </option>\
+												<option value=">="> >= </option>\
+											</select>\
+											<input type="text" name="'+params[i].value+'" class="form-control inline-block w100"></td>\
+										<th>대상자</th>\
+										<td></td>\
+									</tr>';
+
+						$('tbody').append(htmlText);
+					}
+					
+					$( "#searchDialog" ).dialog( "close" );
+				}
+				// document.getElementById('paramsList').innerHTML = htmlText;
+				
+			}
+
+
 		    $(function(){
 		    	$("#deadLine").datepicker({
-				  dateFormat: "yy-mm-dd", // 텍스트 필드에 입력되는 날짜 형식.
+				  dateFormat: "yy-mm-dd", 	 // 텍스트 필드에 입력되는 날짜 형식.
 				  showMonthAfterYear: true , // 월, 년순의 셀렉트 박스를 년,월 순으로 바꿔준다. 
 				  dayNamesMin: ['월', '화', '수', '목', '금', '토', '일'], // 요일의 한글 형식.
 				  monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
@@ -210,41 +207,53 @@
 		
 		    (function(){
 		        $(document).ready(function() {
+
 		            $('#searchPhr').submit(function(){
-		            var $requestPurpose = $('#searchPhr select[name=requestPurpose]');
-		            var $deadLine = $('#searchPhr input[name=deadLine]');
-		            var $requireCnt = $('#searchPhr input[name=requireCnt]');
-		            
-		            if(!$requestPurpose.val()){
-		                alert("활용목적을 선택하세요.");
-		                $requestPurpose.focus();
-		                return false;
-		            }
-		            if(!$deadLine.val()){
-		                alert("마감일자를 선택하세요.");
-		                $deadLine.focus();
-		                return false;
-		            }
-		            if(!$requireCnt.val()){
-		                alert("필요한 PHR 건수를 입력하세요.");
-		                $requireCnt.focus();
-		                return false;
-		            }
-		            // else{
-		            //     if(Number($requireCnt.val())%100!=0){
-		            //         alert("요청 PHR 건수를 100단위로 입력하세요.");
-		            //         $requireCnt.focus();
-		            //         return false;
-		            //     }
-		            // }
-		
-		            if(confirm('해당 조건으로 데이터를 신청합니까?')) return true;
-		            else return false;
+
+						// $( "#searchDialog" ).dialog({
+						// 	autoOpen: false,
+						// 	resizable: false,
+						// 	height: "auto",
+						// 	width: 800,
+						// 	modal: true
+						// });
+						// $( "#searchDialogBtn" ).on( "click", function() {
+						// 	$( "#searchDialog" ).dialog( "open" );
+						// });
+
+						var $requestPurpose = $('#searchPhr select[name=requestPurpose]');
+						var $deadLine = $('#searchPhr input[name=deadLine]');
+						var $requireCnt = $('#searchPhr input[name=requireCnt]');
+						
+						if(!$requestPurpose.val()){
+							alert("활용목적을 선택하세요.");
+							$requestPurpose.focus();
+							return false;
+						}
+						if(!$deadLine.val()){
+							alert("마감일자를 선택하세요.");
+							$deadLine.focus();
+							return false;
+						}
+						if(!$requireCnt.val()){
+							alert("필요한 PHR 건수를 입력하세요.");
+							$requireCnt.focus();
+							return false;
+						}
+						// else{
+						//     if(Number($requireCnt.val())%100!=0){
+						//         alert("요청 PHR 건수를 100단위로 입력하세요.");
+						//         $requireCnt.focus();
+						//         return false;
+						//     }
+						// }
+			
+						if(confirm('해당 조건으로 데이터를 신청합니까?')) return true;
+						else return false;
 		
 		            });
 		        });
 		    })();
-		    
 		    
 		    // 조회 조건 추가
 		    $( function() {
@@ -257,8 +266,14 @@
 	            });
 		        $( "#searchDialogBtn" ).on( "click", function() {
 		            $( "#searchDialog" ).dialog( "open" );
-		        });
-		    });
+				});
+				
+				$( "#cancelBtn" ).on( "click", function() {
+		            $( "#searchDialog" ).dialog( "close" );
+				});
+
+			});
+			
 		</script>
 	</body>
 </html>
