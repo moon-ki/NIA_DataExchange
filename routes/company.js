@@ -49,7 +49,6 @@ router.get('/searchPhr',function(req,res){
                     and length(trim(column_comment)) > 0", [],function(err, colInfos){
         if(err) {console.log(colInfos); res.end();}
         else{
-            console.log(colInfos);
             res.render('./company/com_searchPhr.ejs',{colInfos:colInfos});
         }
         
