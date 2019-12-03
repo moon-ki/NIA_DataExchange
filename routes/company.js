@@ -40,24 +40,37 @@ router.post('/register',function(req,res){
 });
 
 router.get('/searchPhr',function(req,res){
-    res.render('./company/com_searchPhr.ejs');
+    conn.query("SELECT\
+                        column_name, column_comment\
+                    FROM\
+                        information_schema.columns\
+                    WHERE table_schema = 'NIA_DataExchanger'\
+                    and table_name = 'user_phr_sample'\
+                    and length(trim(column_comment)) > 0", [],function(err, colInfos){
+        if(err) {console.log(colInfos); res.end();}
+        else{
+            console.log(colInfos);
+            res.render('./company/com_searchPhr.ejs',{colInfos:colInfos});
+        }
+        
+    });
 });
 
 router.post('/searchPhr', function(req,res){
     var Tmp_sex = req.body.sex;                     //성별
-    var Tmp_ageFrom = req.body.ageFrom;             //나이 from
+    var Tmp_ageFrom = req.body.p_age;               //나이 from
     var Tmp_ageTo = req.body.ageTo;                 //나이 to
     // var Tmp_smokingYn = req.body.smokingYn;
     // var Tmp_drinkingYn = req.body.drinkingYn;
-    var Tmp_bmiFrom = req.body.bmiFrom;             //bmi from
+    var Tmp_bmiFrom = req.body.p_bmi;               //bmi from
     var Tmp_bmiTo = req.body.bmiTo;                 //bmi to
-    var Tmp_systoleFrom = req.body.systoleFrom;     //수축기혈압 from
+    var Tmp_systoleFrom = req.body.systole_bp;      //수축기혈압 from
     var Tmp_systoleTo = req.body.systoleTo;         //수축기혈압 to
-    var Tmp_relaxFrom = req.body.relaxFrom ;        //이완기혈압 from
+    var Tmp_relaxFrom = req.body.relax_bp ;         //이완기혈압 from
     var Tmp_relaxTo = req.body.relaxTo;             //이완기혈압 to
-    var Tmp_astFrom = req.body.astFrom;             //ast from
+    var Tmp_astFrom = req.body.ast;                 //ast from
     var Tmp_astTo = req.body.astTo;                 //ast to
-    var Tmp_altFrom = req.body.altFrom;             //alt from
+    var Tmp_altFrom = req.body.alt;                 //alt from
     var Tmp_altTo = req.body.altTo;                 //alt to
     var requestPurpose = req.body.requestPurpose;   //활용목적
     var deadLine = req.body.deadLine;               //마감기간
@@ -78,7 +91,7 @@ router.post('/searchPhr', function(req,res){
 
     var cntSQL = conn.query('select p_code \
                                from user_phr_sample \
-                              where 1=1 and join_yn = "Y" and alert_yn = "Y" and p_bmi>30'+sqlAndParams[0], sqlAndParams[1], 
+                              where 1=1 and join_yn = "Y" and alert_yn = "Y" '+sqlAndParams[0], sqlAndParams[1], 
         function(err, pCodes){
 
             if(err) console.error(err);
@@ -149,7 +162,6 @@ router.get('/requestData', paginate.middleware(10, 100), function(req,res){
     var sql = 
     ' select main.* from (\
         select    @rownum:=@rownum+1 as num, \
-                --b.com_nm,\
                 req.seq,\
                 req.com_email,\
                 req.request_purpose,\
@@ -279,7 +291,7 @@ router.post('/requestPhr', async(req,res)=>{
                 var sql_SELECT = 'select a.p_code\
                                     from user_phr_sample a \
                                     where 1=1 \
-                                        and join_yn = "Y" and alert_yn="Y"'+dynamicSql+'and p_hospital=? and p_bmi > 30' ;
+                                        and join_yn = "Y" and alert_yn="Y"'+dynamicSql+'and p_hospital=? ' ;
 
             // 재 요청 시
             }else if(requestYn=='R'){
@@ -295,7 +307,7 @@ router.post('/requestPhr', async(req,res)=>{
                     req.body.systoleFrom, req.body.systoleTo, req.body.relaxFrom, req.body.relaxTo, req.body.astFrom,
                     req.body.astTo, req.body.altFrom, req.body.altTo];
     
-                console.log(hospital, com_seq)
+                // console.log(hospital, com_seq)
                 // pcodes 조회!
                 selPcodes(sql_SELECT, sql_SELECT_Params, hospital, requestYn, com_seq, function(successYn, pCodes){
                     if(successYn){
@@ -379,8 +391,8 @@ router.get('/requestDataDetail/:seq/:num/:sex/:ageFrom/:bmiFrom/:systoleFrom/:re
 // 
 router.post('/updateDeadline',function(req,res){
 
-    console.log(req.body.seq);
-    console.log(req.body.deadLine);
+    // console.log(req.body.seq);
+    // console.log(req.body.deadLine);
 
     conn.query('update com_requests set request_yn = "R", CHUNG_yn = "N", SEOUL_yn="N", CHAR_yn="N", deadline= ? \
                 where seq = ?', [req.body.deadLine, req.body.seq], function(err, result){});
@@ -403,7 +415,7 @@ function selPcodes(sql_SELECT, sql_SELECT_Params, hospital, requestYn, comSeq, c
         params.push(hospital);    
     }
 
-    console.log(sql_SELECT, params);
+    // console.log(sql_SELECT, params);
     var sql = conn.query(sql_SELECT, params, function(err, result){
         if(err) {console.log(err);callback(false, err);}
         else {

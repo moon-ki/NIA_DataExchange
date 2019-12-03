@@ -13,16 +13,16 @@ app.use(bodyParser.urlencoded({ extended:false }));
 //*************************************************mysql 연결
 var mysql = require('mysql');
 var dbConfig = {
-    host    : '116.89.189.11',
+    // host    : '116.89.189.11',
+    // user    : 'de_dev',
+    // password: 'althghdansrl',
+    // port    : 3306,
+    // database: 'NIA_DataExchanger'
+    host    : 'localhost',
     user    : 'de_dev',
     password: 'althghdansrl',
     port    : 3306,
-    database: 'NIA_DataExchanger'
-    // host    : '61.38.125.170',
-    // user    : 'root',
-    // password: '0712',
-    // port    : 3306,
-    // database: 'access_test'
+    database: 'de_dev'
 };
 var connection = mysql.createConnection(dbConfig);
 connection.connect();
