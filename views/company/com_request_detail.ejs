@@ -26,8 +26,8 @@
 	    <header>
 	        <div class="user-area">
 	        	<div class="container">
-	        		<h3 class="user-info"><i class="fa fa-user-circle"></i><span id="userNm"><%=userNm%></span>님 반갑습니다</h3>
-	        		<a class="btn btn-white outline btn-25" href="/user/logout">로그아웃</a>
+	        		<h3 class="user-info"><i class="fa fa-user-circle"></i>Welcome <span id="userNm"><%=userNm%></span></h3>
+	        		<a class="btn btn-white outline btn-25" href="/user/logout">Logout</a>
 	        	</div>
 	        	
 	        </div>
@@ -36,8 +36,8 @@
 	        		<h1><img src="/images/common/logo.png" alt="KODA 메디칼 데이터 거래소 및 분석 시스템"></h1>
 	        		<nav id="mainGnb">
 	        			<ul>
-	                        <li><a href="/company/searchPhr"><i class="fab fa-wpforms"></i>의료 데이터 신청</a></li>
-	                        <li class="active"><a href="/company/requestData"><i class="fab fa-stack-overflow"></i>의료 데이터 신청현황</a></li>
+	                        <li><a href="/company/searchPhr"><i class="fab fa-wpforms"></i>Medical Data Application</a></li>
+	                        <li class="active"><a href="/company/requestData"><i class="fab fa-stack-overflow"></i>Medical data application status</a></li>
 	                    </ul>
 	        		</nav>
         		</div>
@@ -46,23 +46,23 @@
 	
 	    <div class="container">
 	    	<h2 class="sub-title">
-				<span>의료 데이터 신청 현황 (기업)</span>
+				<span>Current status of medical data applications (corporate)</span>
 			</h2>
             <table class="list-table" id="dataTable">
 				<thead>
 				    <tr>
-				        <th width="6%" >번호</th>
+				        <th width="6%" >Num</th>
 				        <!-- <th width="5%">회사명</th> -->
 				        <!-- <th width="5%">담당자 Email</th> -->
-				        <th width="8%">신청용도</th>
-				        <th width="8%">신청가능 대상</th>
-				        <th width="auto">신청건수 및 진행상황</th>
-				        <th width="10%">요청일자</th>
-				        <th width="10%">마감일자</th>
+				        <th width="8%">Usage</th>
+				        <th width="8%">Applicable target</th>
+				        <th width="auto">Number of applications and progress</th>
+				        <th width="10%">Request date</th>
+				        <th width="10%">Closing date</th>
 				        <!-- <th width="8%">조회조건</th> -->
 				        <!-- <th width="8%">로그</th> -->
-				        <th width="10%">상태</th>
-				        <th width="10%">상세</th>
+				        <th width="10%">Status</th>
+				        <th width="10%">Detail</th>
 				    </tr>
 				</thead>
                 <tbody>
@@ -126,15 +126,15 @@
                             </td>
                         
                         <%}else if(requestdetail.request_yn=='Y'){%>
-                            <td class="color_dgreen">완료</td>
+                            <td class="color_dgreen">Completion</td>
                         <%}else if(requestdetail.request_yn=='P'){%>
-                            <td class="color_lblue">진행중</td>
+                            <td class="color_lblue">Ongoing</td>
                         <%}else if(requestdetail.request_yn=='F'){%>
-                            <td class="color_red">미완료</td>    
+                            <td class="color_red">Unfinished</td>    
                         <%}else{%>
                             <td>-</td>
                         <%}%>
-                        <td><a href="requestDataDetail/<%=requestdetail.seq%>/<%=requestdetail.num%>/<%=requestdetail.param_sex%>/<%=requestdetail.param_ageFrom%>/<%=requestdetail.param_bmiFrom%>/<%=requestdetail.param_systoleFrom%>/<%=requestdetail.param_relaxFrom%>/<%=requestdetail.param_astFrom%>/<%=requestdetail.param_altFrom%>/<%=requestdetail.reward_desc%>/<%=requestdetail.request_purpose%>/<%=requestdetail.request_yn%>/<%=requestdetail.create_time%>/<%=requestdetail.deadline%>/<%=requestdetail.request_cnt%>/<%=requestdetail.require_cnt%>/<%=requestdetail.response_cnt%>/<%=requestdetail.ratio%>/<%=requestdetail.create_time%>" class="btn btn-purple btn-25">자세히보기</a></td>
+                        <td><a href="requestDataDetail/<%=requestdetail.seq%>/<%=requestdetail.num%>/<%=requestdetail.param_sex%>/<%=requestdetail.param_ageFrom%>/<%=requestdetail.param_bmiFrom%>/<%=requestdetail.param_systoleFrom%>/<%=requestdetail.param_relaxFrom%>/<%=requestdetail.param_astFrom%>/<%=requestdetail.param_altFrom%>/<%=requestdetail.reward_desc%>/<%=requestdetail.request_purpose%>/<%=requestdetail.request_yn%>/<%=requestdetail.create_time%>/<%=requestdetail.deadline%>/<%=requestdetail.request_cnt%>/<%=requestdetail.require_cnt%>/<%=requestdetail.response_cnt%>/<%=requestdetail.ratio%>/<%=requestdetail.create_time%>" class="btn btn-purple btn-25">View</a></td>
                     </tr>
                     <%});%>
                 </tbody>

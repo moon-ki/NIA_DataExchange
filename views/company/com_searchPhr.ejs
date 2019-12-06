@@ -28,8 +28,8 @@
 	    <header>
 	        <div class="user-area">
 	        	<div class="container">
-	        		<h3 class="user-info"><i class="fa fa-user-circle"></i><span id="userNm"><%=userNm%></span>님 반갑습니다</h3>
-	        		<a class="btn btn-white outline btn-25" href="/user/logout">로그아웃</a>
+	        		<h3 class="user-info"><i class="fa fa-user-circle"></i>Welcome <span id="userNm"><%=userNm%></span></h3>
+	        		<a class="btn btn-white outline btn-25" href="/user/logout">Logout</a>
 	        	</div>
 	        	
 	        </div>
@@ -38,8 +38,8 @@
 	        		<h1><img src="/images/common/logo.png" alt="KODA 메디칼 데이터 거래소 및 분석 시스템"></h1>
 	        		<nav id="mainGnb">
 	        			<ul>
-	                        <li class="active"><a href="/company/searchPhr"><i class="fab fa-wpforms"></i>의료 데이터 신청</a></li>
-	                        <li><a href="/company/requestData"><i class="fab fa-stack-overflow"></i>의료 데이터 신청현황</a></li>
+	                        <li class="active"><a href="/company/searchPhr"><i class="fab fa-wpforms"></i>Medical Data Application</a></li>
+	                        <li><a href="/company/requestData"><i class="fab fa-stack-overflow"></i>Medical data application status</a></li>
 	                    </ul>
 	        		</nav>
         		</div>
@@ -48,17 +48,17 @@
 	    
 	    <div class="container">
 	    	<h2 class="sub-title">
-				<span>의료데이터 조회 신청</span>
+				<span>Medical data inquiry application</span>
 			</h2>
 			<!-- 다이얼로그 버튼 -->
 			<div class="bm10 tar">
-				<button id="searchDialogBtn" class="btn btn-purple btn-28 w100">조건 추가</button>
+				<button id="searchDialogBtn" class="btn btn-purple btn-28 w100">Add Condition</button>
 			</div>
 			<!-- 다이얼로그 버튼 -->
 			<form action="/company/searchPhr" method="POST" id="searchPhr">
 				
 				<!-- start: jQuery Dialog -->
-				<div id="searchDialog" title="조회 조건 추가" style="display:none;">
+				<div id="searchDialog" title="Add Condition" style="display:none;">
 				    <div class="border-checkbox-section">
 						<% colInfos.forEach(function(colInfo) { %>
 				        <div class="border-checkbox-group border-checkbox-group-purple">
@@ -68,8 +68,8 @@
 						<%})%>
 					</div>
 				    <div class="tm10 tac">
-						<button id="addItemBtn" class="btn btn-purple w100" onclick="genSearchData()">조건 추가</button>
-						<button id="cancelBtn" class="btn btn-white w100">취소</button>
+						<button id="addItemBtn" class="btn btn-purple w120" onclick="genSearchData()">Add Condition</button>
+						<button id="cancelBtn" class="btn btn-white w100">Cancle</button>
 					</div>
 				</div>
 				<!-- end: jQuery Dialog -->
@@ -84,42 +84,42 @@
 					</colgroup>
 					<tbody>
 						<tr>
-							<th>신청용도</th>
+							<th>Usage</th>
 							<td>
 								<select name="requestPurpose" class="form-control" autofocus>
-					                <option value="">신청용도 선택</option>
+					                <option value="">Select Usage</option>
 					                <option value="Marketing">Marketing</option>
 					                <option value="Sales">Sales</option>
 					                <option value="Research">Research</option>
 					            </select>
 							</td>
-							<th>마감일자</th>
+							<th>Closing date</th>
 							<td>
-								<input type="text" id="deadLine" class="form-control" name="deadLine" size="20" placeholder="마감일자를 선택하세요"/>
+								<input type="text" id="deadLine" class="form-control" name="deadLine" size="20" placeholder="Select close date"/>
 							</td>
 						</tr>
 						<tr>
-							<th>신청건수</th>
-							<td><input type="text" id="requireCnt" class="form-control" name="requireCnt" size="30" placeholder="필요한 PHR 건수를 입력하세요."/></td>
-							<th rowspan="2">정보제공<br />보상방법</th>
+							<th>Number of applications</th>
+							<td><input type="text" id="requireCnt" class="form-control" name="requireCnt" size="30" placeholder="Type Number of application"/></td>
+							<th rowspan="2">Reward<br />information</th> 
 							<td rowspan="2">
-								<textarea id="rewardDesc"class="form-control"style="height:80px;" name="rewardDesc" cols="40" placeholder="정보제공에 따른 보상 방법을 입력하세요"></textarea>
+								<textarea id="rewardDesc"class="form-control"style="height:80px;" name="rewardDesc" cols="40" placeholder="Enter compensation method based on information"></textarea>
 							</td>
 						</tr>
 						<tr>
-							<th>성별</th>
+							<th>Gender</th>
 							<td>
 								 <div class="form-radio">
 						            <div class="radio radio-outline radio-inline radio-purple">
 						                <label>
 						                	<input type="radio" name="sex" id="sex" value="1" checked="checked">
-						                    <i class="helper"></i>남자
+						                    <i class="helper"></i>Male
 						                </label>
 						            </div>
 						            <div class="radio radio-outline radio-inline radio-purple">
 						                <label>
 						                    <input type="radio" name="sex" id="sex" value="2">
-						                    <i class="helper"></i>여자
+						                    <i class="helper"></i>Female
 						                </label>
 						            </div>
 							    </div>
@@ -138,7 +138,7 @@
 				</table>
 				
 				<div class="tm60 tac">
-					<input type="submit" value="신청" class="btn btn-purple w120" style="font-weight:normal;">
+					<input type="submit" value="Apply" class="btn btn-purple w120" style="font-weight:normal;">
 				</div>
 			</form>
 		</div>
@@ -164,17 +164,17 @@
 				for(var i=0;params.length;i++){
 					if(params[i].checked==true){
 
-						if(params[i].value=='p_age') {names='ageFrom'; values='나이';}
+						if(params[i].value=='p_age') {names='ageFrom'; values='Age';}
 						else if(params[i].value=='p_bmi') {names = 'bmiFrom'; values='BMI';}
-						else if(params[i].value=='systole_bp') {names = 'systoleFrom';values='수축기 혈압';}
-						else if(params[i].value=='relax_bp') {names = 'relaxFrom';values='이완기 혈압';}
+						else if(params[i].value=='systole_bp') {names = 'systoleFrom';values='Systolic blood pressure';}
+						else if(params[i].value=='relax_bp') {names = 'relaxFrom';values='Relaxation blood pressure';}
 						else if(params[i].value=='ast') {names = 'astFrom';values='AST';}
 						else if(params[i].value=='alt') {names = 'altFrom';values='ALT';}
 
 						htmlText ='<tr>\
 										<th>'+values+'</th>\
 										<td> <select class="form-control inline-block w100">\
-												<option value="">선택</option>\
+												<option value="">Select</option>\
 												<option value=">"> > </option>\
 												<option value="<"> < </option>\
 												<option value="="> = </option>\
@@ -184,7 +184,7 @@
 												<option value=">="> between </option>\
 											</select>\
 											<input type="text" name="'+names+'" id = "'+params[i].value+'" class="form-control inline-block w200" onfocusout="cntFunc(\''+names+'\')"</td>\
-										<th>대상자</th>\
+										<th>Target</th>\
 										<td> <div id="'+names+'"></div></td>\
 									</tr>';
 
@@ -243,7 +243,7 @@
 		    	$("#deadLine").datepicker({
 				  dateFormat: "yy-mm-dd", 	 // 텍스트 필드에 입력되는 날짜 형식.
 				  showMonthAfterYear: true , // 월, 년순의 셀렉트 박스를 년,월 순으로 바꿔준다. 
-				  dayNamesMin: ['월', '화', '수', '목', '금', '토', '일'], // 요일의 한글 형식.
+				  dayNamesMin: ['일','월', '화', '수', '목', '금', '토'], // 요일의 한글 형식.
 				  monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
 				  monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월']
 				 });

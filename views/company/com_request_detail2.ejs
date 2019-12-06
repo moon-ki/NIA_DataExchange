@@ -28,8 +28,8 @@
 	    <header>
 	        <div class="user-area">
 	        	<div class="container">
-	        		<h3 class="user-info"><i class="fa fa-user-circle"></i><span id="userNm"><%=userNm%></span>님 반갑습니다</h3>
-	        		<a class="btn btn-white outline btn-25" href="/user/logout">로그아웃</a>
+	        		<h3 class="user-info"><i class="fa fa-user-circle"></i>Welcome <span id="userNm"><%=userNm%></span></h3>
+	        		<a class="btn btn-white outline btn-25" href="/user/logout">Logout</a>
 	        	</div>
 	        	
 	        </div>
@@ -38,8 +38,8 @@
 	        		<h1><img src="/images/common/logo.png" alt="KODA 메디칼 데이터 거래소 및 분석 시스템"></h1>
 	        		<nav id="mainGnb">
 	        			<ul>
-	                        <li><a href="/company/searchPhr"><i class="fab fa-wpforms"></i>의료 데이터 신청</a></li>
-	                        <li class="active"><a href="/company/requestData"><i class="fab fa-stack-overflow"></i>의료 데이터 신청현황</a></li>
+	                        <li><a href="/company/searchPhr"><i class="fab fa-wpforms"></i>Medical Data Application</a></li>
+	                        <li class="active"><a href="/company/requestData"><i class="fab fa-stack-overflow"></i>Medical data application status</a></li>
 	                    </ul>
 	        		</nav>
         		</div>
@@ -48,12 +48,12 @@
 	
 	    <div class="container">
 	    	<h2 class="sub-title">
-				<span>의료 데이터 신청 현황 (기업) 상세</span>
+				<span>Current status of medical data applications (corporate) Details</span>
 			</h2>
 			
-			<h3 class="small-title">의료데이터 신청 현황</h3>
+			<h3 class="small-title">Current status of medical data applications</h3>
 			<table class="form-table">
-				<caption>의료데이터 신청 현황</caption>
+				<caption>Current status of medical data applications</caption>
 				<colgroup>
 					<col style="width:12%;" />
 					<col style="width:38%;" />
@@ -62,30 +62,30 @@
 				</colgroup>
 				<tbody>
 					<tr>
-						<th>신청용도</th>
+						<th>Usage</th>
 						<td><%=requestdetail.purpose%></td>
-						<th>상태</th>
+						<th>Status</th>
 						<td>
 							<!--
 							<span class="color_blue bold">수신중</span>
 							<span class="color_dgreen bold">완료</span>
 							-->
 						<% if (requestdetail.requestYn=='N' || requestdetail.requestYn=='R' ){ %>
-							<span class="color_red bold">요청대기</span>
+							<span class="color_red bold">Apply</span>
 						<%}else if(requestdetail.requestYn=='Y'){%>
-							<span class="color_dgreen bold">완료</span>
+							<span class="color_dgreen bold">Completion</span>
 						<%}else if(requestdetail.requestYn=='P'){%>	
-							<span class="color_blue bold">수신중</span>
+							<span class="color_blue bold">Ongoing</span>
 						<%}else if(requestdetail.requestYn=='F'){%>	
-							<span class="color_red bold">미완료</span>								
-							<button class="btn btn-purple btn-25 lm20 w50" onclick='updateDeadline(<%=requestdetail.seq %>)'>수정</button>
+							<span class="color_red bold">Unfinished</span>								
+							<button class="btn btn-purple btn-25 lm20 w50" onclick='updateDeadline(<%=requestdetail.seq %>)'>Edit</button>
 						<%}%>
 						</td>
 					</tr>
 					<tr>
-						<th>요청일자</th>
+						<th>Request date</th>
 						<td><%=requestdetail.createTime%></td>
-						<th>마감일자</th>
+						<th>Closing date</th>
 						<td>
 							<!-- disabled 추가 시 input 효과 사라짐 -->
 							<div class="input-group">
@@ -97,9 +97,9 @@
 						</td>
 					</tr>
 					<tr>
-						<th>대상</th>
+						<th>Applicable target</th>
 						<td><%=requestdetail.requestCnt%></td>
-						<th>신청건수</th>
+						<th>Number of applications</th>
 						<td>
 							<!-- 
 								수신중 :  	progress-bar-info
@@ -123,7 +123,7 @@
 				</tbody>
 			</table>
 			
-			<h3 class="small-title tm60">의료 데이터 신청 조건</h3>
+			<h3 class="small-title tm60">Terms of Application for Medical Data</h3>
 			<table class="form-table">
 				<caption>조회 조건</caption>
 				<colgroup>
@@ -134,31 +134,31 @@
 				</colgroup>
 				<tbody>
 					<tr>
-						<th>번호</th>
+						<th>Num</th>
 						<td><%= requestdetail.num %></td>
-						<th>성별</th>
+						<th>Gender</th>
 						<td><%= requestdetail.sex %></td>
 					</tr>
 					<tr>
-						<th>나이</th>
-						<td><%= requestdetail.ageFrom %>세 이상</td>
-						<th>BMI(체질량지수)</th>
-						<td><%= requestdetail.bmiFrom %> 이상</td>
+						<th>Age</th>
+						<td>more than <%= requestdetail.ageFrom %></td>
+						<th>BMI</th>
+						<td>more than <%= requestdetail.bmiFrom %></td>
 					</tr>
 					<tr>
-						<th>수축기 혈압</th>
-						<td><%= requestdetail.systoleFrom %> 이상</td>
-						<th>이완기 혈압</th>
-						<td><%= requestdetail.relaxFrom %> 이상</td>
+						<th>Systolic blood pressure</th>
+						<td>more than <%= requestdetail.systoleFrom %></td>
+						<th>Relaxed Blood pressure</th>
+						<td>more than <%= requestdetail.relaxFrom %> </td>
 					</tr>
 					<tr>
 						<th>AST</th>
-						<td><%= requestdetail.astFrom %> 이상</td>
+						<td>more than <%= requestdetail.astFrom %></td>
 						<th>ALT</th>
-						<td><%= requestdetail.altFrom %> 이상</td>
+						<td>more than <%= requestdetail.altFrom %></td>
 					</tr>
 					<tr>
-						<th>보상규정</th>
+						<th>Compensation Regulations</th>
 						<td colspan="3" style="height:80px; vertical-align:top;">	
 							<%= requestdetail.rewardDesc %> 
 						</td>
@@ -166,14 +166,14 @@
 				</tbody>
 			</table>
 							
-			<h3 class="small-title tm60">로그 정보</h3>
+			<h3 class="small-title tm60">Log informatino</h3>
 			<table class="list-table" id="dataTable" width="100%" cellspacing="0">
 				<thead>
 				    <tr>
-				        <th width="6%" >번호</th>
-				        <th width="10%">병원</th>
-				        <th width="auto">로그</th>
-				        <th width="13%">생성시간</th>
+				        <th width="6%" >Num</th>
+				        <th width="10%">Hospital</th>
+				        <th width="auto">Log Detail</th>
+				        <th width="13%">Created time</th>
 				    </tr>
 				</thead>
                 <tbody>
@@ -191,7 +191,7 @@
 			</table>
 			
 			<div class="tm60 bm60 tac">
-				<a href="/company/requestData" class="btn btn-purple w120">목 록</a>
+				<a href="/company/requestData" class="btn btn-purple w120">List</a>
 			</div>
 		
 		</div>
@@ -208,7 +208,7 @@
 		
 		<script type="text/javascript">
 			function updateDeadline(seq){
-				if(confirm('마감일자를 수정하겠습니까?')){
+				if(confirm('Will you amend the Close date ?')){
 					
 					var client = new XMLHttpRequest();
 						var params = '&seq='+seq+'&deadLine='+$("#deadLine").val();

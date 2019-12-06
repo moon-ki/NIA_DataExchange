@@ -126,7 +126,7 @@ router.post('/searchPhr', function(req,res){
                                 async.waterfall([
                                     function(callback){
                                         // 로그 기록
-                                        logger.info(comSeq[0].seq, {messageDetail:'[SEARCH] PHR 조회 및 내역 저장 완료 (전체 조회건수: '+pCodes.length+', 목표건수: '+requireCnt+')'});
+                                        logger.info(comSeq[0].seq, {messageDetail:'[SEARCH] Finished saving PHR queries and details (Total count: '+pCodes.length+', Target count: '+requireCnt+')'});
                                         callback(null, comSeq[0].seq, pCodes);
                                     },
                                     // user_requests 인서트 파라미터 셋팅
@@ -171,8 +171,8 @@ router.get('/requestData', paginate.middleware(10, 100), function(req,res){
                 truncate( ( ifnull(req.response_cnt,0.00001) / req.require_cnt) * 100, 0 ) ratio,\
                 req.request_dt,\
                 \
-                case when req.param_sex = "1" then "남자" \
-                        when req.param_sex = "2" then "여자" \
+                case when req.param_sex = "1" then "Male" \
+                        when req.param_sex = "2" then "Female" \
                         else "-"  end as param_sex,\
                 req.param_sex as sex, \
                 \
@@ -287,7 +287,7 @@ router.post('/requestPhr', async(req,res)=>{
         function(callback){
             // 최초 요청 시
             if(requestYn=='N'){
-                logger.info(com_seq, {messageDetail: '[START] PHR 요청 시작'});
+                logger.info(com_seq, {messageDetail: '[START] Start PHR Request'});
                 // 병원 별, API요청할 사용자 select!
                 var sql_SELECT = 'select a.p_code\
                                     from user_phr_sample a \
@@ -296,7 +296,7 @@ router.post('/requestPhr', async(req,res)=>{
 
             // 재 요청 시
             }else if(requestYn=='R'){
-                logger.info(com_seq, {messageDetail: '[RESTART] PHR 재 요청 시작'});
+                logger.info(com_seq, {messageDetail: '[RESTART] Restart PHR Request'});
                 // 병원 별, API요청할 사용자 select!
                 var sql_SELECT = 'select p_code\
                                     from err_comseq_pcode \
@@ -523,7 +523,7 @@ function PhrProcess(pCodes, com_seq, hospital, apiUrl){
         ,ldl_col,blood_color ,feeprotain,kreanin,ast,alt,gamatp,smoke_yn,drink_yn,com_seq) values ?';
 
     var currentCnt = 0;
-    logger.info(com_seq, {messageDetail: '[API Called] PHR 요청 API Call', from:hospital});
+    logger.info(com_seq, {messageDetail: '[API Called] Request API Call of PHR Application ', from:hospital});
     asyncEachSeries(pCodes, function(pCode, next){
         setTimeout(function(){
             async.waterfall([
@@ -638,7 +638,7 @@ function PhrProcess(pCodes, com_seq, hospital, apiUrl){
                             next();
                         }else{
                             conn.query('update com_requests set '+hospital+'_yn = "Y" where seq = ?',com_seq, function(){
-                                logger.info(com_seq, {messageDetail: '[Data Received] '+currentCnt+'건 수신을 완료했습니다.', from:hospital});
+                                logger.info(com_seq, {messageDetail: '[Data Received] Received '+currentCnt+' of them', from:hospital});
                             });
                         }
                 });}
