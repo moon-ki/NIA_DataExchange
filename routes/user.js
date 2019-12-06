@@ -77,7 +77,8 @@ router.get('/acceptRequest', paginate.middleware(10, 100), function(req,res){
                     res.render('user/acceptRequest.ejs',{
                         requestdetail : result,
                         pages : pages,
-                        pageCount : pageCount
+                        pageCount : pageCount,
+                        userNm: req.session.uNm
                     });
                 }
             ]);
@@ -108,12 +109,14 @@ router.post('/loginReg',function(req,res){
             else if(radio=='person'){   //개인회원의 경우
                 if(pw===result[0].p_phone){
                     req.session.uid = result[0].p_code;
+                    req.session.uNm = result[0].p_name;
                     res.send('<script id="sc1" type="test/javascript">alert("로그인 성공!"); location.href="/user/acceptRequest"; </script>');
 
                 }else res.send('<script id="sc1" type="test/javascript">alert("아이디와 비밀번호가 일치하지 않습니다."); location.href="/user/login"; </script>');
             }else if(radio=='company'){ //기업회원의 경우
                 if(pw===result[0].com_pw){
                     req.session.comEmail = result[0].com_email;
+                    req.session.userNm = result[0].user_nm;
                     app.locals.isLogin = true;
                     // res.send('<script>alert("로그인 성공!"); location.href="/company/requestData"; </script>');
                     res.send('<script id="sc1" type="text/javascript"> \

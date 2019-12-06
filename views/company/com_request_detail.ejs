@@ -26,7 +26,7 @@
 	    <header>
 	        <div class="user-area">
 	        	<div class="container">
-	        		<h3 class="user-info"><i class="fa fa-user-circle"></i><span id="userNm">홍길동</span>님 반갑습니다</h3>
+	        		<h3 class="user-info"><i class="fa fa-user-circle"></i><span id="userNm"><%=userNm%></span>님 반갑습니다</h3>
 	        		<a class="btn btn-white outline btn-25" href="/user/logout">로그아웃</a>
 	        	</div>
 	        	
@@ -68,7 +68,7 @@
                 <tbody>
                     <% requestdetail.forEach(function(requestdetail){ %>
                     <tr>
-                        <td><%=requestdetail.num %></td>
+                        <td ><%=requestdetail.num %></td>
                         <td><%=requestdetail.request_purpose%></td>
                         <td><%=requestdetail.request_cnt%></td>
                         <!-- <td><%=requestdetail.r_cnt%></td> -->
@@ -91,7 +91,7 @@
 							<!-- <span class="color_dgreen">1,000</span> -->
 							<!-- <span class="color_red">1,000</span> -->
                         </td>
-                        <td><%=requestdetail.create_time%></td>
+                        <td><%=requestdetail.create_dt%>&nbsp;&nbsp;<%=requestdetail.create_time%></td>
                         <td><%=requestdetail.deadline%></td>
                         <!-- <td>
                             <a onclick="window.open('popSearchParams/<%=requestdetail.num%>/<%=requestdetail.param_sex%>/<%=requestdetail.param_ageFrom%>/<%=requestdetail.param_bmiFrom%>/<%=requestdetail.param_systoleFrom%>/<%=requestdetail.param_relaxFrom%>/<%=requestdetail.param_astFrom%>/<%=requestdetail.param_altFrom%>/<%=requestdetail.reward_desc %>',

@@ -28,7 +28,7 @@
 	    <header>
 	        <div class="user-area">
 	        	<div class="container">
-	        		<h3 class="user-info"><i class="fa fa-user-circle"></i><span id="userNm">홍길동</span>님 반갑습니다</h3>
+	        		<h3 class="user-info"><i class="fa fa-user-circle"></i><span id="userNm"><%=userNm%></span>님 반갑습니다</h3>
 	        		<a class="btn btn-white outline btn-25" href="/user/logout">로그아웃</a>
 	        	</div>
 	        	
@@ -48,7 +48,7 @@
 	    
 	    <div class="container">
 	    	<h2 class="sub-title">
-				<span>연구정보 조회 신청</span>
+				<span>의료데이터 조회 신청</span>
 			</h2>
 			<!-- 다이얼로그 버튼 -->
 			<div class="bm10 tar">
@@ -76,7 +76,6 @@
 				
 				
 				<table class="form-table">
-					<caption>연구 신청 현황</caption>
 					<colgroup>
 						<col style="width:12%;" />
 						<col style="width:38%;" />
@@ -113,13 +112,13 @@
 								 <div class="form-radio">
 						            <div class="radio radio-outline radio-inline radio-purple">
 						                <label>
-						                	<input type="radio" name="sex" value="1" checked="checked">
+						                	<input type="radio" name="sex" id="sex" value="1" checked="checked">
 						                    <i class="helper"></i>남자
 						                </label>
 						            </div>
 						            <div class="radio radio-outline radio-inline radio-purple">
 						                <label>
-						                    <input type="radio" name="sex" value="2">
+						                    <input type="radio" name="sex" id="sex" value="2">
 						                    <i class="helper"></i>여자
 						                </label>
 						            </div>
@@ -143,7 +142,8 @@
 				</div>
 			</form>
 		</div>
-	    
+
+		<div id="javaex"></div>
 		
 		<!-- jQuery -->
 		<script src="/lib/jquery-3.3.1/jquery-3.3.1.js"></script>
@@ -155,46 +155,90 @@
 		
 		<script type="text/javascript">
 
-			// ******************************동적 조회 조건 추가!!
+			// ******************************동적으로 조회 조건 추가!!
 			function genSearchData(){
 				var params = document.getElementsByName("searchParams");
-				var htmlText;
+				var htmlText='';
 				var names;
+				var ids;
 				for(var i=0;params.length;i++){
-					if(params[i].checked){
-						if(params[i].value=='p_age') names='나이'
-						else if(params[i].value=='p_bmi') names = 'BMI'
-						else if(params[i].value=='systole_bp') names = '수축기 혈압'
-						else if(params[i].value=='relax_bp') names = '이완기 혈압'
-						else if(params[i].value=='ast') names = 'AST'
-						else if(params[i].value=='alt') names = 'ALT'
-						
+					if(params[i].checked==true){
 
-						htmlText ='	<tr>\
-										<th>'+names+'</th>\
-										<td> <select >\
+						if(params[i].value=='p_age') {names='ageFrom'; values='나이';}
+						else if(params[i].value=='p_bmi') {names = 'bmiFrom'; values='BMI';}
+						else if(params[i].value=='systole_bp') {names = 'systoleFrom';values='수축기 혈압';}
+						else if(params[i].value=='relax_bp') {names = 'relaxFrom';values='이완기 혈압';}
+						else if(params[i].value=='ast') {names = 'astFrom';values='AST';}
+						else if(params[i].value=='alt') {names = 'altFrom';values='ALT';}
+
+						htmlText ='<tr>\
+										<th>'+values+'</th>\
+										<td> <select class="form-control inline-block w100">\
 												<option value="">선택</option>\
 												<option value=">"> > </option>\
 												<option value="<"> < </option>\
 												<option value="="> = </option>\
 												<option value="<="> <= </option>\
 												<option value=">="> >= </option>\
+												<option value=">="> <> </option>\
+												<option value=">="> between </option>\
 											</select>\
-											<input type="text" name="'+params[i].value+'" class="form-control inline-block w100"></td>\
+											<input type="text" name="'+names+'" id = "'+params[i].value+'" class="form-control inline-block w200" onfocusout="cntFunc(\''+names+'\')"</td>\
 										<th>대상자</th>\
-										<td></td>\
+										<td> <div id="'+names+'"></div></td>\
 									</tr>';
 
 						$('tbody').append(htmlText);
 					}
-					
 					$( "#searchDialog" ).dialog( "close" );
 				}
-				// document.getElementById('paramsList').innerHTML = htmlText;
 				
+				// document.getElementById('paramsList').innerHTML = htmlText;
 			}
 
+			function cntFunc(names){
+				// var array = new Array();
+				var queryString="";
+				try{
+					for(var i=0;document.getElementsByClassName('form-control inline-block w200').length;i++){
 
+
+						// 파라미터 셋팅
+						queryString += document.getElementsByClassName('form-control inline-block w200')[i].id+'='+document.getElementsByClassName('form-control inline-block w200')[i].value;
+						if(i<document.getElementsByClassName('form-control inline-block w200').length-1){
+							queryString+="&";
+						}
+						// // 마지막 조회조건 판별
+						// if(!document.getElementsByName("serachParam2")[i].value){
+						// 	var lastParam = document.getElementsByName("serachParam2")[i].id.replace('p_bmi','bmiFrom').replace('p_age', 'ageFrom').replace('systole_bp','systoleFrom').replace('relax_bp','relaxFrom').replace('ast','astFrom').replace('alt','altFrom');
+						// }
+					}
+				}catch{
+					var sex = $('#searchPhr input[name=sex]:checked').val();
+					queryString+='&sex='+sex;
+					console.log(queryString);
+
+					// JSON.stringify(array);
+					var client = new XMLHttpRequest();
+
+					client.onreadystatechange = function(){
+							if(client.readyState===client.DONE){
+								if(this.status===200 || this.status==201){
+									// alert('해당 조건으로 '+client.responseText+' 건 조회됩니다.');
+									eval(names).innerHTML=client.responseText.replace('"','').replace('"','')+' 건';
+								}else{
+									alert('error!!');
+								}
+							}
+						};
+					client.open('POST', '/company/cntCheck',true);
+					client.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+					client.send(queryString);
+		        }	
+			}
+				
+
+			// 켈린더 셋업
 		    $(function(){
 		    	$("#deadLine").datepicker({
 				  dateFormat: "yy-mm-dd", 	 // 텍스트 필드에 입력되는 날짜 형식.
@@ -205,21 +249,11 @@
 				 });
 		    });
 		
+			// 입력 파라미터 Validation
 		    (function(){
 		        $(document).ready(function() {
 
-		            $('#searchPhr').submit(function(){
-
-						// $( "#searchDialog" ).dialog({
-						// 	autoOpen: false,
-						// 	resizable: false,
-						// 	height: "auto",
-						// 	width: 800,
-						// 	modal: true
-						// });
-						// $( "#searchDialogBtn" ).on( "click", function() {
-						// 	$( "#searchDialog" ).dialog( "open" );
-						// });
+		            $('#searchPhr input[type=submit]').on('click',function(){
 
 						var $requestPurpose = $('#searchPhr select[name=requestPurpose]');
 						var $deadLine = $('#searchPhr input[name=deadLine]');
@@ -247,15 +281,16 @@
 						//         return false;
 						//     }
 						// }
-			
+
 						if(confirm('해당 조건으로 데이터를 신청합니까?')) return true;
-						else return false;
-		
+						else {
+							return false
+						};
 		            });
 		        });
 		    })();
 		    
-		    // 조회 조건 추가
+		    // 다이얼로그 설정
 		    $( function() {
 	            $( "#searchDialog" ).dialog({
 	                autoOpen: false,
@@ -272,6 +307,13 @@
 		            $( "#searchDialog" ).dialog( "close" );
 				});
 
+				// $('#searchPhr input[name=sex]').on('focusout',function(){
+				// 	alert('ddfdfdf');
+
+				// });
+				// $('#searchPhr input[name=p_bmi]').on('focusout',function(){
+				// 	alert('ddfdfdf');
+				// });
 			});
 			
 		</script>

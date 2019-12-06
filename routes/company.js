@@ -49,27 +49,28 @@ router.get('/searchPhr',function(req,res){
                     and length(trim(column_comment)) > 0", [],function(err, colInfos){
         if(err) {console.log(colInfos); res.end();}
         else{
-            res.render('./company/com_searchPhr.ejs',{colInfos:colInfos});
+            res.render('./company/com_searchPhr.ejs',{colInfos:colInfos, userNm:req.session.userNm});
         }
         
     });
 });
 
+// 신청 프로세스
 router.post('/searchPhr', function(req,res){
     var Tmp_sex = req.body.sex;                     //성별
-    var Tmp_ageFrom = req.body.p_age;               //나이 from
+    var Tmp_ageFrom = req.body.ageFrom;             //나이 from
     var Tmp_ageTo = req.body.ageTo;                 //나이 to
     // var Tmp_smokingYn = req.body.smokingYn;
     // var Tmp_drinkingYn = req.body.drinkingYn;
-    var Tmp_bmiFrom = req.body.p_bmi;               //bmi from
+    var Tmp_bmiFrom = req.body.bmiFrom;             //bmi from
     var Tmp_bmiTo = req.body.bmiTo;                 //bmi to
-    var Tmp_systoleFrom = req.body.systole_bp;      //수축기혈압 from
+    var Tmp_systoleFrom = req.body.systoleFrom;     //수축기혈압 from
     var Tmp_systoleTo = req.body.systoleTo;         //수축기혈압 to
-    var Tmp_relaxFrom = req.body.relax_bp ;         //이완기혈압 from
+    var Tmp_relaxFrom = req.body.relaxFrom  ;       //이완기혈압 from
     var Tmp_relaxTo = req.body.relaxTo;             //이완기혈압 to
-    var Tmp_astFrom = req.body.ast;                 //ast from
+    var Tmp_astFrom = req.body.astFrom;             //ast from
     var Tmp_astTo = req.body.astTo;                 //ast to
-    var Tmp_altFrom = req.body.alt;                 //alt from
+    var Tmp_altFrom = req.body.altFrom;             //alt from
     var Tmp_altTo = req.body.altTo;                 //alt to
     var requestPurpose = req.body.requestPurpose;   //활용목적
     var deadLine = req.body.deadLine;               //마감기간
@@ -205,8 +206,8 @@ router.get('/requestData', paginate.middleware(10, 100), function(req,res){
                 if(req.param_altTo="altTo","-",req.param_altTo) as param_altTo, \
                 req.param_altTo as altTo,\
                 \
-                case when date_format(req.request_dt,"%y%m%d")=date_format(now(),"%y%m%d") then date_format(req.request_dt, "%H:%i") \
-                        else date_format(req.request_dt,"%y.%m.%d") end as create_time,\
+                date_format(req.request_dt,"%y.%m.%d") create_dt,\
+                date_format(req.request_dt, "%H:%i")   create_time,\
                 req.dynamic_sql,\
                 req.deadline, \
                 case when trim(req.reward_desc) is null or trim(req.reward_desc) ="" then "-" \
@@ -259,7 +260,8 @@ router.get('/requestData', paginate.middleware(10, 100), function(req,res){
                     res.render('./company/com_request_detail',{
                         requestdetail : requestdetail,
                         pages : pages,
-                        pageCount : pageCount
+                        pageCount : pageCount,
+                        userNm : req.session.userNm
                     });
                 }
             ]);
@@ -380,7 +382,8 @@ router.get('/requestDataDetail/:seq/:num/:sex/:ageFrom/:bmiFrom/:systoleFrom/:re
 
                 res.render('./company/com_request_detail2',{
                     requestdetail:searchParams,
-                    logDetails:logDetails
+                    logDetails:logDetails,
+                    userNm:req.session.userNm
                 });
                 
             }
@@ -400,6 +403,43 @@ router.post('/updateDeadline',function(req,res){
                 alert("마감일자를 정상적으로 업데이트 하였습니다. 다시 요청해주세요."); \
                 location.href="/company/requestData";\
               </script>');
+});
+
+// 신청 건수 확인 프로세스
+router.post('/cntCheck',function(req,res){
+    var Tmp_sex = req.body.sex;                     //성별
+    var Tmp_ageFrom = req.body.p_age;             //나이 from
+    var Tmp_ageTo = req.body.ageTo;                 //나이 to
+    // var Tmp_smokingYn = req.body.smokingYn;
+    // var Tmp_drinkingYn = req.body.drinkingYn;
+    var Tmp_bmiFrom = req.body.p_bmi;             //bmi from
+    var Tmp_bmiTo = req.body.bmiTo;                 //bmi to
+    var Tmp_systoleFrom = req.body.systole_bp;     //수축기혈압 from
+    var Tmp_systoleTo = req.body.systoleTo;         //수축기혈압 to
+    var Tmp_relaxFrom = req.body.relax_bp  ;       //이완기혈압 from
+    var Tmp_relaxTo = req.body.relaxTo;             //이완기혈압 to
+    var Tmp_astFrom = req.body.ast;             //ast from
+    var Tmp_astTo = req.body.astTo;                 //ast to
+    var Tmp_altFrom = req.body.alt;             //alt from
+    var Tmp_altTo = req.body.altTo;                 //alt to
+
+    // 다이나믹 쿼리 생성을 위한 조회 파라미터 셋팅
+    var params_of_filter=[Tmp_sex, Tmp_ageFrom, Tmp_ageTo, Tmp_bmiFrom, Tmp_bmiTo,
+                          Tmp_systoleFrom, Tmp_systoleTo, Tmp_relaxFrom, Tmp_relaxTo, Tmp_astFrom,
+                          Tmp_astTo, Tmp_altFrom, Tmp_altTo];
+    console.log(Tmp_bmiFrom);
+    console.log(params_of_filter);
+
+    var sqlAndParams = genDynamicQuery(params_of_filter);
+
+    var sql = conn.query('select count(*) cnt \
+                            from user_phr_sample \
+                        where 1=1 and join_yn = "Y" and alert_yn = "Y" '+sqlAndParams[0], sqlAndParams[1], 
+        function(err,result){
+            if(err) console.log(err);
+            else res.send('"'+result[0].cnt+'"');
+    });
+    console.log(sql.sql);
 });
 
 //API Call에 필요한 p_codes 조회
