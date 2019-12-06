@@ -560,7 +560,7 @@ function PhrProcess(pCodes, com_seq, hospital, apiUrl){
                 //         else callback(null, responseCnt);
                 //     });
                 // },
-                function(phr, responseCnt, callback){
+                function(phrArrayTotal, responseCnt, callback){
                     console.log(apiUrl);
                     async.each(phrArrayTotal, function(phr){
                         console.log(phr);
