@@ -566,7 +566,7 @@ function PhrProcess(pCodes, com_seq, hospital, apiUrl){
                         console.log(phr);
                         conn.query('select p_bmi, p_age\
                                       from user_phr_sample where p_code = ? ', phr[1], function (err,result){
-                            console.log(result[0].p_bmi, result[0].p_age);
+                            console.log(result);
                             request({
                                 uri: apiUrl,
                                 method:'POST',
