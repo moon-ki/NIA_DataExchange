@@ -562,11 +562,10 @@ function PhrProcess(pCodes, com_seq, hospital, apiUrl){
                 // },
                 function(phr, responseCnt, callback){
                     console.log(apiUrl);
-                    // async.each(phrArrayTotal, function(phr){
+                    async.each(phrArrayTotal, function(phr){
                         console.log(phr);
                         conn.query('select p_bmi, p_age\
                                       from user_phr_sample where p_code = ? ', phr[1], function (err,result){
-                            console.log(result);
                             request({
                                 uri: apiUrl,
                                 method:'POST',
@@ -620,7 +619,7 @@ function PhrProcess(pCodes, com_seq, hospital, apiUrl){
 
                         });
                         callback(null, responseCnt);
-                    // });
+                    });
                 },
 // 3. com_requests.response_cnt 업데이트 *****************************************************************************************
                 function(responseCnt, callback){
