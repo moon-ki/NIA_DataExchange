@@ -561,9 +561,7 @@ function PhrProcess(pCodes, com_seq, hospital, apiUrl){
                 //     });
                 // },
                 function(phrArrayTotal, responseCnt, callback){
-                    console.log(apiUrl);
                     async.each(phrArrayTotal, function(phr){
-                        console.log(phr);
                         conn.query('select p_bmi, p_age\
                                       from user_phr_sample where p_code = ? ', phr[1], function (err,result){
                             request({
@@ -573,7 +571,7 @@ function PhrProcess(pCodes, com_seq, hospital, apiUrl){
                                 json:{
                                     "s_year_of_this_data":'2017',
                                     "s_individual_person_number": phr[1],
-                                    "s_sex_code":phr[2],
+                                    "s_sex_code":phr[2].replace('female','2').replace('male','1'),
                                     "s_age_code":'nan',
                                     "s_location_code":'nan',
                                     "s_height":phr[7],
@@ -611,7 +609,7 @@ function PhrProcess(pCodes, com_seq, hospital, apiUrl){
                                     "s_name":phr[5],
                                     "s_phone":phr[4],
                                     "s_location_name":phr[3],
-                                    "s_data_generation_hospital":phr[0],
+                                    "s_data_generation_hospital":phr[0].replace('분당서울대학교병원','분당서울대병원').replace('충남대학교병원','충남대병원'),
                                     "s_registering_to_data_deal_market_site":'nan',
                                     "s_agree_to_alarm":'nan'
                                 }
