@@ -10,7 +10,7 @@ var logger = server.logger;
 router.get('/8088', function(req, res){
     console.log('api call!');
     var response = request({
-        uri: 'http://116.89.189.32:8088/apiapp/',
+        uri: 'http://116.89.189.32:8087/apiapp/',
         method:'POST',
         enctype: 'multipart/form-data',
         json:{

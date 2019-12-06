@@ -315,7 +315,7 @@ router.post('/requestPhr', async(req,res)=>{
                         // var seperPcode=[];
                         // seperPcode = pCodes.division(20);
 //**********************************************************************************************************PHR 처리 전체 프로세스
-                        PhrProcess(pCodes, com_seq, hospital);
+                        PhrProcess(pCodes, com_seq, hospital, req.session.apiUrl);
 //*******************************************************************************************************************************
                     }//selPcodes if(successYn){
                 });//selPcodes end
@@ -514,7 +514,7 @@ function callAPI (hospital, p_codes, com_seq, callback){
     });
 }
 
-function PhrProcess(pCodes, com_seq, hospital){
+function PhrProcess(pCodes, com_seq, hospital, apiUrl){
 
     // API에서 받은 데이터 인서트 쿼리
     var sql_INSERT_PHR='insert into phr_record_remote(\
@@ -554,10 +554,72 @@ function PhrProcess(pCodes, com_seq, hospital){
                     });
                 },
 // 2. phr_record_remote 테이블 인서트 ********************************************************************************************
+                // function(phrArrayTotal, responseCnt, callback){
+                //     conn.query(sql_INSERT_PHR, [phrArrayTotal], function(err,result){
+                //         if (err) console.log(err);
+                //         else callback(null, responseCnt);
+                //     });
+                // },
                 function(phrArrayTotal, responseCnt, callback){
-                    conn.query(sql_INSERT_PHR, [phrArrayTotal], function(err,result){
-                        if (err) console.log(err);
-                        else callback(null, responseCnt);
+                    console.log(apiUrl);
+                    async.each(phrArrayTotal, function(phr){
+                        console.log(phr);
+                        conn.query('select p_bmi, p_age\
+                                      from user_phr_sample where p_code = ? ', phr[1], function (err,result){
+                            console.log(result[0].p_bmi, result[0].p_age);
+                            request({
+                                uri: apiUrl,
+                                method:'POST',
+                                enctype: 'multipart/form-data',
+                                json:{
+                                    "s_year_of_this_data":'2017',
+                                    "s_individual_person_number": phr[1],
+                                    "s_sex_code":phr[2],
+                                    "s_age_code":'nan',
+                                    "s_location_code":'nan',
+                                    "s_height":phr[7],
+                                    "s_weight":phr[8],
+                                    "s_waist_circumference":phr[9],
+                                    "s_vision_left":phr[10],
+                                    "s_vision_right":phr[11],
+                                    "s_hearing_left":phr[12],
+                                    "s_hearing_right":phr[13],
+                                    "s_systolic_blood_pressure":phr[14],
+                                    "s_diastolic_blood_pressure":phr[15],
+                                    "s_fasting_glucose":phr[16],
+                                    "s_total_cholesterol":phr[17],
+                                    "s_triglyceride":phr[18],
+                                    "s_hdl_cholesterol":phr[19],
+                                    "s_ldl_cholesterol":phr[20],
+                                    "s_hemoglobin":phr[21],
+                                    "s_urine_protein":phr[22],
+                                    "s_creatinine":phr[23],
+                                    "s_ast":phr[24],
+                                    "s_alt":phr[25],
+                                    "s_gamma_gtp":phr[26],
+                                    "s_smoke_status":phr[27],
+                                    "s_drinking_status":phr[28],
+                                    "s_got_oral_examination":'nan',
+                                    "s_has_cavity":'nan',
+                                    "s_has_lost_tooth":'nan',
+                                    "s_has_cervical_abrasion":'nan',
+                                    "s_abnormal_wisdom_tooth":'nan',
+                                    "s_tartar_status":'nan',
+                                    "s_open_date_of_data":'nan',
+                                    "s_age":result[0].p_age,
+                                    "s_birthday":phr[6] ,
+                                    "s_bmi":result[0].p_bmi,
+                                    "s_name":phr[5],
+                                    "s_phone":phr[4],
+                                    "s_location_name":phr[3],
+                                    "s_data_generation_hospital":phr[0],
+                                    "s_registering_to_data_deal_market_site":'nan',
+                                    "s_agree_to_alarm":'nan'
+                                }
+                            });
+
+                        });
+                        
                     });
                 },
 // 3. com_requests.response_cnt 업데이트 *****************************************************************************************
