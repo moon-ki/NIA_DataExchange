@@ -69,7 +69,7 @@
 					</div>
 				    <div class="tm10 tac">
 						<button id="addItemBtn" class="btn btn-purple w120" onclick="genSearchData()">Add Condition</button>
-						<button id="cancelBtn" class="btn btn-white w100">Cancle</button>
+						<button id="cancelBtn" class="btn btn-white w100">Cancel</button>
 					</div>
 				</div>
 				<!-- end: jQuery Dialog -->
@@ -225,7 +225,7 @@
 							if(client.readyState===client.DONE){
 								if(this.status===200 || this.status==201){
 									// alert('해당 조건으로 '+client.responseText+' 건 조회됩니다.');
-									eval(names).innerHTML=client.responseText.replace('"','').replace('"','')+' 건';
+									eval(names).innerHTML=client.responseText.replace('"','').replace('"','')+' cases';
 								}else{
 									alert('error!!');
 								}
