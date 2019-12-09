@@ -339,7 +339,7 @@ router.post('/requestPhr', async(req,res)=>{
 }); // router.post('/requestPhr' END
 
 //기업 상세 페이지 출력
-router.get('/requestDataDetail/:seq/:num/:sex/:ageFrom/:bmiFrom/:systoleFrom/:relaxFrom/:astFrom/:altFrom/:rewardDesc/:purpose/:requestYn/:requestDt/:deadLine/:requestCnt/:requireCnt/:responseCnt/:ratio/:createTime', function(req,res){
+router.get('/requestDataDetail/:seq/:num/:sex/:ageFrom/:bmiFrom/:systoleFrom/:relaxFrom/:astFrom/:altFrom/:rewardDesc/:purpose/:requestYn/:requestTime/:deadLine/:requestCnt/:requireCnt/:responseCnt/:ratio/:requestDt', function(req,res){
     var searchParams = {
         seq:req.params.seq,
         num:req.params.num,
@@ -353,6 +353,7 @@ router.get('/requestDataDetail/:seq/:num/:sex/:ageFrom/:bmiFrom/:systoleFrom/:re
         rewardDesc: req.params.rewardDesc.replace(/(<br>|<br\/>|<br \/>)/g, '\r\n'),
         purpose:req.params.purpose,
         requestYn:req.params.requestYn,
+        requestTime: req.params.requestTime,
         requestDt: req.params.requestDt,
         deadLine:req.params.deadLine,
         requestCnt:req.params.requestCnt,
@@ -383,7 +384,9 @@ router.get('/requestDataDetail/:seq/:num/:sex/:ageFrom/:bmiFrom/:systoleFrom/:re
                 res.render('./company/com_request_detail2',{
                     requestdetail:searchParams,
                     logDetails:logDetails,
-                    userNm:req.session.userNm
+                    userNm:req.session.userNm,
+                    comNm:req.session.comNm
+
                 });
                 
             }

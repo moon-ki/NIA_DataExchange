@@ -118,6 +118,7 @@ router.post('/loginReg',function(req,res){
                     req.session.comEmail = result[0].com_email;
                     req.session.userNm = result[0].user_nm;
                     req.session.apiUrl = result[0].com_api_url;
+                    req.session.comNm = result[0].com_nm; 
                     app.locals.isLogin = true;
                     // res.send('<script>alert("로그인 성공!"); location.href="/company/requestData"; </script>');
                     res.send('<script id="sc1" type="text/javascript"> \

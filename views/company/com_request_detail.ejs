@@ -37,7 +37,7 @@
 	        		<nav id="mainGnb">
 	        			<ul>
 	                        <li><a href="/company/searchPhr"><i class="fab fa-wpforms"></i>Medical Data Application</a></li>
-	                        <li class="active"><a href="/company/requestData"><i class="fab fa-stack-overflow"></i>Medical data application status</a></li>
+	                        <li class="active"><a href="/company/requestData"><i class="fab fa-stack-overflow"></i>Medical Data Application Status</a></li>
 	                    </ul>
 	        		</nav>
         		</div>
@@ -46,19 +46,19 @@
 	
 	    <div class="container">
 	    	<h2 class="sub-title">
-				<span>Current status of medical data applications (corporate)</span>
+				<span>Status of medical data applications</span>
 			</h2>
             <table class="list-table" id="dataTable">
 				<thead>
 				    <tr>
-				        <th width="6%" >Num</th>
+				        <th width="6%" >Number</th>
 				        <!-- <th width="5%">회사명</th> -->
 				        <!-- <th width="5%">담당자 Email</th> -->
-				        <th width="8%">Usage</th>
-				        <th width="8%">Applicable target</th>
-				        <th width="auto">Number of applications and progress</th>
+				        <th width="8%">Type</th>
+				        <th width="8%">Applicable number</th>
+				        <th width="auto">Request number and status</th>
 				        <th width="10%">Request date</th>
-				        <th width="10%">Closing date</th>
+				        <th width="10%">Deadline</th>
 				        <!-- <th width="8%">조회조건</th> -->
 				        <!-- <th width="8%">로그</th> -->
 				        <th width="10%">Status</th>
@@ -102,7 +102,7 @@
                         </td> -->
                         <% if (requestdetail.request_yn=='R' || requestdetail.request_yn=='N'){ %>
                             <td>
-                                <input class="btn btn-purple btn-25 w60" type="button" value="<%= requestdetail.request_yn=='R' ? '재' : ''%>요청" style="font-weight:normal;"
+                                <input class="btn btn-purple btn-25 w60" type="button" value="<%= requestdetail.request_yn=='R' ? '재' : ''%>Apply" style="font-weight:normal;"
                                     onclick="requestPhr(
                                         '<%=requestdetail.dynamic_sql%>'
                                         ,'<%=requestdetail.sex%>'
@@ -126,15 +126,15 @@
                             </td>
                         
                         <%}else if(requestdetail.request_yn=='Y'){%>
-                            <td class="color_dgreen">Completion</td>
+                            <td class="color_dgreen">Complete</td>
                         <%}else if(requestdetail.request_yn=='P'){%>
-                            <td class="color_lblue">Ongoing</td>
+                            <td class="color_lblue">Proceeding</td>
                         <%}else if(requestdetail.request_yn=='F'){%>
-                            <td class="color_red">Unfinished</td>    
+                            <td class="color_red">Incomplete</td>    
                         <%}else{%>
                             <td>-</td>
                         <%}%>
-                        <td><a href="requestDataDetail/<%=requestdetail.seq%>/<%=requestdetail.num%>/<%=requestdetail.param_sex%>/<%=requestdetail.param_ageFrom%>/<%=requestdetail.param_bmiFrom%>/<%=requestdetail.param_systoleFrom%>/<%=requestdetail.param_relaxFrom%>/<%=requestdetail.param_astFrom%>/<%=requestdetail.param_altFrom%>/<%=requestdetail.reward_desc%>/<%=requestdetail.request_purpose%>/<%=requestdetail.request_yn%>/<%=requestdetail.create_time%>/<%=requestdetail.deadline%>/<%=requestdetail.request_cnt%>/<%=requestdetail.require_cnt%>/<%=requestdetail.response_cnt%>/<%=requestdetail.ratio%>/<%=requestdetail.create_time%>" class="btn btn-purple btn-25">View</a></td>
+                        <td><a href="requestDataDetail/<%=requestdetail.seq%>/<%=requestdetail.num%>/<%=requestdetail.param_sex%>/<%=requestdetail.param_ageFrom%>/<%=requestdetail.param_bmiFrom%>/<%=requestdetail.param_systoleFrom%>/<%=requestdetail.param_relaxFrom%>/<%=requestdetail.param_astFrom%>/<%=requestdetail.param_altFrom%>/<%=requestdetail.reward_desc%>/<%=requestdetail.request_purpose%>/<%=requestdetail.request_yn%>/<%=requestdetail.create_time%>/<%=requestdetail.deadline%>/<%=requestdetail.request_cnt%>/<%=requestdetail.require_cnt%>/<%=requestdetail.response_cnt%>/<%=requestdetail.ratio%>/<%=requestdetail.create_dt%>" class="btn btn-purple btn-25">View</a></td>
                     </tr>
                     <%});%>
                 </tbody>

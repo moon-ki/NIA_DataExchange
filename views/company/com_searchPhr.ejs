@@ -48,7 +48,7 @@
 	    
 	    <div class="container">
 	    	<h2 class="sub-title">
-				<span>Medical data inquiry application</span>
+				<span>Medical data application</span>
 			</h2>
 			<!-- 다이얼로그 버튼 -->
 			<div class="bm10 tar">
@@ -79,12 +79,12 @@
 					<colgroup>
 						<col style="width:12%;" />
 						<col style="width:38%;" />
-						<col style="width:12%;" />
+						<col style="width:12%;" /> 
 						<col style="width:38%;" />
 					</colgroup>
 					<tbody>
 						<tr>
-							<th>Usage</th>
+							<th>Type</th>
 							<td>
 								<select name="requestPurpose" class="form-control" autofocus>
 					                <option value="">Select Usage</option>
@@ -93,7 +93,7 @@
 					                <option value="Research">Research</option>
 					            </select>
 							</td>
-							<th>Closing date</th>
+							<th>Deadline</th>
 							<td>
 								<input type="text" id="deadLine" class="form-control" name="deadLine" size="20" placeholder="Select close date"/>
 							</td>
@@ -101,7 +101,7 @@
 						<tr>
 							<th>Number of applications</th>
 							<td><input type="text" id="requireCnt" class="form-control" name="requireCnt" size="30" placeholder="Type Number of application"/></td>
-							<th rowspan="2">Reward<br />information</th> 
+							<th rowspan="2">Rewards</th> 
 							<td rowspan="2">
 								<textarea id="rewardDesc"class="form-control"style="height:80px;" name="rewardDesc" cols="40" placeholder="Enter compensation method based on information"></textarea>
 							</td>
@@ -167,7 +167,7 @@
 						if(params[i].value=='p_age') {names='ageFrom'; values='Age';}
 						else if(params[i].value=='p_bmi') {names = 'bmiFrom'; values='BMI';}
 						else if(params[i].value=='systole_bp') {names = 'systoleFrom';values='Systolic blood pressure';}
-						else if(params[i].value=='relax_bp') {names = 'relaxFrom';values='Relaxation blood pressure';}
+						else if(params[i].value=='relax_bp') {names = 'relaxFrom';values='Diastolic blood pressure';}
 						else if(params[i].value=='ast') {names = 'astFrom';values='AST';}
 						else if(params[i].value=='alt') {names = 'altFrom';values='ALT';}
 

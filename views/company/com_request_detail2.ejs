@@ -48,10 +48,10 @@
 	
 	    <div class="container">
 	    	<h2 class="sub-title">
-				<span>Current status of medical data applications (corporate) Details</span>
+				<span>Detail status of medical data applications (company)</span>
 			</h2>
 			
-			<h3 class="small-title">Current status of medical data applications</h3>
+			<h3 class="small-title"><%=comNm%></h3>
 			<table class="form-table">
 				<caption>Current status of medical data applications</caption>
 				<colgroup>
@@ -62,7 +62,7 @@
 				</colgroup>
 				<tbody>
 					<tr>
-						<th>Usage</th>
+						<th>Type</th>
 						<td><%=requestdetail.purpose%></td>
 						<th>Status</th>
 						<td>
@@ -73,19 +73,19 @@
 						<% if (requestdetail.requestYn=='N' || requestdetail.requestYn=='R' ){ %>
 							<span class="color_red bold">Apply</span>
 						<%}else if(requestdetail.requestYn=='Y'){%>
-							<span class="color_dgreen bold">Completion</span>
+							<span class="color_dgreen bold">Complete</span>
 						<%}else if(requestdetail.requestYn=='P'){%>	
-							<span class="color_blue bold">Ongoing</span>
+							<span class="color_blue bold">Proceeding</span>
 						<%}else if(requestdetail.requestYn=='F'){%>	
-							<span class="color_red bold">Unfinished</span>								
+							<span class="color_red bold">Incomplete</span>								
 							<button class="btn btn-purple btn-25 lm20 w50" onclick='updateDeadline(<%=requestdetail.seq %>)'>Edit</button>
 						<%}%>
 						</td>
 					</tr>
 					<tr>
 						<th>Request date</th>
-						<td><%=requestdetail.createTime%></td>
-						<th>Closing date</th>
+						<td><%=requestdetail.requestDt%> <%=requestdetail.requestTime%></td>
+						<th>Deadline</th>
 						<td>
 							<!-- disabled 추가 시 input 효과 사라짐 -->
 							<div class="input-group">
@@ -97,9 +97,9 @@
 						</td>
 					</tr>
 					<tr>
-						<th>Applicable target</th>
+						<th>Applicable number</th>
 						<td><%=requestdetail.requestCnt%></td>
-						<th>Number of applications</th>
+						<th>Number of request and status</th>
 						<td>
 							<!-- 
 								수신중 :  	progress-bar-info
@@ -123,7 +123,7 @@
 				</tbody>
 			</table>
 			
-			<h3 class="small-title tm60">Terms of Application for Medical Data</h3>
+			<h3 class="small-title tm60">Request informations</h3>
 			<table class="form-table">
 				<caption>조회 조건</caption>
 				<colgroup>
@@ -134,7 +134,7 @@
 				</colgroup>
 				<tbody>
 					<tr>
-						<th>Num</th>
+						<th>Number</th>
 						<td><%= requestdetail.num %></td>
 						<th>Gender</th>
 						<td><%= requestdetail.sex %></td>
@@ -148,7 +148,7 @@
 					<tr>
 						<th>Systolic blood pressure</th>
 						<td>more than <%= requestdetail.systoleFrom %></td>
-						<th>Relaxed Blood pressure</th>
+						<th>Diastolic blood pressure</th>
 						<td>more than <%= requestdetail.relaxFrom %> </td>
 					</tr>
 					<tr>
@@ -158,7 +158,7 @@
 						<td>more than <%= requestdetail.altFrom %></td>
 					</tr>
 					<tr>
-						<th>Compensation Regulations</th>
+						<th>Rewards</th>
 						<td colspan="3" style="height:80px; vertical-align:top;">	
 							<%= requestdetail.rewardDesc %> 
 						</td>
@@ -166,14 +166,14 @@
 				</tbody>
 			</table>
 							
-			<h3 class="small-title tm60">Log informatino</h3>
+			<h3 class="small-title tm60">Log</h3>
 			<table class="list-table" id="dataTable" width="100%" cellspacing="0">
 				<thead>
 				    <tr>
-				        <th width="6%" >Num</th>
+				        <th width="6%" >Number</th>
 				        <th width="10%">Hospital</th>
-				        <th width="auto">Log Detail</th>
-				        <th width="13%">Created time</th>
+				        <th width="auto">Detail informations</th>
+				        <th width="13%">Generated time</th>
 				    </tr>
 				</thead>
                 <tbody>
