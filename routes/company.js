@@ -41,12 +41,13 @@ router.post('/register',function(req,res){
 
 router.get('/searchPhr',function(req,res){
     conn.query("SELECT\
-                        column_name, column_comment\
+                        column_name, rpad(column_comment,99,' ') column_comment\
                     FROM\
                         information_schema.columns\
                     WHERE table_schema = 'NIA_DataExchanger'\
                     and table_name = 'user_phr_sample'\
-                    and length(trim(column_comment)) > 0", [],function(err, colInfos){
+                    and length(trim(column_comment)) > 0\
+                    order by length(column_comment) ", [],function(err, colInfos){
         if(err) {console.log(colInfos); res.end();}
         else{
             res.render('./company/com_searchPhr.ejs',{colInfos:colInfos, userNm:req.session.userNm});
@@ -271,6 +272,7 @@ router.get('/requestData', paginate.middleware(10, 100), function(req,res){
 
 //phr 사용승인 신청 프로세스
 router.post('/requestPhr', async(req,res)=>{
+    logger.info(com_seq, {messageDetail: '[START] Start PHR Request'});
     //조회 파라미터 초기화
     var dynamicSql = req.body.dynamicSql;
     var com_seq = req.body.seq;
@@ -287,7 +289,6 @@ router.post('/requestPhr', async(req,res)=>{
         function(callback){
             // 최초 요청 시
             if(requestYn=='N'){
-                logger.info(com_seq, {messageDetail: '[START] Start PHR Request'});
                 // 병원 별, API요청할 사용자 select!
                 var sql_SELECT = 'select a.p_code\
                                     from user_phr_sample a \
@@ -308,7 +309,6 @@ router.post('/requestPhr', async(req,res)=>{
                     req.body.systoleFrom, req.body.systoleTo, req.body.relaxFrom, req.body.relaxTo, req.body.astFrom,
                     req.body.astTo, req.body.altFrom, req.body.altTo];
     
-                // console.log(hospital, com_seq)
                 // pcodes 조회!
                 selPcodes(sql_SELECT, sql_SELECT_Params, hospital, requestYn, com_seq, function(successYn, pCodes){
                     if(successYn){
@@ -364,11 +364,11 @@ router.get('/requestDataDetail/:seq/:num/:sex/:ageFrom/:bmiFrom/:systoleFrom/:re
     };
 
     conn.query('select message,\
-                       replace(replace(replace(meta,"CHAR", "분당차병원"),"SEOUL", "분당서울대병원"),"CHUNG", "충남대병원")  meta,\
+                       replace(replace(replace(meta,"CHAR", "CHA University Bundang Medical Center"),"SEOUL", "Seoul National University Bundang Hospital"),"CHUNG", "Chungnam National University Hospital")  meta,\
                        date_format(timestamp, "%y.%m.%d %H:%i") create_dt \
                   from sys_logs_default\
                  where message = ? \
-                 order by timestamp desc', [req.params.seq],
+                 order by case when timestamp desc', [req.params.seq],
         function(err, logs){
             if(err) console.log(err);
             else{
@@ -386,9 +386,7 @@ router.get('/requestDataDetail/:seq/:num/:sex/:ageFrom/:bmiFrom/:systoleFrom/:re
                     logDetails:logDetails,
                     userNm:req.session.userNm,
                     comNm:req.session.comNm
-
                 });
-                
             }
         }
     );

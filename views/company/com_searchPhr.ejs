@@ -208,15 +208,11 @@
 						if(i<document.getElementsByClassName('form-control inline-block w200').length-1){
 							queryString+="&";
 						}
-						// // 마지막 조회조건 판별
-						// if(!document.getElementsByName("serachParam2")[i].value){
-						// 	var lastParam = document.getElementsByName("serachParam2")[i].id.replace('p_bmi','bmiFrom').replace('p_age', 'ageFrom').replace('systole_bp','systoleFrom').replace('relax_bp','relaxFrom').replace('ast','astFrom').replace('alt','altFrom');
-						// }
 					}
 				}catch{
 					var sex = $('#searchPhr input[name=sex]:checked').val();
 					queryString+='&sex='+sex;
-					console.log(queryString);
+					// console.log(queryString);
 
 					// JSON.stringify(array);
 					var client = new XMLHttpRequest();
@@ -225,7 +221,7 @@
 							if(client.readyState===client.DONE){
 								if(this.status===200 || this.status==201){
 									// alert('해당 조건으로 '+client.responseText+' 건 조회됩니다.');
-									eval(names).innerHTML=client.responseText.replace('"','').replace('"','')+' cases';
+									eval(names).innerHTML=client.responseText.replace('"','').replace('"','')+' Cases';
 								}else{
 									alert('error!!');
 								}
