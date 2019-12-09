@@ -36,7 +36,7 @@
 				</div>
 				<ul>
 					<li>
-						<h4>ID</h4>
+						<h4>USER NAME</h4>
 						<input id="inp_loginId" name="uid" type="text" size="20" placeholder="ID" />
 					</li>
 					<li>
@@ -154,17 +154,17 @@
                 var $radioInput = $('#login_form input[name=selectwho]:checked');
 
                 if(!$usernameInput.val()){
-                    alert("아이디를 입력해주세요.");
+                    alert("Please Type USER NAME");
                     $usernameInput.focus();
                     return false;
                 }
                 if(!$passwordInput.val()){
-                    alert("패스워드를 입력해주세요.");
+                    alert("Please Type PASSWORD");
                     $passwordInput.focus();
                     return false;
                 }
                 if(!$radioInput.val()){
-                    alert("개인이나 기업을 선택해주세요.");
+                    alert("Please Select Login type");
                     $radioInput.focus();
                     return false;
                 }

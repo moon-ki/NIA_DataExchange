@@ -99,11 +99,11 @@ router.post('/searchPhr', function(req,res){
             else{
                 // 조회 데이터가 없을 경우
                 if(pCodes==""||pCodes.length==0) {
-                    res.send('<script>alert("결과가 존재하지 않습니다. 다시 검색하세요."); \
+                    res.send('<script>alert("Result does not exist Search again."); \
                                 location.href="/company/searchPhr"; </script>');
                 // 목표 건수보다, 조회 건수가 적을 경우
                 }else if( pCodes.length < requireCnt ){
-                    res.send('<script>alert("목표 PHR건수 보다 조회된 레코드가 적습니다."); \
+                    res.send('<script>alert("Fewer records looked up than the target PHR."); \
                                 location.href="/company/searchPhr"; </script>');
                 }else{
                     // com_requests 인서트 쿼리
@@ -326,7 +326,7 @@ router.post('/requestPhr', async(req,res)=>{
         },// async.each end
         function(callback){
             res.send('<script id="sc1" type="text/javascript"> \
-                        alert("PHR을 신청했습니다."); \
+                        alert("You have applied for PHR Data."); \
                         location.href="/company/requestData";\
                     </script>')
         }
@@ -401,7 +401,7 @@ router.post('/updateDeadline',function(req,res){
                 where seq = ?', [req.body.deadLine, req.body.seq], function(err, result){});
 
     res.send('<script id="sc1" type="text/javascript"> \
-                alert("마감일자를 정상적으로 업데이트 하였습니다. 다시 요청해주세요."); \
+                alert("The deadline has been updated successfully. Please apply again."); \
                 location.href="/company/requestData";\
               </script>');
 });

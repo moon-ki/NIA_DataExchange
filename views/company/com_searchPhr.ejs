@@ -256,17 +256,17 @@
 						var $requireCnt = $('#searchPhr input[name=requireCnt]');
 						
 						if(!$requestPurpose.val()){
-							alert("활용목적을 선택하세요.");
+							alert("Please select Type");
 							$requestPurpose.focus();
 							return false;
 						}
 						if(!$deadLine.val()){
-							alert("마감일자를 선택하세요.");
+							alert("Please select Deadline");
 							$deadLine.focus();
 							return false;
 						}
 						if(!$requireCnt.val()){
-							alert("필요한 PHR 건수를 입력하세요.");
+							alert("Please Type Number of applications");
 							$requireCnt.focus();
 							return false;
 						}
@@ -278,7 +278,7 @@
 						//     }
 						// }
 
-						if(confirm('해당 조건으로 데이터를 신청합니까?')) return true;
+						if(confirm('Are you sure what you apply as these condition?')) return true;
 						else {
 							return false
 						};
