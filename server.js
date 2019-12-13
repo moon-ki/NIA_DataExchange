@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 // var localStrategy = require('passport-local').Strategy;
 var session = require('express-session');
 var winston_mysql = require('winston-mysql');
+var http = require('http');
 //************************************************미들웨어 로드
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended:false }));
@@ -62,12 +63,18 @@ app.use('/font', express.static('font'));
 //  라우팅 처리
 app.use('/user', require('./routes/user')); 
 app.use('/company', require('./routes/company'));
+app.use('/admin', require('./routes/admin'));
 // app.use('/pop', require('./routes/company'));
 app.use('/test', require('./routes/util'));
 
 app.locals.isLogin = false;
 
 //was 기동
-app.listen(8080, function() {
-    console.log('-------------------Application Started-------------------');
-});
+// app.listen(8080, function() {
+//     console.log('-------------------Application Started-------------------');
+// });
+
+app.set('port',8080);
+http.createServer(app).listen(app.get('port'), function(){
+    console.log('[Server has been Started] Express server listening on port '+app.get('port'));
+})
