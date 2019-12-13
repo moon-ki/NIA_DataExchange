@@ -366,9 +366,9 @@ pre {word-break:break-all; white-space:pre-line;}
 .img_area {display:none;}
 
 .login_area {position:relative; width:100%; height:100%; background:url(../images/login/login_bg.png) no-repeat center center; background-size:cover;}
-.login_area:after {content:""; position:absolute; left:50%; margin-left:-122px; top:50%; margin-top:-270px; width:238px; height:72px; 
+.login_area:after {content:""; position:absolute; left:50%; margin-left:-122px; top:50%; margin-top:-310px; width:220px; height:137px; 
 	background:url(../images/login/login_logo.png) no-repeat center center;}
-.login_area .login_inner {width:300px; height:400px; position:absolute; top:50%; margin-top:-170px; left:50%; margin-left:-180px; background:#fff; 
+.login_area .login_inner {width:300px; height:400px; position:absolute; top:50%; margin-top:-150px; left:50%; margin-left:-180px; background:#fff; 
 	padding:30px; border-radius:10px; box-sizing:content-box; -moz-box-sizing:content-box; -webkit-box-sizing:content-box;}
 .login_area .login_inner > h3 {color:#333; font-size:18px; font-weight:bold; margin:15px 0 10px 0;}
 .login_area .login_inner > h4 {color:#333; font-size:14px; font-weight:normal; margin:0;}
@@ -406,8 +406,8 @@ pre {word-break:break-all; white-space:pre-line;}
 	.img_area {display:block; width:459px; height:100%; float:left; position:relative; background:url(../images/login/login_bg.png) no-repeat center center; background-size:cover;}
 	.img_area .img_inner {width:459px; height:225px; color:#fff; position:absolute; left:0; top:50%; margin-top:-110px; padding:0;
 						  box-sizing:border-box; -moz-box-sizing:border-box; -webkit-box-sizing:border-box;}
-	.img_area .img_inner h1 {margin:0; display:inline-block; position:absolute; right:110px; top:90px;}
-	.img_area .img_inner h2 {margin:0; text-align:right; font-size:22px; padding:185px 105px 0 0; letter-spacing:-0.3px; line-height:1.2; font-weight:500;}
+	.img_area .img_inner h1 {margin:0; display:inline-block; position:absolute; right:110px; top:52px;}
+	.img_area .img_inner h2 {margin:0; text-align:right; font-size:22px; padding:207px 95px 0 0; letter-spacing:-0.3px; line-height:1.2; font-weight:500;}
 	.img_area .img_inner p {color:#a686d5; font-size:16px; text-align:right; margin:0;padding:15px 110px 0 0; letter-spacing:-1.3px;}
 
 	.login_area {width:calc(100% - 459px); background:#fff; float:right;}

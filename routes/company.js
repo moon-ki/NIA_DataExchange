@@ -294,14 +294,15 @@ router.post('/requestPhr', async(req,res)=>{
                                     from user_phr_sample a \
                                     where 1=1 \
                                         and join_yn = "Y" and alert_yn="Y"'+dynamicSql+'and p_hospital=? ' ;
-
+                var restartYn = "N";
             // 재 요청 시
             }else if(requestYn=='R'){
-                logger.info(com_seq, {messageDetail: '[RESTART] Restart PHR Request'});
+                logger.info(com_seq, {messageDetail: '[RESTART] Restart PHR Request', restartYn:'Y'});
                 // 병원 별, API요청할 사용자 select!
                 var sql_SELECT = 'select p_code\
                                     from err_comseq_pcode \
                                     where com_seq = ? and p_hospital = ?'; 
+                var restartYn = "Y";
             }
 
             asyncEachSeries(hospitals, function(hospital, next){
@@ -315,7 +316,7 @@ router.post('/requestPhr', async(req,res)=>{
                         // var seperPcode=[];
                         // seperPcode = pCodes.division(20);
 //**********************************************************************************************************PHR 처리 전체 프로세스
-                        PhrProcess(pCodes, com_seq, hospital, req.session.apiUrl);
+                        PhrProcess(pCodes, com_seq, hospital, restartYn, req.session.apiUrl);
 //*******************************************************************************************************************************
                     }//selPcodes if(successYn){
                 });//selPcodes end
@@ -368,7 +369,7 @@ router.get('/requestDataDetail/:seq/:num/:sex/:ageFrom/:bmiFrom/:systoleFrom/:re
                        date_format(timestamp, "%y.%m.%d %H:%i") create_dt \
                   from sys_logs_default\
                  where message = ? \
-                 order by case when timestamp desc', [req.params.seq],
+                 order by id desc', [req.params.seq],
         function(err, logs){
             if(err) console.log(err);
             else{
@@ -440,7 +441,6 @@ router.post('/cntCheck',function(req,res){
             if(err) console.log(err);
             else res.send('"'+result[0].cnt+'"');
     });
-    console.log(sql.sql);
 });
 
 //API Call에 필요한 p_codes 조회
@@ -490,7 +490,7 @@ function callAPI (hospital, p_codes, com_seq, callback){
                 var phrArrayOne = [];
                 
                 //---------------------환자 인적사항
-                var hospital_pcode = result.result[j].entry[0].id.split('-'); 
+                var hospital_pcode = result.result[j].entry[0].id.split('-');
                 phrArrayOne.push(hospital_pcode[0]);                            //충남대학교병원
                 phrArrayOne.push(hospital_pcode[1]);                            //19
                 phrArrayOne.push(result.result[j].entry[0].gender);             //female
@@ -515,7 +515,7 @@ function callAPI (hospital, p_codes, com_seq, callback){
     });
 }
 
-function PhrProcess(pCodes, com_seq, hospital, apiUrl){
+function PhrProcess(pCodes, com_seq, hospital, restartYn, apiUrl){
 
     // API에서 받은 데이터 인서트 쿼리
     var sql_INSERT_PHR='insert into phr_record_remote(\
@@ -524,7 +524,7 @@ function PhrProcess(pCodes, com_seq, hospital, apiUrl){
         ,ldl_col,blood_color ,feeprotain,kreanin,ast,alt,gamatp,smoke_yn,drink_yn,com_seq) values ?';
 
     var currentCnt = 0;
-    logger.info(com_seq, {messageDetail: '[API Called] Request API Call of PHR Application ', from:hospital});
+    logger.info(com_seq, {messageDetail: '[API Called] Request API Call of PHR Application ', from:hospital, status:'called', restartYn:restartYn});
     asyncEachSeries(pCodes, function(pCode, next){
         setTimeout(function(){
             async.waterfall([
@@ -555,71 +555,70 @@ function PhrProcess(pCodes, com_seq, hospital, apiUrl){
                     });
                 },
 // 2. phr_record_remote 테이블 인서트 ********************************************************************************************
-                // function(phrArrayTotal, responseCnt, callback){
-                //     conn.query(sql_INSERT_PHR, [phrArrayTotal], function(err,result){
-                //         if (err) console.log(err);
-                //         else callback(null, responseCnt);
-                //     });
-                // },
                 function(phrArrayTotal, responseCnt, callback){
-                    async.each(phrArrayTotal, function(phr){
-                        conn.query('select p_bmi, p_age\
-                                      from user_phr_sample where p_code = ? ', phr[1], function (err,result){
-                            request({
-                                uri: apiUrl,
-                                method:'POST',
-                                enctype: 'multipart/form-data',
-                                json:{
-                                    "s_year_of_this_data":'2017',
-                                    "s_individual_person_number": phr[1],
-                                    "s_sex_code":phr[2].replace('female','2').replace('male','1'),
-                                    "s_age_code":'nan',
-                                    "s_location_code":'nan',
-                                    "s_height":phr[7],
-                                    "s_weight":phr[8],
-                                    "s_waist_circumference":phr[9],
-                                    "s_vision_left":phr[10],
-                                    "s_vision_right":phr[11],
-                                    "s_hearing_left":phr[12],
-                                    "s_hearing_right":phr[13],
-                                    "s_systolic_blood_pressure":phr[14],
-                                    "s_diastolic_blood_pressure":phr[15],
-                                    "s_fasting_glucose":phr[16],
-                                    "s_total_cholesterol":phr[17],
-                                    "s_triglyceride":phr[18],
-                                    "s_hdl_cholesterol":phr[19],
-                                    "s_ldl_cholesterol":phr[20],
-                                    "s_hemoglobin":phr[21],
-                                    "s_urine_protein":phr[22],
-                                    "s_creatinine":phr[23],
-                                    "s_ast":phr[24],
-                                    "s_alt":phr[25],
-                                    "s_gamma_gtp":phr[26],
-                                    "s_smoke_status":phr[27],
-                                    "s_drinking_status":phr[28],
-                                    "s_got_oral_examination":'nan',
-                                    "s_has_cavity":'nan',
-                                    "s_has_lost_tooth":'nan',
-                                    "s_has_cervical_abrasion":'nan',
-                                    "s_abnormal_wisdom_tooth":'nan',
-                                    "s_tartar_status":'nan',
-                                    "s_open_date_of_data":'nan',
-                                    "s_age":result[0].p_age,
-                                    "s_birthday":phr[6] ,
-                                    "s_bmi":result[0].p_bmi,
-                                    "s_name":phr[5],
-                                    "s_phone":phr[4],
-                                    "s_location_name":phr[3],
-                                    "s_data_generation_hospital":phr[0].replace('분당서울대학교병원','분당서울대병원').replace('충남대학교병원','충남대병원'),
-                                    "s_registering_to_data_deal_market_site":'nan',
-                                    "s_agree_to_alarm":'nan'
-                                }
-                            });
-
-                        });
-                        callback(null, responseCnt);
+                    conn.query(sql_INSERT_PHR, [phrArrayTotal], function(err,result){
+                        if (err) console.log(err);
+                        else callback(null, responseCnt);
                     });
                 },
+                // function(phrArrayTotal, responseCnt, callback){
+                //     async.each(phrArrayTotal, function(phr){
+                //         conn.query('select p_bmi, p_age\
+                //                       from user_phr_sample where p_code = ? ', phr[1], function (err,result){
+                //             request({
+                //                 uri: apiUrl,
+                //                 method:'POST',
+                //                 enctype: 'multipart/form-data',
+                //                 json:{
+                //                     "s_year_of_this_data":'2017',
+                //                     "s_individual_person_number": phr[1],
+                //                     "s_sex_code":phr[2].replace('female','2').replace('male','1'),
+                //                     "s_age_code":'nan',
+                //                     "s_location_code":'nan',
+                //                     "s_height":phr[7],
+                //                     "s_weight":phr[8],
+                //                     "s_waist_circumference":phr[9],
+                //                     "s_vision_left":phr[10],
+                //                     "s_vision_right":phr[11],
+                //                     "s_hearing_left":phr[12],
+                //                     "s_hearing_right":phr[13],
+                //                     "s_systolic_blood_pressure":phr[14],
+                //                     "s_diastolic_blood_pressure":phr[15],
+                //                     "s_fasting_glucose":phr[16],
+                //                     "s_total_cholesterol":phr[17],
+                //                     "s_triglyceride":phr[18],
+                //                     "s_hdl_cholesterol":phr[19],
+                //                     "s_ldl_cholesterol":phr[20],
+                //                     "s_hemoglobin":phr[21],
+                //                     "s_urine_protein":phr[22],
+                //                     "s_creatinine":phr[23],
+                //                     "s_ast":phr[24],
+                //                     "s_alt":phr[25],
+                //                     "s_gamma_gtp":phr[26],
+                //                     "s_smoke_status":phr[27],
+                //                     "s_drinking_status":phr[28],
+                //                     "s_got_oral_examination":'nan',
+                //                     "s_has_cavity":'nan',
+                //                     "s_has_lost_tooth":'nan',
+                //                     "s_has_cervical_abrasion":'nan',
+                //                     "s_abnormal_wisdom_tooth":'nan',
+                //                     "s_tartar_status":'nan',
+                //                     "s_open_date_of_data":'nan',
+                //                     "s_age":result[0].p_age,
+                //                     "s_birthday":phr[6] ,
+                //                     "s_bmi":result[0].p_bmi,
+                //                     "s_name":phr[5],
+                //                     "s_phone":phr[4],
+                //                     "s_location_name":phr[3],
+                //                     "s_data_generation_hospital":phr[0].replace('분당서울대학교병원','분당서울대병원').replace('충남대학교병원','충남대병원'),
+                //                     "s_registering_to_data_deal_market_site":'nan',
+                //                     "s_agree_to_alarm":'nan'
+                //                 }
+                //             });
+                //         });
+                //         callback(null, responseCnt);
+                //     });
+                // },
 // 3. com_requests.response_cnt 업데이트 *****************************************************************************************
                 function(responseCnt, callback){
                     conn.query('update com_requests \
@@ -639,7 +638,7 @@ function PhrProcess(pCodes, com_seq, hospital, apiUrl){
                             next();
                         }else{
                             conn.query('update com_requests set '+hospital+'_yn = "Y" where seq = ?',com_seq, function(){
-                                logger.info(com_seq, {messageDetail: '[Data Received] Received '+currentCnt+' of them', from:hospital});
+                                logger.info(com_seq, {messageDetail: '[Data Received] Received '+currentCnt+' of them', from:hospital, receiveCnt:currentCnt, status:'received', restartYn:restartYn});
                             });
                         }
                 });}

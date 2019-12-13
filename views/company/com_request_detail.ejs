@@ -102,7 +102,7 @@
                         </td> -->
                         <% if (requestdetail.request_yn=='R' || requestdetail.request_yn=='N'){ %>
                             <td>
-                                <input class="btn btn-purple btn-25 w60" type="button" value="<%= requestdetail.request_yn=='R' ? '재' : ''%>Apply" style="font-weight:normal;"
+                                <input class="btn btn-purple btn-25 w60" type="button" value="<%= requestdetail.request_yn=='R' ? 'Re' : ''%>Apply" style="font-weight:normal;"
                                     onclick="requestPhr(
                                         '<%=requestdetail.dynamic_sql%>'
                                         ,'<%=requestdetail.sex%>'
@@ -216,7 +216,7 @@
 						client.open('POST', '/company/requestPhr',true);
 						client.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 						client.send(params);
-		        }
+		        	}
 		    }
 		</script>
 	</body>

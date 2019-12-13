@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+<html>
+    <body>
+        <head>
+            <title>billboard</title>
+            <script src="https://d3js.org/d3.v5.min.js"></script>
+            <link rel="stylesheet" href="/styles/billboard.css">
+            <script src = "/public/billboard.js"></script>
+        </head>
+        <body>
+            <h2>일자별 병원의 PHR 송신 건수</h2>
+            <div id="chart1"></div>
+            <h2>기관별 요청, 응답건수</h2>
+            <div id="chart2"></div>
+            <h2>기관별 마감율</h2>
+            <div id="chart3"></div>
+            <div id="chart4"></div>
+            <div id="chart5"></div>
+        </body>
+</html>
+<!-- jQuery -->
+<script src="/lib/jquery-3.3.1/jquery-3.3.1.js"></script>
+<script>
+    
+$(function(){
+    var tmp_x = '<%= data1.x%>';
+    var tmp_chung = '<%= data1.chung%>';
+    var tmp_char = '<%= data1.char%>';
+    var tmp_seoul = '<%= data1.seoul%>';
+
+    var x = tmp_x.split(',');
+    var chung = tmp_chung.split(',');
+    var char = tmp_char.split(',');
+    var seoul = tmp_seoul.split(',');
+// data1
+    var chart1 = bb.generate({
+        bindto: "#chart1",
+        data: {
+            x:'x',
+            types: {
+                '충남대병원': "bar",
+                '분당차병원': "bar",
+                '분당서울대병원': "bar"},
+            columns: [x,char,seoul, chung]
+        },
+        axis: {
+            x:{
+                type:'timeseries',
+                tick:{
+                    format:'%y-%m-%d'
+            }}
+        }
+    });
+    chart1.groups([['충남대병원', '분당차병원','분당서울대병원']]);
+
+// data2
+    var tmp_x = '<%= data2.x%>';
+    var tmp_requireCnt = '<%= data2.requireCnt%>';
+    var tmp_responseCnt = '<%= data2.responseCnt%>';
+
+    var x = tmp_x.split(',');
+    var requireCnt = tmp_requireCnt.split(',');
+    var responseCnt = tmp_responseCnt.split(',');
+    console.log(x);
+    var chart2 = bb.generate({
+        bindto: "#chart2",
+        data: {
+            x:'x',
+            type: 'bar',
+            columns: [x,requireCnt,responseCnt]
+        },
+        axis: {
+            x:{
+                type:'category',
+            }
+        }
+    });
+
+});
+
+function getData(){
+    var chart = bb.generate({
+        bindto: "#chart",
+        data: {
+            types: {
+                data1: "line",
+                data2: "spline"},
+            columns: [
+                ["data1", 30, 200, 100, 170, 150, 250],
+                ["data2", 130, 100, 140, 35, 110, 50]
+            ]
+        }
+    });
+    var chart2 = bb.generate({
+        bindto: "#chart2",
+        data: {
+            types: {
+                data1: "step",
+                data2: "area"},
+            columns: [
+                ["data1", 30, 200, 100, 170, 150, 250],
+                ["data2", 130, 100, 140, 35, 110, 50]
+            ]
+        }
+    });
+    var chart3 = bb.generate({
+        bindto: "#chart3",
+        data: {
+            types: {
+                data1: "area-spline",
+                data2: "area-step"},
+            columns: [
+                ["data1", 30, 200, 100, 170, 150, 250],
+                ["data2", 130, 100, 140, 35, 110, 50]
+            ]
+        }
+    });
+    var chart4 = bb.generate({
+        bindto: "#chart4",
+        data: {
+            x:'x',
+            types: {
+                data1: "bar",
+                data2: "bar"},
+            columns: [ 
+
+            ]
+        },
+        axis:{
+            x:{
+                type:'timeseries',
+                tick:{
+                    format:'%y-%m-%d'
+                }
+            }
+        }
+    });
+    chart4.groups([['data1', 'data2']]);
+    var chart5 = bb.generate({
+        bindto: "#chart5",
+        data: {
+            
+            types: {
+                data1: "donut",
+                data2: "gauge"},
+            columns: [
+                ["data1", 30, 200, 100, 170, 150, 250],
+                ["data2", 130, 100, 140, 35, 110, 50]
+            ]
+        }
+    });
+}
+</script>
