@@ -17,7 +17,7 @@ router.get('/admin',function(req,res){
                                     replace(JSON_EXTRACT(meta,"$.message"),\'"\',"") com_seq, \
                                     replace(JSON_EXTRACT(meta,"$.restartYn"),\'"\',"") restart_yn,\
                                     replace(JSON_EXTRACT(meta,"$.status"),\'"\',"") status, \
-                                    date_format(timestamp,"%y-%m-%d") created_date,\
+                                    date_format(timestamp,"%Y년 %m월") created_date,\
                                     meta \
                             from sys_logs_default\
                         ) log\
@@ -72,17 +72,38 @@ router.get('/admin',function(req,res){
 
                 function(err,datas){
                     var data2 = Object();
-                    var requireCnt = ['요청건수'];
-                    var responseCnt = ['응답건수'];
-                    var x = ['x'];
+                    // var data3 = Object()
 
                     if(err) console.log(err);
                     else {
-                        async.each(datas, function(data){
-                            requireCnt.push(data.require_cnt);
-                            responseCnt.push(data.response_cnt);
-                            x.push(data.com_nm);
-                        });
+                        //차트 데이터 초기화를 위한 셋팅
+                        var requireCnt = ['요청건수'];
+                        var responseCnt = ['응답건수'];
+                        var x = ['x'];
+                        // data3.cri = Array(Array(),Array());
+                        // data3.dc =  Array(Array(),Array());
+                        // data3.ic =  Array(Array(),Array());
+
+                        for(var i=0;i<datas.length;i++){
+                            //bar 데이터 가공
+                            requireCnt.push(datas[i].require_cnt);
+                            responseCnt.push(datas[i].response_cnt);
+                            x.push(datas[i].com_nm);
+
+                            // // 도넛 차트 데이터 가공
+                            // if(datas[i].com_nm=='Clinical_Research_Institute'){
+                            //     data3.cri[0].push('ResposeCnt',datas[i].response_cnt);
+                            //     data3.cri[1].push('RequireCnt',datas[i].require_cnt);
+                            // }else if(datas[i].com_nm=='Drug_Company'){
+                            //     data3.dc[0].push('ResposeCnt',datas[i].response_cnt);
+                            //     data3.dc[1].push('RequireCnt',datas[i].require_cnt);
+                            // }else if(datas[i].com_nm=='Insurance_Company'){
+                            //     data3.ic[0].push('ResposeCnt',datas[i].response_cnt);
+                            //     data3.ic[1].push('RequireCnt',datas[i].require_cnt);
+                            // }else{
+                            //     console.log('error!!!!')
+                            // }
+                        };
 
                         // 결과 데이터셋 생성
                         data2.x = x;
@@ -91,15 +112,42 @@ router.get('/admin',function(req,res){
 
                         callback(null, data1, data2);
                     }
-                });
+            });
         },
         function(data1, data2, callback){
-            callback(null,data1, data2)
+            conn.query('select mst.com_nm, \
+                                round(count(case when (req.CHUNG_yn="Y" and req.SEOUL_yn="Y" and req.CHAR_yn="Y" ) then 1 end)/count(*) * 100 ,1)as percent\
+                        from com_requests req, com_info mst\
+                        where req.com_email = mst.com_email\
+                        and date_format(req.request_dt,"%y%m") ="1912"\
+                        group by mst.com_nm',[],
+                function(err,results){
+                    var data3 = new Object();
+                    data3.cri = new Array();
+                    data3.dc = new Array();
+                    data3.ic = new Array();
+
+                    async.each(results, function(result){
+                        if(result.com_nm=='Clinical_Research_Institute'){
+                            data3.cri.push(result.com_nm, result.percent); 
+                        }else if(result.com_nm=='Drug_Company'){
+                            data3.dc.push(result.com_nm, result.percent); 
+                        }else if(result.com_nm=='Insurance_Company'){
+                            data3.ic.push(result.com_nm, result.percent); 
+                        }
+                    });
+                    callback(null,data1, data2, data3);
+            });
+            
         },
-        function(data1, data2, callback){
+        function(data1, data2, data3, callback){
+            console.log('data1:----------------------------------')
             console.log(data1);
+            console.log('data2:----------------------------------')
             console.log(data2);
-            res.render('./admin/admin',{ data1:data1, data2:data2 });
+            console.log('data3:----------------------------------')
+            console.log(data3);
+            res.render('./admin/admin',{ data1:data1, data2:data2, data3:data3 });
         }
     ]);
 

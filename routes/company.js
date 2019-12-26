@@ -272,11 +272,14 @@ router.get('/requestData', paginate.middleware(10, 100), function(req,res){
 
 //phr 사용승인 신청 프로세스
 router.post('/requestPhr', async(req,res)=>{
-    logger.info(com_seq, {messageDetail: '[START] Start PHR Request'});
+    
     //조회 파라미터 초기화
     var dynamicSql = req.body.dynamicSql;
     var com_seq = req.body.seq;
     var requestYn = req.body.requestYn;
+
+    // logging 처리
+    logger.info(com_seq, {messageDetail: '[START] Start PHR Request'});
 
     //병원 별, API Request 실핻
     var hospitals = ['CHUNG','CHAR','SEOUL'];
@@ -366,7 +369,7 @@ router.get('/requestDataDetail/:seq/:num/:sex/:ageFrom/:bmiFrom/:systoleFrom/:re
 
     conn.query('select message,\
                        replace(replace(replace(meta,"CHAR", "CHA University Bundang Medical Center"),"SEOUL", "Seoul National University Bundang Hospital"),"CHUNG", "Chungnam National University Hospital")  meta,\
-                       date_format(timestamp, "%y.%m.%d %H:%i") create_dt \
+                       date_format(timestamp, "%y.%m.%d %H:%i:%s") create_dt \
                   from sys_logs_default\
                  where message = ? \
                  order by id desc', [req.params.seq],

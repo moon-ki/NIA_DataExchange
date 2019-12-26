@@ -9,14 +9,16 @@
             <script src = "/public/billboard.js"></script>
         </head>
         <body>
-            <h2>일자별 병원의 PHR 송신 건수</h2>
+            <h2>월별 병원의 PHR 송신 건수</h2>
             <div id="chart1"></div>
             <h2>기관별 요청, 응답건수</h2>
             <div id="chart2"></div>
             <h2>기관별 마감율</h2>
-            <div id="chart3"></div>
-            <div id="chart4"></div>
-            <div id="chart5"></div>
+            <div><div id="chart3"> </div> <div id="chart4"></div> <div id="chart5"></div> </div>
+            
+            
+            
+
         </body>
 </html>
 <!-- jQuery -->
@@ -24,16 +26,16 @@
 <script>
     
 $(function(){
+    // data1
     var tmp_x = '<%= data1.x%>';
     var tmp_chung = '<%= data1.chung%>';
     var tmp_char = '<%= data1.char%>';
     var tmp_seoul = '<%= data1.seoul%>';
-
     var x = tmp_x.split(',');
     var chung = tmp_chung.split(',');
     var char = tmp_char.split(',');
     var seoul = tmp_seoul.split(',');
-// data1
+
     var chart1 = bb.generate({
         bindto: "#chart1",
         data: {
@@ -46,10 +48,12 @@ $(function(){
         },
         axis: {
             x:{
-                type:'timeseries',
-                tick:{
-                    format:'%y-%m-%d'
-            }}
+                type:'category',
+                // type:'timeseries',
+            //     tick:{
+            //         format:'%y-%m-%d'
+            // }
+            }
         }
     });
     chart1.groups([['충남대병원', '분당차병원','분당서울대병원']]);
@@ -58,11 +62,9 @@ $(function(){
     var tmp_x = '<%= data2.x%>';
     var tmp_requireCnt = '<%= data2.requireCnt%>';
     var tmp_responseCnt = '<%= data2.responseCnt%>';
-
     var x = tmp_x.split(',');
     var requireCnt = tmp_requireCnt.split(',');
     var responseCnt = tmp_responseCnt.split(',');
-    console.log(x);
     var chart2 = bb.generate({
         bindto: "#chart2",
         data: {
@@ -78,6 +80,52 @@ $(function(){
     });
 
 });
+
+// data3
+    var cri_ResposeCnt = '<%=data3.cri%>'.split(',');
+    // var cri_RequireCnt = cri_ResposeCnt.splice(2,4);
+    var dc_ResposeCnt = '<%=data3.dc%>'.split(',');
+    // var dc_RequireCnt = dc_ResposeCnt.splice(2,4);
+    var ic_ResposeCnt = '<%=data3.ic%>'.split(',');
+    // var ic_RequireCnt = ic_ResposeCnt.splice(2,4);
+
+    console.log(cri_ResposeCnt);
+    console.log(dc_ResposeCnt);
+    console.log(ic_ResposeCnt);
+    // console.log(cri_RequireCnt);
+    // console.log(dc_RequireCnt);
+    // console.log(ic_RequireCnt);
+
+    var chart3 = bb.generate({
+        data:{
+            bindto: "#chart3",
+            columns:[
+                cri_ResposeCnt
+            ],
+            type:'gauge',
+        }
+
+    });
+    var chart3 = bb.generate({
+        data:{
+            bindto: "#chart4",
+            columns:[
+            dc_ResposeCnt
+            ],
+            type:'gauge',
+        }
+
+    });
+    var chart3 = bb.generate({
+        data:{
+            bindto: "#chart5",
+            columns:[
+            ic_ResposeCnt
+            ],
+            type:'gauge',
+        }
+
+    });
 
 function getData(){
     var chart = bb.generate({
