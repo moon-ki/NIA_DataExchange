@@ -31,8 +31,9 @@
 		<div class="login_inner">
 			<form action="/user/loginReg" method="post" id="login_form" >
 				<div class="login_radio">
-					<input type="radio" name="selectwho" id="company" class="radio" value="company" checked><label for="company">Company</label>
-					<input type="radio" name="selectwho" id="person" class="radio" value="person"><label for="person">Individual</label>
+                    <input type="radio" name="selectwho" id="person" class="radio" value="person" checked><label for="person">Individual</label></input>
+					<input type="radio" name="selectwho" id="company" class="radio" value="company"><label for="company">Company</label></input>
+					
 				</div>
 				<ul>
 					<li>
@@ -129,6 +130,7 @@
                     // https://codeday.me/ko/qa/20190310/40850.html 참고
 
                     //응답한 javascript 태그 삽입
+                    alert(client.responseText);
                     document.getElementById("javaexe").innerHTML = this.responseText;
                     //실행
                     eval(document.getElementById('sc1').innerHTML);

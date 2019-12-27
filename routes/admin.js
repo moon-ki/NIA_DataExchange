@@ -116,11 +116,11 @@ router.get('/admin',function(req,res){
         },
         function(data1, data2, callback){
             conn.query('select mst.com_nm, \
-                                round(count(case when (req.CHUNG_yn="Y" and req.SEOUL_yn="Y" and req.CHAR_yn="Y" ) then 1 end)/count(*) * 100 ,1)as percent\
-                        from com_requests req, com_info mst\
-                        where req.com_email = mst.com_email\
-                        and date_format(req.request_dt,"%y%m") ="1912"\
-                        group by mst.com_nm',[],
+                               round(sum(case when (req.CHUNG_yn="Y" and req.SEOUL_yn="Y" and req.CHAR_yn="Y" ) then 1 end)/count(*) * 100 ,1) as percent\
+                          from com_requests req, com_info mst\
+                         where req.com_email = mst.com_email\
+                           and date_format(req.request_dt,"%y%m") ="1912"\
+                         group by mst.com_nm',[],
                 function(err,results){
                     var data3 = new Object();
                     data3.cri = new Array();
@@ -136,21 +136,20 @@ router.get('/admin',function(req,res){
                             data3.ic.push(result.com_nm, result.percent); 
                         }
                     });
-                    callback(null,data1, data2, data3);
+                    callback(null, data1, data2, data3);
             });
             
         },
         function(data1, data2, data3, callback){
-            console.log('data1:----------------------------------')
+            console.log('data1:----------------------------------');
             console.log(data1);
-            console.log('data2:----------------------------------')
+            console.log('data2:----------------------------------');
             console.log(data2);
-            console.log('data3:----------------------------------')
+            console.log('data3:----------------------------------');
             console.log(data3);
             res.render('./admin/admin',{ data1:data1, data2:data2, data3:data3 });
         }
     ]);
-
 });
 
 module.exports = router;

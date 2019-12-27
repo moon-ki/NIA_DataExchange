@@ -3,7 +3,7 @@
 <html>
     <body>
         <head>
-            <title>billboard</title>
+            <title>의료데이터 거래소 관리자 페이지</title>
             <script src="https://d3js.org/d3.v5.min.js"></script>
             <link rel="stylesheet" href="/styles/billboard.css">
             <script src = "/public/billboard.js"></script>
@@ -82,25 +82,18 @@ $(function(){
 });
 
 // data3
-    var cri_ResposeCnt = '<%=data3.cri%>'.split(',');
+    var cri = '<%=data3.cri%>'.split(',');
     // var cri_RequireCnt = cri_ResposeCnt.splice(2,4);
-    var dc_ResposeCnt = '<%=data3.dc%>'.split(',');
+    var dc = '<%=data3.dc%>'.split(',');
     // var dc_RequireCnt = dc_ResposeCnt.splice(2,4);
-    var ic_ResposeCnt = '<%=data3.ic%>'.split(',');
+    var ic = '<%=data3.ic%>'.split(',');
     // var ic_RequireCnt = ic_ResposeCnt.splice(2,4);
-
-    console.log(cri_ResposeCnt);
-    console.log(dc_ResposeCnt);
-    console.log(ic_ResposeCnt);
-    // console.log(cri_RequireCnt);
-    // console.log(dc_RequireCnt);
-    // console.log(ic_RequireCnt);
 
     var chart3 = bb.generate({
         data:{
             bindto: "#chart3",
             columns:[
-                cri_ResposeCnt
+                cri
             ],
             type:'gauge',
         }
@@ -110,7 +103,7 @@ $(function(){
         data:{
             bindto: "#chart4",
             columns:[
-            dc_ResposeCnt
+                dc
             ],
             type:'gauge',
         }
@@ -120,7 +113,7 @@ $(function(){
         data:{
             bindto: "#chart5",
             columns:[
-            ic_ResposeCnt
+                ic
             ],
             type:'gauge',
         }

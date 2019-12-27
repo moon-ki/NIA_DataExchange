@@ -94,7 +94,6 @@ router.post('/loginReg',function(req,res){
     var sql = '';
 
     //회원에 따른 sql 분기처리
-    console.log(radio);
     if(radio=="person"){            //개인회원 로그인
         sql = 'select * from user_phr_sample where p_code = ?';
     }else if(radio=="company"){     //기업회원 로그인
@@ -104,13 +103,13 @@ router.post('/loginReg',function(req,res){
     conn.query(sql, [id], function(err,result){
         if(err) console.error(err);
         else{   //아이디가 존재하지 않는 경우
-            if(result=='') res.send('<script id="sc1" type="test/javascript">alert("USER NAME does not exist! Please check USER NAME."); location.href="/user/login"; </script>');
-
-            else if(radio=='person'){   //개인회원의 경우
+            if(result=='') {
+                res.send('<script id="sc1" type="test/javascript">alert("USER NAME does not exist! Please check USER NAME."); location.href="/user/login"; </script>');
+            }else if(radio=='person'){   //개인회원의 경우
                 if(pw===result[0].p_phone){
                     req.session.uid = result[0].p_code;
                     req.session.uNm = result[0].p_name;
-                    res.send('<script id="sc1" type="test/javascript">alert(""Login Success!"); location.href="/user/acceptRequest"; </script>');
+                    res.send('<script id="sc1" type="test/javascript">alert("Login Success!"); location.href="/user/acceptRequest"; </script>');
 
                 }else res.send('<script id="sc1" type="test/javascript">alert("USER NAME and Password do not match"); location.href="/user/login"; </script>');
             }else if(radio=='company'){ //기업회원의 경우
