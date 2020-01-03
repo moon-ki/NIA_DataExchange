@@ -31,21 +31,39 @@ router.get('/logout',function(req,res){
 // 요청현황 화면 조회
 router.get('/acceptRequest', paginate.middleware(10, 100), function(req,res){
     var sql = 'select * from(\
-                select @rownum:=@rownum+1 as num, \
-                      a.com_email,\
-                      b.com_nm, \
-                      case when date_format(a.request_dt,"%y%m%d")=date_format(now(),"%y%m%d") then date_format(a.request_dt, "%h:%i") \
-                           else date_format(a.request_dt,"%y%m%d") end as request_dt,\
-                      a.request_dt as create_dt,\
-                      a.request_purpose\
-                 from user_requests a, com_info b,\
-                      (select @rownum:=0) tmp\
-                where 1=1\
-                  and a.p_code = "100105"\
-                  and a.com_email = b.com_email\
-                order by a.request_dt) main\
-            order by create_dt desc\
-            limit '+ (req.query.page-1)*req.query.limit+','+req.query.limit ;
+                select @rownum:=@rownum+1 as num, main.* \
+                from(\
+                    select \
+                        case when a.param_sex = "1" then "Male" \
+                             when a.param_sex = "2" then "Female" \
+                             else "-"  end as param_sex,\
+                        a.com_email,\
+                        b.com_nm, \
+                        date_format(a.request_dt, "%y.%m.%d %H:%i") as request_dt,\
+                        a.request_dt as create_dt,\
+                        a.request_purpose,\
+                        a.deadline,\
+                        if(a.reward_desc ="", "-", a.reward_desc) as reward_desc,\
+                        format(a.require_cnt,0)  require_cnt,\
+                        format(a.request_cnt,0)  request_cnt,\
+                        if(a.param_ageFrom="ageFrom","-",a.param_ageFrom) as param_ageFrom,\
+                        if(a.param_bmiFrom="bmiFrom","-",a.param_bmiFrom) as param_bmiFrom,\
+                        if(a.param_systoleFrom="systoleFrom","-",a.param_systoleFrom) as param_systoleFrom,\
+                        if(a.param_relaxFrom="relaxFrom","-",a.param_relaxFrom) as param_relaxFrom,\
+                        if(a.param_astFrom="astFrom","-",a.param_astFrom) as param_astFrom,\
+                        if(a.param_altFrom="altFrom","-",a.param_altFrom) as param_altFrom,\
+                        case when a.finish_yn = "P" and date_format(a.deadline,"%y%m%d") >= date_format(now(),"%y%m%d") then "P"\
+                             when a.finish_yn = "P" and date_format(a.deadline,"%y%m%d") <  date_format(now(),"%y%m%d") then "F"\
+                             else a.finish_yn end finish_yn, \
+                        a.participation_yn\
+                        from user_requests a, com_info b\
+                    where 1=1\
+                        and a.com_email = b.com_email\
+                        and a.p_code = ?\
+                        order by a.request_dt  ) main, (select @rownum:=0) tmp\
+                )result\
+                order by num desc\
+                limit '+ (req.query.page-1)*req.query.limit+','+req.query.limit ;
     
     conn.query(sql, [req.session.uid],function(err, result){
         if(err) {
@@ -62,7 +80,7 @@ router.get('/acceptRequest', paginate.middleware(10, 100), function(req,res){
                     if(result[0]){
                             conn.query('select count(*) cnt\
                                         from user_requests  \
-                                        where p_code = "100105"', req.session.comEmail, function(err,result){
+                                        where p_code = ?', [req.session.uid], function(err,result){
                                 pageCount = Math.ceil(result[0].cnt / req.query.limit);
                                 pages = paginate.getArrayPages(req)( 4 , pageCount, req.query.page);
                                 callbak(null, pageCount, pages);
@@ -131,8 +149,26 @@ router.post('/loginReg',function(req,res){
 });
 
 //사용자 상세 페이지
-router.get('/acceptRequestDetail', function(req,res){
-    res.render('./user/acceptRequest_detail',{});
+router.get('/acceptRequestDetail/:num/:sex/:ageFrom/:bmiFrom/:systoleFrom/:relaxFrom/:astFrom/:altFrom/:rewardDesc/:purpose/:finishYn/:deadLine/:requestCnt/:requireCnt/:requestDt/:participationYn', function(req,res){
+    var searchParams = {
+        num:req.params.num,
+        sex: req.params.sex, 
+        ageFrom: req.params.ageFrom, 
+        bmiFrom: req.params.bmiFrom, 
+        systoleFrom: req.params.systoleFrom,
+        relaxFrom: req.params.relaxFrom,
+        astFrom: req.params.astFrom,
+        altFrom: req.params.altFrom,
+        rewardDesc: req.params.rewardDesc.replace(/(<br>|<br\/>|<br \/>)/g, '\r\n'),
+        purpose:req.params.purpose,
+        finishYn:req.params.finishYn,
+        requestDt: req.params.requestDt,
+        deadLine:req.params.deadLine,
+        requestCnt:req.params.requestCnt,
+        requireCnt:req.params.requireCnt,
+        participationYn:req.params.participationYn
+    };
+    res.render('./user/acceptRequest_detail',{requestdetail:searchParams});
 });
 
 

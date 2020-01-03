@@ -62,27 +62,41 @@
 				<tbody>
 					<tr>
 						<th>Type</th>
-						<td>Sales</td>
+						<td><%=requestdetail.purpose%></td>
 						<th>Status</th>
-						<td class="color_lblue">Onging</td>
+						<% if (requestdetail.finishYn=='P'){ %>
+							<td class="color_lblue">Proceeding</td>
+						<%}else if(requestdetail.finishYn=='F'){%>
+							<td class="color_red">Incomplete</td>
+						<%}else if(requestdetail.finishYn=='N'){%>
+							<td class="color_lblue">Ready for request</td>
+						<%}else if(requestdetail.finishYn=='Y'){%>
+							<td class="color_dgreen">Complete</td>
+						<%}else{%>
+							<td>-</td>
+						<%}%>	
                         <!-- <td class="color_gray">마감</td>
                         <td class="color_red">미완료</td>  -->   
 					</tr>
 					<tr>
 						<th>Request Date</th>
-						<td>2019-11-17</td>
+						<td><%=requestdetail.requestDt%></td>
 						<th>Deadline</th>
-						<td>2019-11-28</td>
+						<td><%=requestdetail.deadLine%></td>
 					</tr>
 					<tr>
 						<th>Applicable number</th>
-						<td>7,620</td>
+						<td><%=requestdetail.requestCnt%></td>
 						<th>Request number</th>
-						<td>100</td>
+						<td><%=requestdetail.requireCnt%></td>
 					</tr>
 					<tr>
 						<th>Status of participant</th>
-						<td colspan="3"><i class="fa fa-check color_dgreen"></i></td>
+						<% if (requestdetail.participationYn=='Y'){ %>
+							<td><i class="fa fa-check color_dgreen"></i></td>
+						<%}else{%>
+							<td></td>
+						<%}%>
 					</tr>
 				</tbody>
 			</table>
@@ -99,32 +113,32 @@
 				<tbody>
 					<tr>
 						<th>Number</th>
-						<td>35</td>
+						<td><%= requestdetail.num %></td>
 						<th>Gender</th>
-						<td>Male</td>
+						<td><%= requestdetail.sex %></td>
 					</tr>
 					<tr>
 						<th>Age</th>
-						<td>more then 40</td>
+						<td>more then <%= requestdetail.ageFrom %></td>
 						<th>BMI</th>
-						<td>-</td>
+						<td> more then <%= requestdetail.bmiFrom %></td>
 					</tr>
 					<tr>
 						<th>Systolic blood pressure</th>
-						<td>- </td>
+						<td>more then <%= requestdetail.systoleFrom %> </td>
 						<th>Diastolic blood pressure</th>
-						<td>- </td>
+						<td>more then <%= requestdetail.relaxFrom %></td>
 					</tr>
 					<tr>
 						<th>AST</th>
-						<td>more then 40  </td>
+						<td>more then <%= requestdetail.astFrom %>  </td>
 						<th>ALT</th>
-						<td>more then 40 </td>
+						<td>more then <%= requestdetail.altFrom %> </td>
 					</tr>
 					<tr>
 						<th>Rewards</th>
 						<td colspan="3" style="height:80px; vertical-align:top;">	
-							-
+							<%= requestdetail.rewardDesc %>
 						</td>
 					</tr>
 				</tbody>

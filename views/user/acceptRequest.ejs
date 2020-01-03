@@ -68,23 +68,36 @@
 	                <tr>
 	                    <td><%= requestdetail.num %></td>
 	                    <td><%= requestdetail.com_nm %></td>
-	                    <td><%=requestdetail.request_purpose%></td>
-	                    <td>1,000</td>
+	                    <td><%= requestdetail.request_purpose%></td>
+	                    <td><%= requestdetail.request_cnt %></td>
 	                    <td><%=requestdetail.request_dt%></td>
-	                    <td>2019-11-26</td>
-	                    <!-- <td><%=requestdetail.deadline%></td> -->
+	                    <td><%=requestdetail.deadline%></td>
 	                    <!--<% if (requestdetail.accept_yn=='N'){ %>
 	                     <td>
 	                        미승인
 	                    </td>
 	                    <%}else{%>
 	                    <td>승인완료</td>
-	                    <%}%> -->
-	                    <td class="color_lblue">Proceeding</td>
+						<%}%> -->
+						<% if (requestdetail.finish_yn=='P'){ %>
+							<td class="color_lblue">Proceeding</td>
+						<%}else if(requestdetail.finish_yn=='F'){%>
+							<td class="color_red">Incomplete</td>
+						<%}else if(requestdetail.finish_yn=='N'){%>
+							<td class="color_lblue">Ready for request</td>
+						<%}else if(requestdetail.finish_yn=='Y'){%>
+							<td class="color_dgreen">Complete</td>
+						<%}else{%>
+							<td>-</td>
+						<%}%>	
                         <!-- <td class="color_gray">마감</td>
-                        <td class="color_red">미완료</td>  -->   
-                        <td><i class="fa fa-check color_dgreen"></i></td>
-                        <td><a href="/user/acceptRequestDetail" class="btn btn-purple btn-25">View</a></td>
+						<td class="color_red">미완료</td>  -->   
+						<% if (requestdetail.participation_yn=='Y'){ %>
+							<td><i class="fa fa-check color_dgreen"></i></td>
+						<%}else{%>
+							<td></td>
+						<%}%>
+                        <td><a href="acceptRequestDetail/<%=requestdetail.num%>/<%=requestdetail.param_sex%>/<%=requestdetail.param_ageFrom%>/<%=requestdetail.param_bmiFrom%>/<%=requestdetail.param_systoleFrom%>/<%=requestdetail.param_relaxFrom%>/<%=requestdetail.param_astFrom%>/<%=requestdetail.param_altFrom%>/<%=requestdetail.reward_desc%>/<%=requestdetail.request_purpose%>/<%=requestdetail.finish_yn%>/<%=requestdetail.deadline%>/<%=requestdetail.request_cnt%>/<%=requestdetail.require_cnt%>/<%=requestdetail.request_dt%>/<%=requestdetail.participation_yn%>" class="btn btn-purple btn-25">View</a></td>
 	                </tr>
 	                <%});%>
 	            </tbody>

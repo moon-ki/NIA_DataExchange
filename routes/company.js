@@ -7,6 +7,9 @@ var server = require('../server');
 var conn = server.conn;
 var asyncEachSeries = require('async-each-series');
 var logger = server.logger;
+global.CHUNG='';
+global.SEOUL='';
+global.CHAR='';
 
 // Array를 분할
 Array.prototype.division = function (n) {
@@ -123,29 +126,39 @@ router.post('/searchPhr', function(req,res){
                     // com_requests 인서트 실행
                     var insertSQL = conn.query(sql, insertParams,function(err,insertResult){
                         if(!err){
-                            conn.query('select seq from com_requests order by seq desc limit 1',[],function(err, comSeq){
+                            conn.query('select * from com_requests order by seq desc limit 1',[],function(err, com_requests){
                                 async.waterfall([
                                     function(callback){
                                         // 로그 기록
-                                        logger.info(comSeq[0].seq, {messageDetail:'[SEARCH] Finished saving PHR queries and details (Total count: '+pCodes.length+', Target count: '+requireCnt+')'});
-                                        callback(null, comSeq[0].seq, pCodes);
+                                        logger.info(com_requests[0].seq, {messageDetail:'[SEARCH] Finished saving PHR queries and details (Total count: '+pCodes.length+', Target count: '+requireCnt+')'});
+                                        callback(null, com_requests, pCodes);
                                     },
                                     // user_requests 인서트 파라미터 셋팅
-                                    function(com_seq, pCodes,callback){
-                                        var userRequestInsertParam=[]
+                                    function(com_requests, pCodes,callback){
+                                        var userRequestInsertParam= new Array();
                                         async.each(pCodes, function(pCode){
-                                            userRequestInsertParam.push([com_seq, req.session.comEmail, requestPurpose, pCode.p_code])
+                                            userRequestInsertParam.push([com_requests[0].seq, req.session.comEmail, req.body.requestPurpose, pCode.p_code, com_requests[0].deadline, 
+                                                                         com_requests[0].reward_desc, com_requests[0].require_cnt, com_requests[0].response_cnt, com_requests[0].request_cnt, com_requests[0].param_sex,
+                                                                         com_requests[0].param_ageFrom, com_requests[0].param_bmiFrom, com_requests[0].param_systoleFrom, com_requests[0].param_relaxFrom, com_requests[0].param_astFrom,
+                                                                         com_requests[0].param_altFrom]);
                                         });
                                         callback(null, userRequestInsertParam);
                                         
                                     },
                                     // user_requests 인서트
                                     function(userRequestInsertParam, callback){
-                                        conn.query('insert into user_requests (com_seq, com_email, request_purpose, p_code) values ? ', [userRequestInsertParam], function(err,Re){
+                                        conn.query('insert into user_requests (com_seq, com_email, request_purpose, p_code, deadline,\
+                                                                               reward_desc, require_cnt, response_cnt, request_cnt, param_sex,\
+                                                                               param_ageFrom, param_bmiFrom, param_systoleFrom, param_relaxFrom, param_astFrom, param_altFrom) values ? ', [userRequestInsertParam], function(err,Re){
                                             if(err) console.error(err);
                                             else callback(null)
                                         });
                                     },
+                                    // function(seq, pCodes, callback){
+                                    //     conn.query('insert into user_requests\
+                                    //                 select ');
+                                    //     callback(null);
+                                    // },
                                     function(){
                                         res.redirect('/company/requestData');
                                     }
@@ -162,7 +175,7 @@ router.get('/requestData', paginate.middleware(10, 100), function(req,res){
     // tmp_gj_2017 은 임시테이블로, phr데이터의 필터링에 쓰인다.
     var sql = 
     ' select main.* from (\
-        select    @rownum:=@rownum+1 as num, \
+        select  @rownum:=@rownum+1 as num, \
                 req.seq,\
                 req.com_email,\
                 req.request_purpose,\
@@ -286,7 +299,11 @@ router.post('/requestPhr', async(req,res)=>{
     async.waterfall([
         function(callback){
             conn.query('update com_requests set request_yn = "P" where seq = ?', com_seq, function(err, res){
-                if(!err) callback(null);
+                if(!err) {
+                    conn.query('update user_requests set finish_yn = "P" where com_seq = ?', [com_seq], function(err,res){
+                        if(!err) callback(null);
+                    });
+                }
             });
         },
         function(callback){
@@ -319,6 +336,7 @@ router.post('/requestPhr', async(req,res)=>{
                         // var seperPcode=[];
                         // seperPcode = pCodes.division(20);
 //**********************************************************************************************************PHR 처리 전체 프로세스
+                        
                         PhrProcess(pCodes, com_seq, hospital, restartYn, req.session.apiUrl);
 //*******************************************************************************************************************************
                     }//selPcodes if(successYn){
@@ -376,7 +394,7 @@ router.get('/requestDataDetail/:seq/:num/:sex/:ageFrom/:bmiFrom/:systoleFrom/:re
         function(err, logs){
             if(err) console.log(err);
             else{
-                var logDetails=[]
+                var logDetails= new Array();
                 var logTmp;
                 async.each(logs, function(log){
                     logTmp = JSON.parse(log.meta);
@@ -402,7 +420,12 @@ router.post('/updateDeadline',function(req,res){
     // console.log(req.body.deadLine);
 
     conn.query('update com_requests set request_yn = "R", CHUNG_yn = "N", SEOUL_yn="N", CHAR_yn="N", deadline= ? \
-                where seq = ?', [req.body.deadLine, req.body.seq], function(err, result){});
+                where seq = ?', [req.body.deadLine, req.body.seq], function(err, result){
+                    if(!err){
+                        conn.query('update user_requests set deadline = ?\
+                                    where com_seq = ?',[req.body.deadLine, req.body.seq],function(err,result){})
+                    }
+                });
 
     res.send('<script id="sc1" type="text/javascript"> \
                 alert("The deadline has been updated successfully. Please apply again."); \
@@ -432,8 +455,8 @@ router.post('/cntCheck',function(req,res){
     var params_of_filter=[Tmp_sex, Tmp_ageFrom, Tmp_ageTo, Tmp_bmiFrom, Tmp_bmiTo,
                           Tmp_systoleFrom, Tmp_systoleTo, Tmp_relaxFrom, Tmp_relaxTo, Tmp_astFrom,
                           Tmp_astTo, Tmp_altFrom, Tmp_altTo];
-    console.log(Tmp_bmiFrom);
-    console.log(params_of_filter);
+    // console.log(Tmp_bmiFrom);
+    // console.log(params_of_filter);
 
     var sqlAndParams = genDynamicQuery(params_of_filter);
 
@@ -527,7 +550,9 @@ function PhrProcess(pCodes, com_seq, hospital, restartYn, apiUrl){
         ,ldl_col,blood_color ,feeprotain,kreanin,ast,alt,gamatp,smoke_yn,drink_yn,com_seq) values ?';
 
     var currentCnt = 0;
+    var CHUNG, SEOUL, CHAR;
     logger.info(com_seq, {messageDetail: '[API Called] Request API Call of PHR Application ', from:hospital, status:'called', restartYn:restartYn});
+
     asyncEachSeries(pCodes, function(pCode, next){
         setTimeout(function(){
             async.waterfall([
@@ -628,11 +653,16 @@ function PhrProcess(pCodes, com_seq, hospital, restartYn, apiUrl){
                                 set response_cnt = response_cnt + cast(? as unsigned)\
                                 where seq = ?', [responseCnt, com_seq], function(err, result){
                         if(err) console.log(err);
-                        else callback(null, responseCnt);
+                        else {
+                            conn.query('update user_requests set participation_yn = "Y" where p_code = ? and com_seq = ?',[pCode,com_seq],function(err,res){
+                                if(!err) callback(null, responseCnt);
+                            })
+                            
+                        }
                     });
                 },
 // 4. 목표수량 체크 **************************************************************************************************************
-                function(responseCnt){
+                function(responseCnt, callback){
                     conn.query('select cast(require_cnt as unsigned)  as require_cnt,\
                                        cast(response_cnt as unsigned) as response_cnt\
                                 from com_requests where seq = ?', com_seq, function(err,result){
@@ -640,11 +670,27 @@ function PhrProcess(pCodes, com_seq, hospital, restartYn, apiUrl){
                         if(result[0].require_cnt > result[0].response_cnt+2){
                             next();
                         }else{
-                            conn.query('update com_requests set '+hospital+'_yn = "Y" where seq = ?',com_seq, function(){
-                                logger.info(com_seq, {messageDetail: '[Data Received] Received '+currentCnt+' of them', from:hospital, receiveCnt:currentCnt, status:'received', restartYn:restartYn});
+                            conn.query('update com_requests set '+hospital+'_yn = "Y" where seq = ?',com_seq, function(err,res){
+                                if(!err){
+                                    logger.info(com_seq, {messageDetail: '[Data Received] Received '+currentCnt+' of them', from:hospital, receiveCnt:currentCnt, status:'received', restartYn:restartYn});
+                                    if(hospital=='CHUNG')       {global.CHUNG = 'Y'; console.log('CHUNG 완료!: ', global.CHUNG, global.SEOUL, global.CHAR);}
+                                    else if(hospital=='SEOUL')  {global.SEOUL = 'Y'; console.log('SEOUL 완료!: ', global.CHUNG, global.SEOUL, global.CHAR);}
+                                    else if(hospital=='CHAR')   {global.CHAR  = 'Y'; console.log('CHAR 완료!: ',  global.CHUNG, global.SEOUL, global.CHAR);}
+                                    
+                                    if(global.CHUNG+global.SEOUL+global.CHAR == 'YYY') {
+                                        console.log('프로세스 완료 확인!!')
+                                        callback(null);
+                                    }
+                                }
                             });
                         }
-                });}
+                    });
+                },function(){
+                    conn.query('update user_requests set finish_yn = "Y" where com_seq = ?',[com_seq],function(){});
+                    global.CHUNG='';
+                    global.SEOUL='';
+                    global.CHAR ='';
+                }
 //******************************************************************************************************************************
             ]);}, 3000);
     });
