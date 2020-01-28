@@ -118,7 +118,7 @@
     function login(){
         var pw = $('#login_form input[id=inp_loginPwd]');
         var id = $('#login_form input[id=inp_loginId]');
-        var selectwho = $('#login_form input[name=selectwho]');
+        var selectwho = $('#login_form input[name="selectwho"]:checked');
         
         var client = new XMLHttpRequest();
         var params = 'uid='+id.val()+'&upw='+pw.val()+'&selectwho='+selectwho.val();
@@ -151,7 +151,7 @@
             $('#login_form').submit(function(){
                 var $usernameInput = $('#login_form input[name=uid]');
                 var $passwordInput = $('#login_form input[name=upw]');
-                var $radioInput = $('#login_form input[name="selectwho"]:checked').val();
+                var $radioInput = $('#input[name="selectwho"]:checked');
 
                 if(!$usernameInput.val()){
                     alert("Please Type USER NAME");
@@ -163,7 +163,7 @@
                     $passwordInput.focus();
                     return false;
                 }
-                if(!$radioInput){
+                if(!$radioInput.val()){
                     alert("Please Select Login type");
                     $radioInput.focus();
                     return false;
