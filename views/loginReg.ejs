@@ -33,7 +33,6 @@
 				<div class="login_radio">
                     <input type="radio" name="selectwho" id="person" class="radio" value="person" checked><label for="person">Individual</label></input>
 					<input type="radio" name="selectwho" id="company" class="radio" value="company"><label for="company">Company</label></input>
-					
 				</div>
 				<ul>
 					<li>
@@ -44,7 +43,7 @@
 						<h4>PASSWORD</h4>
 						<input id="inp_loginPwd" name="upw" type="password" size="20" placeholder="Password" autocomplete="off" />
 					</li>
-				</ul>	
+				</ul>
 				<div class="login_util">
 					<div class="remember_area">
 						<div class="border-checkbox-section">
@@ -152,7 +151,7 @@
             $('#login_form').submit(function(){
                 var $usernameInput = $('#login_form input[name=uid]');
                 var $passwordInput = $('#login_form input[name=upw]');
-                var $radioInput = $('#login_form input[name=selectwho]:checked');
+                var $radioInput = $('#login_form input[name="selectwho"]:checked').val();
 
                 if(!$usernameInput.val()){
                     alert("Please Type USER NAME");
@@ -164,7 +163,7 @@
                     $passwordInput.focus();
                     return false;
                 }
-                if(!$radioInput.val()){
+                if(!$radioInput){
                     alert("Please Select Login type");
                     $radioInput.focus();
                     return false;
