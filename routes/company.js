@@ -138,7 +138,7 @@ router.post('/searchPhr', function(req,res){
                                         var userRequestInsertParam= new Array();
                                         async.each(pCodes, function(pCode){
                                             userRequestInsertParam.push([com_requests[0].seq, req.session.comEmail, req.body.requestPurpose, pCode.p_code, com_requests[0].deadline, 
-                                                                         com_requests[0].reward_desc, com_requests[0].require_cnt, com_requests[0].response_cnt, com_requests[0].request_cnt, com_requests[0].param_sex,
+                                                                         com_requests[0].reward_desc, com_requests[0].require_cnt, com_requests[0].request_cnt, com_requests[0].param_sex,
                                                                          com_requests[0].param_ageFrom, com_requests[0].param_bmiFrom, com_requests[0].param_systoleFrom, com_requests[0].param_relaxFrom, com_requests[0].param_astFrom,
                                                                          com_requests[0].param_altFrom]);
                                         });
@@ -148,7 +148,7 @@ router.post('/searchPhr', function(req,res){
                                     // user_requests 인서트
                                     function(userRequestInsertParam, callback){
                                         conn.query('insert into user_requests (com_seq, com_email, request_purpose, p_code, deadline,\
-                                                                               reward_desc, require_cnt, response_cnt, request_cnt, param_sex,\
+                                                                               reward_desc, require_cnt, request_cnt, param_sex,\
                                                                                param_ageFrom, param_bmiFrom, param_systoleFrom, param_relaxFrom, param_astFrom, param_altFrom) values ? ', [userRequestInsertParam], function(err,Re){
                                             if(err) console.error(err);
                                             else callback(null)
@@ -336,7 +336,6 @@ router.post('/requestPhr', async(req,res)=>{
                         // var seperPcode=[];
                         // seperPcode = pCodes.division(20);
 //**********************************************************************************************************PHR 처리 전체 프로세스
-                        
                         PhrProcess(pCodes, com_seq, hospital, restartYn, req.session.apiUrl);
 //*******************************************************************************************************************************
                     }//selPcodes if(successYn){

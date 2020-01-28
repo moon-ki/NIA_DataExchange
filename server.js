@@ -43,6 +43,7 @@ app.listen(8080, function() {
 
 function handleDisconnect(){
     var dbConfig = {
+        connectionLimit :10,
         host    : '116.89.189.11',
         user    : 'de_dev',
         password: 'althghdansrl',
@@ -54,22 +55,22 @@ function handleDisconnect(){
         // port    : 3306,
         // database: 'de_dev'
     };
-    var connection = mysql.createConnection(dbConfig);
-    connection.connect(function(err) {
-        if(err) {  
-            console.log('Error when connecting to DB:', err);  
-            setTimeout(handleDisconnect, 2000);  
-        }
-    });
+    var connection = mysql.createPool(dbConfig);
+    // connection.connect(function(err) {
+    //     if(err) {  
+    //         console.log('Error when connecting to DB:', err);  
+    //         setTimeout(handleDisconnect, 2000);  
+    //     }
+    // });
 
-    connection.on('error',function(err){
-        console.log('db error', err);  
-        if(err.code === 'PROTOCOL_CONNECTION_LOST') {
-          handleDisconnect();  
-        } else {
-          throw err;  
-        }          
-    });
+    // connection.on('error',function(err){
+    //     console.log('db error', err);  
+    //     if(err.code === 'PROTOCOL_CONNECTION_LOST') {
+    //       handleDisconnect();  
+    //     } else {
+    //       throw err;
+    //     }
+    // });
     exports.conn = connection;
 
     //************************************************Logger 셋팅

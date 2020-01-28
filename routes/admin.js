@@ -4,7 +4,7 @@ var server = require('../server');
 var conn = server.conn;
 var async = require('async');
 
-router.get('/admin',function(req,res){
+router.get('/admin/:year/:month',function(req,res){
     async.waterfall([
         function(callback){
             conn.query('select \
@@ -67,8 +67,8 @@ router.get('/admin',function(req,res){
                                sum(req.response_cnt) as response_cnt\
                          from com_requests req, com_info mst\
                         where req.com_email = mst.com_email\
-                          and date_format(req.request_dt,"%y%m") ="1912"\
-                        group by mst.com_nm', [], 
+                          and date_format(req.request_dt,"%y%m") =if(?="",date_format(req.request_dt,"%y%m"),?) \
+                        group by mst.com_nm', [req.params.year+req.params.month, req.params.year+req.params.month], 
 
                 function(err,datas){
                     var data2 = Object();
@@ -119,8 +119,8 @@ router.get('/admin',function(req,res){
                                round(sum(case when (req.CHUNG_yn="Y" and req.SEOUL_yn="Y" and req.CHAR_yn="Y" ) then 1 end)/count(*) * 100 ,1) as percent\
                           from com_requests req, com_info mst\
                          where req.com_email = mst.com_email\
-                           and date_format(req.request_dt,"%y%m") ="1912"\
-                         group by mst.com_nm',[],
+                           and date_format(req.request_dt,"%y%m") = if(?="",date_format(req.request_dt,"%y%m"),?) \
+                         group by mst.com_nm',[req.params.year+req.params.month, req.params.year+req.params.month],
                 function(err,results){
                     var data3 = new Object();
                     data3.cri = new Array();
@@ -141,12 +141,12 @@ router.get('/admin',function(req,res){
             
         },
         function(data1, data2, data3, callback){
-            console.log('data1:----------------------------------');
-            console.log(data1);
-            console.log('data2:----------------------------------');
-            console.log(data2);
-            console.log('data3:----------------------------------');
-            console.log(data3);
+            // console.log('data1:----------------------------------');
+            // console.log(data1);
+            // console.log('data2:----------------------------------');
+            // console.log(data2);
+            // console.log('data3:----------------------------------');
+            // console.log(data3);
             res.render('./admin/admin',{ data1:data1, data2:data2, data3:data3 });
         }
     ]);

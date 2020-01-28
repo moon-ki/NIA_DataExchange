@@ -3,6 +3,12 @@
 <html>
     <body>
         <head>
+            <!-- CSS -->
+            <link href="/lib/font-awesome/css/all.css" rel="stylesheet">
+            <link href="/lib/bootstrap/css/bootstrap.css" rel="stylesheet">
+            <link href="/lib/jquery.ui/jquery-ui.css" rel="stylesheet">
+            <link href="/lib/jquery.ui/jquery-ui.theme.css" rel="stylesheet">
+            <link href="/styles/style.css" rel="stylesheet">
             <title>의료데이터 거래소 관리자 페이지</title>
             <script src="https://d3js.org/d3.v5.min.js"></script>
             <link rel="stylesheet" href="/styles/billboard.css">
@@ -11,6 +17,30 @@
         <body>
             <h2>월별 병원의 PHR 송신 건수</h2>
             <div id="chart1"></div>
+            <select id="year" autofocus>
+                <option value="">Select Year</option>
+                <option value="19">2019</option>
+                <option value="20">2020</option>
+                <option value="21">2021</option>
+            </select>
+            <select id="month" autofocus>
+                    <option value="">Select Month</option>
+                    <option value="01">01</option>
+                    <option value="02">02</option>
+                    <option value="03">03</option>
+                    <option value="04">04</option>
+                    <option value="05">05</option>
+                    <option value="06">06</option>
+                    <option value="07">07</option>
+                    <option value="08">08</option>
+                    <option value="09">09</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </select>
+            <input class="btn btn-green btn-30 w60" value="조회" type="button" style="font-weight:normal;"
+                onclick="searchData()"
+            />
             <h2>기관별 요청, 응답건수</h2>
             <div id="chart2"></div>
             <h2>기관별 마감율</h2>
@@ -120,76 +150,14 @@ $(function(){
 
     });
 
-function getData(){
-    var chart = bb.generate({
-        bindto: "#chart",
-        data: {
-            types: {
-                data1: "line",
-                data2: "spline"},
-            columns: [
-                ["data1", 30, 200, 100, 170, 150, 250],
-                ["data2", 130, 100, 140, 35, 110, 50]
-            ]
-        }
-    });
-    var chart2 = bb.generate({
-        bindto: "#chart2",
-        data: {
-            types: {
-                data1: "step",
-                data2: "area"},
-            columns: [
-                ["data1", 30, 200, 100, 170, 150, 250],
-                ["data2", 130, 100, 140, 35, 110, 50]
-            ]
-        }
-    });
-    var chart3 = bb.generate({
-        bindto: "#chart3",
-        data: {
-            types: {
-                data1: "area-spline",
-                data2: "area-step"},
-            columns: [
-                ["data1", 30, 200, 100, 170, 150, 250],
-                ["data2", 130, 100, 140, 35, 110, 50]
-            ]
-        }
-    });
-    var chart4 = bb.generate({
-        bindto: "#chart4",
-        data: {
-            x:'x',
-            types: {
-                data1: "bar",
-                data2: "bar"},
-            columns: [ 
+</script>
 
-            ]
-        },
-        axis:{
-            x:{
-                type:'timeseries',
-                tick:{
-                    format:'%y-%m-%d'
-                }
-            }
-        }
-    });
-    chart4.groups([['data1', 'data2']]);
-    var chart5 = bb.generate({
-        bindto: "#chart5",
-        data: {
-            
-            types: {
-                data1: "donut",
-                data2: "gauge"},
-            columns: [
-                ["data1", 30, 200, 100, 170, 150, 250],
-                ["data2", 130, 100, 140, 35, 110, 50]
-            ]
-        }
-    });
-}
+<script type="text/javascript">
+    function searchData(){
+
+        var year = $('#year').val();
+        var month = $('#month').val();
+        
+        location.href='/admin/admin/'+year+'/'+month
+    }
 </script>
